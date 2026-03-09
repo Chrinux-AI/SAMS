@@ -1,4 +1,5 @@
 ﻿<?php
+
 /**
  * SAMS Library - Book Catalog
  * Search, filter, and view all books in the library collection
@@ -46,7 +47,8 @@ try {
     if (table_exists('library_categories')) {
         $categories = db()->fetchAll("SELECT * FROM library_categories WHERE tenant_id = ? ORDER BY name", [$tenantId]);
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 // Build query
 $where = ["lb.tenant_id = ?"];
@@ -79,12 +81,14 @@ try {
             ORDER BY lb.title ASC
         ", $params);
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 $flash = get_flash_message();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <?php include INCLUDES_PATH . '/favicon-loader.php'; ?>
     <script src="../assets/js/theme-loader.js"></script>
@@ -97,122 +101,126 @@ $flash = get_flash_message();
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">
 </head>
+
 <body>
-<div class="app-layout">
-    <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
-    <main class="main-content">
-        <div class="cyber-header">
-            <div class="page-icon-orb"><i class="fas fa-book"></i></div>
-            <div>
-                <h1>Book Catalog</h1>
-                <p>Browse and manage the library book collection</p>
-            </div>
-        </div>
-        <div class="cyber-content">
-            <?php if ($flash): ?>
-                <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>"><?= htmlspecialchars($flash['message']) ?></div>
-            <?php endif; ?>
-
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form method="GET" class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <label class="form-label">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Title, Author, ISBN..." value="<?= htmlspecialchars($search) ?>">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Category</label>
-                            <select name="category" class="form-select">
-                                <option value="">All Categories</option>
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= htmlspecialchars($cat['id']) ?>" <?= $category_filter == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
-                                <option value="">All Statuses</option>
-                                <option value="available" <?= $status_filter === 'available' ? 'selected' : '' ?>>Available</option>
-                                <option value="checked_out" <?= $status_filter === 'checked_out' ? 'selected' : '' ?>>Checked Out</option>
-                                <option value="reserved" <?= $status_filter === 'reserved' ? 'selected' : '' ?>>Reserved</option>
-                                <option value="damaged" <?= $status_filter === 'damaged' ? 'selected' : '' ?>>Damaged</option>
-                                <option value="lost" <?= $status_filter === 'lost' ? 'selected' : '' ?>>Lost</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Search</button>
-                        </div>
-                    </form>
+    <div class="app-layout">
+        <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
+        <main class="main-content">
+            <div class="cyber-header">
+                <div class="page-icon-orb"><i class="fas fa-book"></i></div>
+                <div>
+                    <h1>Book Catalog</h1>
+                    <p>Browse and manage the library book collection</p>
                 </div>
             </div>
+            <div class="cyber-content">
+                <?php if ($flash): ?>
+                    <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>"><?= htmlspecialchars($flash['message']) ?></div>
+                <?php endif; ?>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5><?= count($books) ?> book(s) found</h5>
-                <a href="add-book.php" class="btn btn-success"><i class="fas fa-plus"></i> Add New Book</a>
-            </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="GET" class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Search</label>
+                                <input type="text" name="search" class="form-control" placeholder="Title, Author, ISBN..." value="<?= htmlspecialchars($search) ?>">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Category</label>
+                                <select name="category" class="form-select">
+                                    <option value="">All Categories</option>
+                                    <?php foreach ($categories as $cat): ?>
+                                        <option value="<?= htmlspecialchars($cat['id']) ?>" <?= $category_filter == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select name="status" class="form-select">
+                                    <option value="">All Statuses</option>
+                                    <option value="available" <?= $status_filter === 'available' ? 'selected' : '' ?>>Available</option>
+                                    <option value="checked_out" <?= $status_filter === 'checked_out' ? 'selected' : '' ?>>Checked Out</option>
+                                    <option value="reserved" <?= $status_filter === 'reserved' ? 'selected' : '' ?>>Reserved</option>
+                                    <option value="damaged" <?= $status_filter === 'damaged' ? 'selected' : '' ?>>Damaged</option>
+                                    <option value="lost" <?= $status_filter === 'lost' ? 'selected' : '' ?>>Lost</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-            <div class="card">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>ISBN</th>
-                                <th>Category</th>
-                                <th>Shelf</th>
-                                <th>Total</th>
-                                <th>Available</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($books)): ?>
-                                <tr><td colspan="9" class="text-center py-4">No books found.</td></tr>
-                            <?php else: ?>
-                                <?php foreach ($books as $book): ?>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><?= count($books) ?> book(s) found</h5>
+                    <a href="add-book.php" class="btn btn-success"><i class="fas fa-plus"></i> Add New Book</a>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>ISBN</th>
+                                    <th>Category</th>
+                                    <th>Shelf</th>
+                                    <th>Total</th>
+                                    <th>Available</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($books)): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($book['title']) ?></strong></td>
-                                        <td><?= htmlspecialchars($book['author'] ?? '') ?></td>
-                                        <td><code><?= htmlspecialchars($book['isbn'] ?? 'N/A') ?></code></td>
-                                        <td><?= htmlspecialchars($book['category_name'] ?? $book['category'] ?? '-') ?></td>
-                                        <td><?= htmlspecialchars($book['shelf_location'] ?? '-') ?></td>
-                                        <td><?= (int)($book['total_copies'] ?? 0) ?></td>
-                                        <td><?= (int)($book['available_copies'] ?? 0) ?></td>
-                                        <td>
-                                            <?php
-                                            $status = $book['status'] ?? 'available';
-                                            $badge_class = match($status) {
-                                                'available' => 'badge bg-success',
-                                                'checked_out' => 'badge bg-warning',
-                                                'reserved' => 'badge bg-info',
-                                                'damaged' => 'badge bg-danger',
-                                                'lost' => 'badge bg-dark',
-                                                default => 'badge bg-secondary',
-                                            };
-                                            ?>
-                                            <span class="<?= $badge_class ?>"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $status))) ?></span>
-                                        </td>
-                                        <td>
-                                            <a href="add-book.php?edit=<?= (int)$book['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this book?');">
-                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-                                                <input type="hidden" name="book_id" value="<?= (int)$book['id'] ?>">
-                                                <button type="submit" name="delete_book" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
-                                            </form>
-                                        </td>
+                                        <td colspan="9" class="text-center py-4">No books found.</td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                <?php else: ?>
+                                    <?php foreach ($books as $book): ?>
+                                        <tr>
+                                            <td><strong><?= htmlspecialchars($book['title']) ?></strong></td>
+                                            <td><?= htmlspecialchars($book['author'] ?? '') ?></td>
+                                            <td><code><?= htmlspecialchars($book['isbn'] ?? 'N/A') ?></code></td>
+                                            <td><?= htmlspecialchars($book['category_name'] ?? $book['category'] ?? '-') ?></td>
+                                            <td><?= htmlspecialchars($book['shelf_location'] ?? '-') ?></td>
+                                            <td><?= (int)($book['total_copies'] ?? 0) ?></td>
+                                            <td><?= (int)($book['available_copies'] ?? 0) ?></td>
+                                            <td>
+                                                <?php
+                                                $status = $book['status'] ?? 'available';
+                                                $badge_class = match ($status) {
+                                                    'available' => 'badge bg-success',
+                                                    'checked_out' => 'badge bg-warning',
+                                                    'reserved' => 'badge bg-info',
+                                                    'damaged' => 'badge bg-danger',
+                                                    'lost' => 'badge bg-dark',
+                                                    default => 'badge bg-secondary',
+                                                };
+                                                ?>
+                                                <span class="<?= $badge_class ?>"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $status))) ?></span>
+                                            </td>
+                                            <td>
+                                                <a href="add-book.php?edit=<?= (int)$book['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                                <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this book?');">
+                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                                                    <input type="hidden" name="book_id" value="<?= (int)$book['id'] ?>">
+                                                    <button type="submit" name="delete_book" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
-</div>
-<script src="../assets/js/main.js"></script>
+        </main>
+    </div>
+    <script src="../assets/js/main.js"></script>
 </body>
+
 </html>

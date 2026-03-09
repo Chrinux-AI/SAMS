@@ -1,4 +1,5 @@
 ﻿<?php
+
 /**
  * SAMS Library - Issue & Return Books
  * Issue books to students and process returns
@@ -108,13 +109,15 @@ try {
     if (table_exists('library_books')) {
         $available_books = db()->fetchAll("SELECT id, title, author, isbn, available_copies FROM library_books WHERE tenant_id = ? AND available_copies > 0 ORDER BY title", [$tenantId]);
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 // Fetch students
 $students = [];
 try {
     $students = db()->fetchAll("SELECT id, first_name, last_name, assigned_id FROM users WHERE role = 'student' ORDER BY first_name, last_name") ?: [];
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 // Fetch active loans for return
 $active_loans = [];
@@ -131,13 +134,15 @@ try {
             ORDER BY ll.due_date ASC
         ", [$tenantId]);
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 $default_due = date('Y-m-d', strtotime('+14 days'));
 $flash = get_flash_message();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <?php include INCLUDES_PATH . '/favicon-loader.php'; ?>
     <script src="../assets/js/theme-loader.js"></script>
@@ -150,137 +155,143 @@ $flash = get_flash_message();
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">
 </head>
+
 <body>
-<div class="app-layout">
-    <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
-    <main class="main-content">
-        <div class="cyber-header">
-            <div class="page-icon-orb"><i class="fas fa-exchange-alt"></i></div>
-            <div>
-                <h1>Issue &amp; Return Books</h1>
-                <p>Manage book circulation - issue to students and process returns</p>
+    <div class="app-layout">
+        <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
+        <main class="main-content">
+            <div class="cyber-header">
+                <div class="page-icon-orb"><i class="fas fa-exchange-alt"></i></div>
+                <div>
+                    <h1>Issue &amp; Return Books</h1>
+                    <p>Manage book circulation - issue to students and process returns</p>
+                </div>
             </div>
-        </div>
-        <div class="cyber-content">
-            <?php if ($flash): ?>
-                <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>"><?= htmlspecialchars($flash['message']) ?></div>
-            <?php endif; ?>
+            <div class="cyber-content">
+                <?php if ($flash): ?>
+                    <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>"><?= htmlspecialchars($flash['message']) ?></div>
+                <?php endif; ?>
 
-            <div class="row g-4">
-                <!-- Issue Book -->
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-arrow-right"></i> Issue Book</h5>
+                <div class="row g-4">
+                    <!-- Issue Book -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-arrow-right"></i> Issue Book</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                                    <div class="mb-3">
+                                        <label class="form-label">Student <span class="text-danger">*</span></label>
+                                        <select name="student_id" class="form-select" required>
+                                            <option value="">Select Student</option>
+                                            <?php foreach ($students as $s): ?>
+                                                <option value="<?= (int)$s['id'] ?>"><?= htmlspecialchars($s['first_name'] . ' ' . $s['last_name']) ?> <?= $s['assigned_id'] ? '(' . htmlspecialchars($s['assigned_id']) . ')' : '' ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Book <span class="text-danger">*</span></label>
+                                        <select name="book_id" class="form-select" required>
+                                            <option value="">Select Book</option>
+                                            <?php foreach ($available_books as $b): ?>
+                                                <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['title']) ?> — <?= htmlspecialchars($b['author'] ?? 'Unknown') ?> (<?= (int)$b['available_copies'] ?> avail.)</option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Due Date <span class="text-danger">*</span></label>
+                                        <input type="date" name="due_date" class="form-control" required value="<?= htmlspecialchars($default_due) ?>" min="<?= date('Y-m-d') ?>">
+                                    </div>
+                                    <button type="submit" name="issue_book" class="btn btn-primary w-100"><i class="fas fa-hand-holding"></i> Issue Book</button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <form method="POST">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-                                <div class="mb-3">
-                                    <label class="form-label">Student <span class="text-danger">*</span></label>
-                                    <select name="student_id" class="form-select" required>
-                                        <option value="">Select Student</option>
-                                        <?php foreach ($students as $s): ?>
-                                            <option value="<?= (int)$s['id'] ?>"><?= htmlspecialchars($s['first_name'] . ' ' . $s['last_name']) ?> <?= $s['assigned_id'] ? '(' . htmlspecialchars($s['assigned_id']) . ')' : '' ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Book <span class="text-danger">*</span></label>
-                                    <select name="book_id" class="form-select" required>
-                                        <option value="">Select Book</option>
-                                        <?php foreach ($available_books as $b): ?>
-                                            <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['title']) ?> — <?= htmlspecialchars($b['author'] ?? 'Unknown') ?> (<?= (int)$b['available_copies'] ?> avail.)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Due Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="due_date" class="form-control" required value="<?= htmlspecialchars($default_due) ?>" min="<?= date('Y-m-d') ?>">
-                                </div>
-                                <button type="submit" name="issue_book" class="btn btn-primary w-100"><i class="fas fa-hand-holding"></i> Issue Book</button>
-                            </form>
+                    </div>
+
+                    <!-- Return Book -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="fas fa-arrow-left"></i> Return Book</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Active Loan <span class="text-danger">*</span></label>
+                                        <select name="loan_id" class="form-select" required>
+                                            <option value="">Select Loan to Return</option>
+                                            <?php foreach ($active_loans as $loan): ?>
+                                                <option value="<?= (int)$loan['id'] ?>" <?= $loan['days_overdue'] > 0 ? 'class="text-danger"' : '' ?>>
+                                                    #<?= (int)$loan['id'] ?> — <?= htmlspecialchars($loan['title']) ?> → <?= htmlspecialchars($loan['first_name'] . ' ' . $loan['last_name']) ?>
+                                                    (Due: <?= htmlspecialchars($loan['due_date']) ?>)
+                                                    <?= $loan['days_overdue'] > 0 ? ' [OVERDUE ' . (int)$loan['days_overdue'] . 'd]' : '' ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Fine Amount ($)</label>
+                                        <input type="number" name="fine_amount" class="form-control" step="0.01" min="0" value="0.00">
+                                        <small class="text-muted">Enter fine amount if applicable</small>
+                                    </div>
+                                    <button type="submit" name="return_book" class="btn btn-success w-100"><i class="fas fa-undo"></i> Process Return</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Return Book -->
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0"><i class="fas fa-arrow-left"></i> Return Book</h5>
-                        </div>
-                        <div class="card-body">
-                            <form method="POST">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-                                <div class="mb-3">
-                                    <label class="form-label">Select Active Loan <span class="text-danger">*</span></label>
-                                    <select name="loan_id" class="form-select" required>
-                                        <option value="">Select Loan to Return</option>
-                                        <?php foreach ($active_loans as $loan): ?>
-                                            <option value="<?= (int)$loan['id'] ?>" <?= $loan['days_overdue'] > 0 ? 'class="text-danger"' : '' ?>>
-                                                #<?= (int)$loan['id'] ?> — <?= htmlspecialchars($loan['title']) ?> → <?= htmlspecialchars($loan['first_name'] . ' ' . $loan['last_name']) ?>
-                                                (Due: <?= htmlspecialchars($loan['due_date']) ?>)
-                                                <?= $loan['days_overdue'] > 0 ? ' [OVERDUE ' . (int)$loan['days_overdue'] . 'd]' : '' ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Fine Amount ($)</label>
-                                    <input type="number" name="fine_amount" class="form-control" step="0.01" min="0" value="0.00">
-                                    <small class="text-muted">Enter fine amount if applicable</small>
-                                </div>
-                                <button type="submit" name="return_book" class="btn btn-success w-100"><i class="fas fa-undo"></i> Process Return</button>
-                            </form>
-                        </div>
+                <!-- Recent Active Loans -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-clock"></i> Current Active Loans (<?= count($active_loans) ?>)</h5>
                     </div>
-                </div>
-            </div>
-
-            <!-- Recent Active Loans -->
-            <div class="card mt-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-clock"></i> Current Active Loans (<?= count($active_loans) ?>)</h5></div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Loan #</th>
-                                <th>Student</th>
-                                <th>Book</th>
-                                <th>Loan Date</th>
-                                <th>Due Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($active_loans)): ?>
-                                <tr><td colspan="6" class="text-center py-4">No active loans.</td></tr>
-                            <?php else: ?>
-                                <?php foreach ($active_loans as $loan): ?>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Loan #</th>
+                                    <th>Student</th>
+                                    <th>Book</th>
+                                    <th>Loan Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($active_loans)): ?>
                                     <tr>
-                                        <td>#<?= (int)$loan['id'] ?></td>
-                                        <td><?= htmlspecialchars($loan['first_name'] . ' ' . $loan['last_name']) ?></td>
-                                        <td><?= htmlspecialchars($loan['title']) ?></td>
-                                        <td><?= htmlspecialchars($loan['loan_date']) ?></td>
-                                        <td><?= htmlspecialchars($loan['due_date']) ?></td>
-                                        <td>
-                                            <?php if ($loan['days_overdue'] > 0): ?>
-                                                <span class="badge bg-danger">Overdue <?= (int)$loan['days_overdue'] ?>d</span>
-                                            <?php else: ?>
-                                                <span class="badge bg-success">On Time</span>
-                                            <?php endif; ?>
-                                        </td>
+                                        <td colspan="6" class="text-center py-4">No active loans.</td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                <?php else: ?>
+                                    <?php foreach ($active_loans as $loan): ?>
+                                        <tr>
+                                            <td>#<?= (int)$loan['id'] ?></td>
+                                            <td><?= htmlspecialchars($loan['first_name'] . ' ' . $loan['last_name']) ?></td>
+                                            <td><?= htmlspecialchars($loan['title']) ?></td>
+                                            <td><?= htmlspecialchars($loan['loan_date']) ?></td>
+                                            <td><?= htmlspecialchars($loan['due_date']) ?></td>
+                                            <td>
+                                                <?php if ($loan['days_overdue'] > 0): ?>
+                                                    <span class="badge bg-danger">Overdue <?= (int)$loan['days_overdue'] ?>d</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-success">On Time</span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
-</div>
-<script src="../assets/js/main.js"></script>
+        </main>
+    </div>
+    <script src="../assets/js/main.js"></script>
 </body>
+
 </html>

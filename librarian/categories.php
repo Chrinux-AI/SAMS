@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SAMS Library - Categories Management
  * CRUD for library book categories
@@ -93,12 +94,14 @@ try {
             ORDER BY lc.name
         ", [$tenantId]);
     }
-} catch (Throwable $e) {}
+} catch (Throwable $e) {
+}
 
 $flash = get_flash_message();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <?php include INCLUDES_PATH . '/favicon-loader.php'; ?>
     <script src="../assets/js/theme-loader.js"></script>
@@ -111,127 +114,135 @@ $flash = get_flash_message();
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">
 </head>
+
 <body>
-<div class="app-layout">
-    <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
-    <main class="main-content">
-        <div class="cyber-header">
-            <div class="page-icon-orb"><i class="fas fa-tags"></i></div>
-            <div>
-                <h1>Library Categories</h1>
-                <p>Manage book categories and classifications</p>
+    <div class="app-layout">
+        <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
+        <main class="main-content">
+            <div class="cyber-header">
+                <div class="page-icon-orb"><i class="fas fa-tags"></i></div>
+                <div>
+                    <h1>Library Categories</h1>
+                    <p>Manage book categories and classifications</p>
+                </div>
             </div>
-        </div>
-        <div class="cyber-content">
-            <?php if ($flash): ?>
-                <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>"><?= htmlspecialchars($flash['message']) ?></div>
-            <?php endif; ?>
+            <div class="cyber-content">
+                <?php if ($flash): ?>
+                    <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>"><?= htmlspecialchars($flash['message']) ?></div>
+                <?php endif; ?>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header"><h5 class="mb-0"><i class="fas fa-plus"></i> Add Category</h5></div>
-                        <div class="card-body">
-                            <form method="POST">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-                                <input type="hidden" name="action" value="add">
-                                <div class="mb-3">
-                                    <label class="form-label">Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="name" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    <textarea name="description" class="form-control" rows="3"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> Add Category</button>
-                            </form>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-plus"></i> Add Category</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                                    <input type="hidden" name="action" value="add">
+                                    <div class="mb-3">
+                                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="name" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea name="description" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> Add Category</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header"><h5 class="mb-0"><i class="fas fa-list"></i> All Categories (<?= count($categories) ?>)</h5></div>
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Books</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (empty($categories)): ?>
-                                        <tr><td colspan="4" class="text-center py-4">No categories yet.</td></tr>
-                                    <?php else: ?>
-                                        <?php foreach ($categories as $cat): ?>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-list"></i> All Categories (<?= count($categories) ?>)</h5>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Books</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($categories)): ?>
                                             <tr>
-                                                <td><strong><?= htmlspecialchars($cat['name']) ?></strong></td>
-                                                <td><?= htmlspecialchars($cat['description'] ?? '-') ?></td>
-                                                <td><span class="badge bg-info"><?= (int)$cat['book_count'] ?></span></td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="editCategory(<?= (int)$cat['id'] ?>, '<?= htmlspecialchars(addslashes($cat['name']), ENT_QUOTES) ?>', '<?= htmlspecialchars(addslashes($cat['description'] ?? ''), ENT_QUOTES) ?>')" title="Edit"><i class="fas fa-edit"></i></button>
-                                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this category?');">
-                                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-                                                        <input type="hidden" name="action" value="delete">
-                                                        <input type="hidden" name="cat_id" value="<?= (int)$cat['id'] ?>">
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
-                                                    </form>
-                                                </td>
+                                                <td colspan="4" class="text-center py-4">No categories yet.</td>
                                             </tr>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                                        <?php else: ?>
+                                            <?php foreach ($categories as $cat): ?>
+                                                <tr>
+                                                    <td><strong><?= htmlspecialchars($cat['name']) ?></strong></td>
+                                                    <td><?= htmlspecialchars($cat['description'] ?? '-') ?></td>
+                                                    <td><span class="badge bg-info"><?= (int)$cat['book_count'] ?></span></td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="editCategory(<?= (int)$cat['id'] ?>, '<?= htmlspecialchars(addslashes($cat['name']), ENT_QUOTES) ?>', '<?= htmlspecialchars(addslashes($cat['description'] ?? ''), ENT_QUOTES) ?>')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this category?');">
+                                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                                                            <input type="hidden" name="action" value="delete">
+                                                            <input type="hidden" name="cat_id" value="<?= (int)$cat['id'] ?>">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
-</div>
+        </main>
+    </div>
 
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="cat_id" id="edit_cat_id">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Category</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="name" id="edit_name" class="form-control" required>
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="cat_id" id="edit_cat_id">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea name="description" id="edit_description" class="form-control" rows="3"></textarea>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" id="edit_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" id="edit_description" class="form-control" rows="3"></textarea>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="../assets/js/main.js"></script>
-<script>
-function editCategory(id, name, desc) {
-    document.getElementById('edit_cat_id').value = id;
-    document.getElementById('edit_name').value = name;
-    document.getElementById('edit_description').value = desc;
-    var modal = new bootstrap.Modal(document.getElementById('editModal'));
-    modal.show();
-}
-</script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        function editCategory(id, name, desc) {
+            document.getElementById('edit_cat_id').value = id;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_description').value = desc;
+            var modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+    </script>
 </body>
+
 </html>
