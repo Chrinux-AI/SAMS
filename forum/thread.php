@@ -4,8 +4,9 @@
  * View Thread and Replies
  */
 
-require_once '../includes/session-handler.php';
-require_once '../includes/db.php';
+require_once '../includes/config.php';
+require_once '../includes/functions.php';
+require_once '../includes/database.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
@@ -32,7 +33,7 @@ if (!$thread) {
 }
 
 // Increment view count
-db()->execute("UPDATE forum_threads SET view_count = view_count + 1 WHERE id = ?", [$thread_id]);
+db()->query("UPDATE forum_threads SET view_count = view_count + 1 WHERE id = ?", [$thread_id]);
 
 $page_title = $thread['title'];
 
@@ -60,12 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$thread['is_locked']) {
 
     if (empty($errors)) {
         try {
-            db()->execute("
-                INSERT INTO forum_posts (thread_id, user_id, content)
-                VALUES (?, ?, ?)
-            ", [$thread_id, $user_id, $content]);
+            db()->insert('forum_posts', [
+                'thread_id' => $thread_id,
+                'user_id' => $user_id,
+                'content' => $content
+            ]);
 
-            db()->execute("
+            db()->query("
                 UPDATE forum_threads
                 SET reply_count = reply_count + 1, last_activity_at = NOW()
                 WHERE id = ?

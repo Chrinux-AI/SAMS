@@ -1,15 +1,91 @@
 <?php
+
+/**
+ * SAMS Forum Moderator Dashboard - Advanced Moderation Interface
+ * Professional dashboard with AI-powered moderation and content analysis
+ */
 session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
 require_login('../login.php');
-
 if (!has_role('forum_moderator') && !has_role('admin')) {
     redirect('../login.php', 'Access denied. Forum moderator privileges required.', 'error');
 }
 
-$full_name = $_SESSION['full_name'] ?? 'User';
+$moderator_id = $_SESSION['user_id'];
+$tenantId = $_SESSION['tenant_id'] ?? 1;
+$full_name = $_SESSION['full_name'];
+
+// Get moderation statistics
+$moderation_stats = [
+    'total_threads' => fm_count('forum_threads', 'tenant_id = ?', [$tenantId]),
+    'total_posts' => fm_count('forum_posts', 'tenant_id = ?', [$tenantId]),
+    'reported_posts' => fm_count('forum_posts', 'tenant_id = ? AND is_reported = 1', [$tenantId]),
+    'moderated_today' => fm_count('audit_logs', 'tenant_id = ? AND action LIKE "%moderate%" AND DATE(created_at) = CURDATE()', [$tenantId]),
+];
+
+// Get reported posts
+$reported_posts = db()->fetchAll("
+    SELECT fp.*, u.first_name, u.last_name, u.role,
+           ft.title as thread_title, ft.category_id,
+           fc.name as category_name,
+           COUNT(fpr.id) as report_count,
+           GROUP_CONCAT(fpr.reason SEPARATOR ', ') as report_reasons
+    FROM forum_posts fp
+    JOIN users u ON fp.user_id = u.id
+    JOIN forum_threads ft ON fp.thread_id = ft.id
+    JOIN forum_categories fc ON ft.category_id = fc.id
+    LEFT JOIN forum_post_reports fpr ON fp.id = fpr.post_id
+    WHERE fp.tenant_id = ? AND fp.is_reported = 1
+    GROUP BY fp.id
+    ORDER BY fp.created_at DESC
+    LIMIT 20
+", [$tenantId]);
+
+// Get recent moderation actions
+$recent_moderation = db()->fetchAll("
+    SELECT al.*, u.first_name, u.last_name,
+           CASE
+               WHEN al.action LIKE '%delete_post%' THEN 'Post Deleted'
+               WHEN al.action LIKE '%delete_thread%' THEN 'Thread Deleted'
+               WHEN al.action LIKE '%warn_user%' THEN 'User Warned'
+               WHEN al.action LIKE '%ban_user%' THEN 'User Banned'
+               ELSE 'Other Action'
+           END as action_type
+    FROM audit_logs al
+    JOIN users u ON al.user_id = u.id
+    WHERE al.tenant_id = ? AND al.action LIKE '%moderate%'
+    ORDER BY al.created_at DESC
+    LIMIT 10
+", [$tenantId]);
+
+// AI Moderation Insights
+$ai_insights = [];
+try {
+    require_once '../includes/sams-init.php';
+    try {
+        if (class_exists('SAMS_ModerationBot')) {
+            $moderationBot = new SAMS_ModerationBot();
+            $ai_insights = $moderationBot->getModerationInsights($tenantId);
+        }
+    } catch (Throwable $e) {
+        // Fallback insights
+        $ai_insights = [
+            'moderation_health' => $moderation_stats['reported_posts'] > 10 ? 'needs_attention' : 'good',
+            'content_quality' => 'stable',
+            'recommendation' => $moderation_stats['reported_posts'] > 0 ? 'Review reported posts promptly to maintain community standards' : 'Forum moderation is running smoothly'
+        ];
+    }
+} catch (Throwable $e) {
+    $ai_insights = [
+        'moderation_health' => 'good',
+        'content_quality' => 'stable',
+        'recommendation' => 'Continue regular moderation monitoring and community engagement'
+    ];
+}
+
+$csrf = generate_csrf_token();
 
 function fm_count($table, $where = '1=1', $params = []) {
     try { if (!table_exists($table)) return 0; return (int)db()->count($table, $where, $params); } catch (Throwable $e) { return 0; }

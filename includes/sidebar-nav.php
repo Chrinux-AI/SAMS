@@ -12,6 +12,9 @@ if (session_status() === PHP_SESSION_NONE) {
 // Optional advanced AI modules are loaded lazily to avoid sidebar hard-fail.
 
 $current_page = basename($_SERVER['PHP_SELF']);
+$current_dir = basename(dirname($_SERVER['PHP_SELF']));
+$in_subdir = !in_array($current_dir, ['admin', 'teacher', 'student', 'parent', 'librarian', 'bursar', 'accountant', 'transport', 'forum-moderator', 'general', 'chatbots', 'attendance']);
+$subdir_prefix = $in_subdir ? '../' : '';
 $user_name = $_SESSION['full_name'] ?? 'User';
 $user_role = $_SESSION['role'] ?? ($_SESSION['user_role'] ?? 'user');
 $user_id = $_SESSION['user_id'] ?? 0;
@@ -39,6 +42,7 @@ if ($user_role === 'admin') {
     'Main' => [
       'dashboard.php' => ['icon' => 'tachometer-alt', 'label' => 'Dashboard'],
       'overview.php' => ['icon' => 'chart-pie', 'label' => 'Overview'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'People' => [
       'students.php' => ['icon' => 'user-graduate', 'label' => 'Students'],
@@ -55,6 +59,7 @@ if ($user_role === 'admin') {
     'Communication' => [
       '../messages.php' => ['icon' => 'envelope', 'label' => 'Messages', 'badge' => $unread_count > 0 ? $unread_count : null],
       '../notices.php' => ['icon' => 'bullhorn', 'label' => 'Notices'],
+      '../forum/index.php' => ['icon' => 'comments', 'label' => 'Forum'],
       'notices.php' => ['icon' => 'edit', 'label' => 'Manage Notices'],
       'emergency-alerts.php' => ['icon' => 'exclamation-triangle', 'label' => 'Alerts'],
     ],
@@ -74,6 +79,19 @@ if ($user_role === 'admin') {
       'lms-settings.php' => ['icon' => 'graduation-cap', 'label' => 'LMS Settings'],
       'settings.php' => ['icon' => 'cog', 'label' => 'Settings'],
     ],
+    'AI Center' => [
+      'ai-center/index.php' => ['icon' => 'brain', 'label' => 'AI Dashboard'],
+      'ai-center/anomaly-detection.php' => ['icon' => 'exclamation-triangle', 'label' => 'Anomaly Detection'],
+      'ai-center/security-monitor.php' => ['icon' => 'shield-alt', 'label' => 'Security Monitor'],
+      'ai-center/automation.php' => ['icon' => 'cogs', 'label' => 'Automation'],
+      'ai-center/documentation-engine.php' => ['icon' => 'file-alt', 'label' => 'Documentation'],
+      'ai-center/system-health.php' => ['icon' => 'heartbeat', 'label' => 'AI System Health'],
+      'ai-center/backup-monitor.php' => ['icon' => 'database', 'label' => 'Backup Monitor'],
+      'ai-center/predictive-analytics.php' => ['icon' => 'chart-line', 'label' => 'Predictive Analytics'],
+      'ai-center/training.php' => ['icon' => 'graduation-cap', 'label' => 'AI Training'],
+      'ai-center/knowledge-base.php' => ['icon' => 'book-open', 'label' => 'Knowledge Base'],
+      'ai-center/incident-timeline.php' => ['icon' => 'stream', 'label' => 'Incident Timeline'],
+    ],
   ];
 } elseif ($user_role === 'teacher') {
   $nav_sections = [
@@ -82,6 +100,7 @@ if ($user_role === 'admin') {
       'my-classes.php' => ['icon' => 'door-open', 'label' => 'My Classes'],
       'students.php' => ['icon' => 'user-graduate', 'label' => 'Students'],
       'attendance.php' => ['icon' => 'clipboard-check', 'label' => 'Attendance'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Academic' => [
       'materials.php' => ['icon' => 'file-upload', 'label' => 'Materials'],
@@ -93,6 +112,7 @@ if ($user_role === 'admin') {
       '../messages.php' => ['icon' => 'envelope', 'label' => 'Messages', 'badge' => $unread_count > 0 ? $unread_count : null],
       'parent-comms.php' => ['icon' => 'users', 'label' => 'Parent Comms'],
       '../notices.php' => ['icon' => 'bullhorn', 'label' => 'Notices'],
+      '../forum/index.php' => ['icon' => 'comment-dots', 'label' => 'Forum'],
       'resources.php' => ['icon' => 'book', 'label' => 'Resources'],
       'behavior-logs.php' => ['icon' => 'clipboard-list', 'label' => 'Behavior Logs'],
       'meeting-hours.php' => ['icon' => 'calendar-alt', 'label' => 'Meeting Hours'],
@@ -111,6 +131,7 @@ if ($user_role === 'admin') {
       'schedule.php' => ['icon' => 'calendar-alt', 'label' => 'Schedule'],
       'attendance.php' => ['icon' => 'clipboard-list', 'label' => 'Attendance'],
       'checkin.php' => ['icon' => 'fingerprint', 'label' => 'Check-in'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Academic' => [
       'class-registration.php' => ['icon' => 'user-plus', 'label' => 'Registration'],
@@ -123,6 +144,7 @@ if ($user_role === 'admin') {
       '../messages.php' => ['icon' => 'envelope', 'label' => 'Messages', 'badge' => $unread_count > 0 ? $unread_count : null],
       'communication.php' => ['icon' => 'comment-dots', 'label' => 'Student Chat'],
       '../notices.php' => ['icon' => 'bullhorn', 'label' => 'Notices'],
+      '../forum/index.php' => ['icon' => 'comments', 'label' => 'Forum'],
       'study-groups.php' => ['icon' => 'users', 'label' => 'Study Groups'],
     ],
     'Account' => [
@@ -138,6 +160,7 @@ if ($user_role === 'admin') {
       'children.php' => ['icon' => 'child', 'label' => 'Children'],
       'link-children.php' => ['icon' => 'link', 'label' => 'Link Children'],
       'attendance.php' => ['icon' => 'clipboard-list', 'label' => 'Attendance'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Academic' => [
       'grades.php' => ['icon' => 'chart-bar', 'label' => 'Grades'],
@@ -149,6 +172,7 @@ if ($user_role === 'admin') {
       '../messages.php' => ['icon' => 'envelope', 'label' => 'Messages', 'badge' => $unread_count > 0 ? $unread_count : null],
       'communication.php' => ['icon' => 'user-tie', 'label' => 'Contact Teachers'],
       '../notices.php' => ['icon' => 'bullhorn', 'label' => 'Notices'],
+      '../forum/index.php' => ['icon' => 'comments', 'label' => 'Forum'],
       'book-meeting.php' => ['icon' => 'calendar-plus', 'label' => 'Book Meeting'],
       'my-meetings.php' => ['icon' => 'calendar-check', 'label' => 'My Meetings'],
     ],
@@ -162,6 +186,7 @@ if ($user_role === 'admin') {
   $nav_sections = [
     'Main' => [
       'dashboard.php' => ['icon' => 'tachometer-alt', 'label' => 'Dashboard'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Catalog' => [
       'books.php' => ['icon' => 'book', 'label' => 'Book Catalog'],
@@ -190,6 +215,7 @@ if ($user_role === 'admin') {
   $nav_sections = [
     'Main' => [
       'dashboard.php' => ['icon' => 'tachometer-alt', 'label' => 'Dashboard'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Billing' => [
       'fee-collection.php' => ['icon' => 'cash-register', 'label' => 'Fee Collection'],
@@ -217,6 +243,7 @@ if ($user_role === 'admin') {
   $nav_sections = [
     'Main' => [
       'dashboard.php' => ['icon' => 'tachometer-alt', 'label' => 'Dashboard'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Finance' => [
       'ledger.php' => ['icon' => 'book', 'label' => 'General Ledger'],
@@ -244,6 +271,7 @@ if ($user_role === 'admin') {
   $nav_sections = [
     'Main' => [
       'dashboard.php' => ['icon' => 'tachometer-alt', 'label' => 'Dashboard'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Fleet' => [
       'routes.php' => ['icon' => 'route', 'label' => 'Routes'],
@@ -269,6 +297,7 @@ if ($user_role === 'admin') {
   $nav_sections = [
     'Main' => [
       'dashboard.php' => ['icon' => 'tachometer-alt', 'label' => 'Dashboard'],
+      'team-selection.php' => ['icon' => 'users', 'label' => 'Team Selection'],
     ],
     'Moderation' => [
       'threads.php' => ['icon' => 'comments', 'label' => 'All Threads'],
@@ -315,8 +344,14 @@ if ($user_role === 'admin') {
     <?php foreach ($nav_sections as $section_name => $items): ?>
       <div class="menu-section">
         <div class="menu-section-title"><?php echo $section_name; ?></div>
-        <?php foreach ($items as $page => $item): ?>
-          <a href="<?php echo $page; ?>" class="menu-item <?php echo $current_page === basename($page) ? 'active' : ''; ?>">
+        <?php foreach ($items as $page => $item):
+          $href = $page;
+          if ($in_subdir && !str_starts_with($page, '../') && !str_starts_with($page, 'http')) {
+            $href = $subdir_prefix . $page;
+          }
+          $is_active = $current_page === basename($page) || ($in_subdir && str_contains($page, $current_dir . '/' . $current_page));
+        ?>
+          <a href="<?php echo $href; ?>" class="menu-item <?php echo $is_active ? 'active' : ''; ?>">
             <span class="menu-icon"><i class="fas fa-<?php echo $item['icon']; ?>"></i></span>
             <span class="menu-label"><?php echo $item['label']; ?></span>
             <?php if (!empty($item['badge'])): ?>
@@ -328,7 +363,7 @@ if ($user_role === 'admin') {
     <?php endforeach; ?>
 
     <div class="menu-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
-      <a href="../logout.php" class="menu-item">
+      <a href="<?php echo $in_subdir ? '../../logout.php' : '../logout.php'; ?>" class="menu-item">
         <span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>
         <span class="menu-label">Logout</span>
       </a>
@@ -351,19 +386,19 @@ include_once __DIR__ . '/sams-bot.php';
 
 // Include Advanced AI System
 if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && class_exists('SAMS_AI_Manager')) {
-    try {
-        $ai_manager = new SAMS_AI_Manager($_SESSION['user_id'], $_SESSION['role']);
-        $page_context = [
-            'current_page' => basename($_SERVER['PHP_SELF']),
-            'user_role' => $_SESSION['role'],
-            'timestamp' => time()
-        ];
-        $aiInterface = $ai_manager->getAIInterface($page_context);
-        if (is_array($aiInterface) && isset($aiInterface['chatbot'])) {
-            echo $aiInterface['chatbot'];
-        }
-    } catch (Throwable $e) {
-        error_log('Sidebar AI rendering failed: ' . $e->getMessage());
+  try {
+    $ai_manager = new SAMS_AI_Manager($_SESSION['user_id'], $_SESSION['role']);
+    $page_context = [
+      'current_page' => basename($_SERVER['PHP_SELF']),
+      'user_role' => $_SESSION['role'],
+      'timestamp' => time()
+    ];
+    $aiInterface = $ai_manager->getAIInterface($page_context);
+    if (is_array($aiInterface) && isset($aiInterface['chatbot'])) {
+      echo $aiInterface['chatbot'];
     }
+  } catch (Throwable $e) {
+    error_log('Sidebar AI rendering failed: ' . $e->getMessage());
+  }
 }
 ?>

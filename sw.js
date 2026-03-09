@@ -1,12 +1,13 @@
 /**
- * SAMS Service Worker
+ * SAMS Service Worker - Enhanced with Offline Attendance
  * Handles offline caching, background sync, and push notifications
- * Version: 1.0.0
+ * Version: 2.0.0 - Enhanced with offline attendance capabilities
  */
 
-const CACHE_VERSION = 'sams-v1.0.0';
+const CACHE_VERSION = 'sams-v2.0.0';
 const CACHE_NAME = `sams-cache-${CACHE_VERSION}`;
 const DATA_CACHE_NAME = `sams-data-${CACHE_VERSION}`;
+const OFFLINE_ATTENDANCE_CACHE = 'offline-attendance';
 
 // Assets to cache immediately
 const STATIC_ASSETS = [
@@ -20,11 +21,19 @@ const STATIC_ASSETS = [
     '/attendance/offline.html'
 ];
 
+// Offline attendance pages
+const OFFLINE_PAGES = [
+    '/attendance/teacher/attendance.php',
+    '/attendance/student/attendance.php',
+    '/attendance/teacher/checkin.php',
+    '/attendance/student/checkin.php'
+];
+
 // Cache strategies
 const CACHE_STRATEGIES = {
     pages: 'network-first',
     assets: 'cache-first',
-    api: 'network-only',
+    api: 'network-first', // Changed to support offline queueing
     images: 'cache-first'
 };
 
@@ -62,23 +71,34 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch event - serve from cache with network fallback
+// Fetch event - serve from cache with network fallback and offline support
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Skip non-GET requests
-    if (request.method !== 'GET') return;
-
-    // API requests - network-first with cache fallback
-    if (url.pathname.includes('/api/')) {
-        event.respondWith(networkFirstStrategy(request, DATA_CACHE_NAME));
+    // Handle POST requests for offline attendance
+    if (request.method === 'POST' && url.pathname.includes('attendance')) {
+        event.respondWith(handleOfflineAttendance(request));
         return;
     }
 
-    // PHP pages - network-first
+    // Skip non-GET requests (except attendance)
+    if (request.method !== 'GET') return;
+
+    // API requests - network-first with cache fallback and queueing
+    if (url.pathname.includes('/api/')) {
+        event.respondWith(networkFirstWithQueue(request, DATA_CACHE_NAME));
+        return;
+    }
+
+    // PHP pages - network-first with offline support
     if (url.pathname.endsWith('.php')) {
-        event.respondWith(networkFirstStrategy(request, CACHE_NAME));
+        // Check if this is an offline attendance page
+        if (OFFLINE_PAGES.includes(url.pathname)) {
+            event.respondWith(networkFirstWithOfflineSupport(request, CACHE_NAME));
+        } else {
+            event.respondWith(networkFirstStrategy(request, CACHE_NAME));
+        }
         return;
     }
 
@@ -378,6 +398,17 @@ function openDB() {
 self.addEventListener('message', (event) => {
     console.log('[SW] Message received:', event.data);
 
+    if (event.data.type === 'SYNC_OFFLINE_DATA') {
+        event.waitUntil(syncOfflineData());
+    }
+
+    if (event.data.type === 'GET_OFFLINE_STATUS') {
+        event.ports[0].postMessage({
+            type: 'OFFLINE_STATUS',
+            pendingCount: getPendingAttendanceCount()
+        });
+    }
+
     if (event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     } else if (event.data.type === 'CACHE_URLS') {
@@ -387,8 +418,187 @@ self.addEventListener('message', (event) => {
         );
     } else if (event.data.type === 'CLEAR_CACHE') {
         event.waitUntil(
-            caches.keys()
-                .then(names => Promise.all(names.map(name => caches.delete(name))))
+            caches.delete(CACHE_NAME)
+                .then(() => caches.delete(DATA_CACHE_NAME))
         );
     }
 });
+
+// Handle offline attendance requests
+async function handleOfflineAttendance(request) {
+    try {
+        // Try network first
+        const response = await fetch(request);
+        return response;
+    } catch (error) {
+        console.log('[SW] Network offline, queuing attendance data');
+
+        // Queue the attendance data for later sync
+        const attendanceData = await request.clone().json();
+        await queueOfflineAttendance(attendanceData);
+
+        // Return success response to user
+        return new Response(JSON.stringify({
+            success: true,
+            message: 'Attendance recorded offline. Will sync when connection is restored.',
+            queued: true
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// Queue offline attendance data
+async function queueOfflineAttendance(data) {
+    const db = await openDB();
+    const transaction = db.transaction(['pendingAttendance'], 'readwrite');
+    const store = transaction.objectStore('pendingAttendance');
+
+    const attendanceRecord = {
+        data: data,
+        timestamp: Date.now(),
+        synced: false
+    };
+
+    await store.add(attendanceRecord);
+    console.log('[SW] Attendance data queued for offline sync');
+}
+
+// Sync offline data when back online
+async function syncOfflineData() {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(['pendingAttendance'], 'readwrite');
+        const store = transaction.objectStore('pendingAttendance');
+
+        const pendingRecords = await store.getAll();
+
+        for (const record of pendingRecords) {
+            if (!record.synced) {
+                try {
+                    const response = await fetch('/attendance/api/sync_attendance.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(record.data)
+                    });
+
+                    if (response.ok) {
+                        record.synced = true;
+                        await store.put(record);
+                        console.log('[SW] Synced attendance record:', record.id);
+                    }
+                } catch (error) {
+                    console.error('[SW] Failed to sync attendance record:', error);
+                }
+            }
+        }
+
+        // Clean up synced records
+        await cleanupSyncedRecords();
+
+        return { success: true, synced: pendingRecords.length };
+    } catch (error) {
+        console.error('[SW] Sync failed:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// Get pending attendance count
+async function getPendingAttendanceCount() {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(['pendingAttendance'], 'readonly');
+        const store = transaction.objectStore('pendingAttendance');
+
+        const pendingRecords = await store.getAll();
+        return pendingRecords.filter(record => !record.synced).length;
+    } catch (error) {
+        return 0;
+    }
+}
+
+// Cleanup synced records
+async function cleanupSyncedRecords() {
+    const db = await openDB();
+    const transaction = db.transaction(['pendingAttendance'], 'readwrite');
+    const store = transaction.objectStore('pendingAttendance');
+
+    const allRecords = await store.getAll();
+
+    for (const record of allRecords) {
+        if (record.synced) {
+            await store.delete(record.id);
+        }
+    }
+}
+
+// Network-first with queueing strategy
+async function networkFirstWithQueue(request, cacheName) {
+    const cache = await caches.open(cacheName);
+
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch (error) {
+        console.error('[SW] Network failed, trying cache:', error);
+        const cached = await cache.match(request);
+
+        if (cached) {
+            return cached;
+        }
+
+        // Return offline page for navigation requests
+        if (request.mode === 'navigate') {
+            return cache.match('/attendance/offline.html');
+        }
+
+        return new Response('Network error', {
+            status: 503,
+            statusText: 'Service Unavailable'
+        });
+    }
+}
+
+// Network-first with offline support for attendance pages
+async function networkFirstWithOfflineSupport(request, cacheName) {
+    const cache = await caches.open(cacheName);
+
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch (error) {
+        console.error('[SW] Network failed, trying cache:', error);
+        const cached = await cache.match(request);
+
+        if (cached) {
+            // Add offline indicator to cached response
+            const modifiedResponse = new Response(cached.body, {
+                status: cached.status,
+                statusText: cached.statusText,
+                headers: {
+                    ...cached.headers,
+                    'X-Offline': 'true',
+                    'X-Offline-Message': 'Showing cached content - some features may be limited'
+                }
+            });
+            return modifiedResponse;
+        }
+
+        // Return offline page for navigation requests
+        if (request.mode === 'navigate') {
+            return cache.match('/attendance/offline.html');
+        }
+
+        return new Response('Network error', {
+            status: 503,
+            statusText: 'Service Unavailable'
+        });
+    }
+}

@@ -1,15 +1,82 @@
 <?php
+
+/**
+ * SAMS Transport Dashboard - Modern Transport Management Interface
+ * Professional dashboard with transport insights and AI-powered features
+ */
 session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
 require_login('../login.php');
-
 if (!has_role('transport') && !has_role('admin')) {
     redirect('../login.php', 'Access denied. Transport privileges required.', 'error');
 }
 
-$full_name = $_SESSION['full_name'] ?? 'User';
+$transport_id = $_SESSION['user_id'];
+$tenantId = $_SESSION['tenant_id'] ?? 1;
+$full_name = $_SESSION['full_name'];
+
+// Get transport statistics
+$transport_stats = [
+    'total_routes' => trn_count('transport_routes', 'tenant_id = ? AND is_active = 1', [$tenantId]),
+    'total_vehicles' => trn_count('transport_vehicles', 'tenant_id = ? AND status = "active"', [$tenantId]),
+    'assigned_students' => trn_count('transport_assignments', 'tenant_id = ? AND status = "active"', [$tenantId]),
+    'unassigned_students' => trn_count('users u', 'u.tenant_id = ? AND u.role = "student" AND u.status = "active" AND NOT EXISTS (SELECT 1 FROM transport_assignments ta WHERE ta.student_id = u.id AND ta.status = "active")', [$tenantId]),
+];
+
+// Get recent assignments
+$recent_assignments = db()->fetchAll("
+    SELECT ta.*, u.first_name, u.last_name, tr.route_name, tv.vehicle_number, tv.driver_name
+    FROM transport_assignments ta
+    JOIN users u ON ta.student_id = u.id
+    JOIN transport_routes tr ON ta.route_id = tr.id
+    JOIN transport_vehicles tv ON ta.vehicle_id = tv.id
+    WHERE ta.tenant_id = ?
+    ORDER BY ta.created_at DESC
+    LIMIT 10
+", [$tenantId]);
+
+// Get route capacity information
+$route_capacity = db()->fetchAll("
+    SELECT tr.*, tv.vehicle_number, tv.capacity,
+           COUNT(ta.id) as assigned_students,
+           (tv.capacity - COUNT(ta.id)) as available_seats,
+           ROUND((COUNT(ta.id) / tv.capacity) * 100, 1) as utilization_rate
+    FROM transport_routes tr
+    JOIN transport_vehicles tv ON tr.vehicle_id = tv.id
+    LEFT JOIN transport_assignments ta ON tr.id = ta.route_id AND ta.status = 'active'
+    WHERE tr.tenant_id = ? AND tr.is_active = 1
+    GROUP BY tr.id, tr.route_name, tv.vehicle_number, tv.capacity
+    ORDER BY tr.route_name
+", [$tenantId]);
+
+// AI Transport Insights
+$ai_insights = [];
+try {
+    require_once '../includes/sams-init.php';
+    try {
+        if (class_exists('SAMS_TransportBot')) {
+            $transportBot = new SAMS_TransportBot();
+            $ai_insights = $transportBot->getTransportInsights($tenantId);
+        }
+    } catch (Throwable $e) {
+        // Fallback insights
+        $ai_insights = [
+            'transport_health' => $transport_stats['unassigned_students'] > 20 ? 'needs_attention' : 'good',
+            'route_optimization' => 'stable',
+            'recommendation' => $transport_stats['unassigned_students'] > 0 ? 'Assign unassigned students to appropriate routes to improve transport efficiency' : 'Transport operations are running efficiently'
+        ];
+    }
+} catch (Throwable $e) {
+    $ai_insights = [
+        'transport_health' => 'good',
+        'route_optimization' => 'stable',
+        'recommendation' => 'Continue regular transport monitoring and route optimization'
+    ];
+}
+
+$csrf = generate_csrf_token();
 
 function trn_count($table, $where = '1=1', $params = [])
 {

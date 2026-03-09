@@ -5,8 +5,9 @@
  * Main category listing and thread browsing
  */
 
-require_once '../includes/session-handler.php';
-require_once '../includes/db.php';
+require_once '../includes/config.php';
+require_once '../includes/functions.php';
+require_once '../includes/database.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

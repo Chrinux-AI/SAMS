@@ -4,8 +4,9 @@
  * Create New Forum Thread
  */
 
-require_once '../includes/session-handler.php';
-require_once '../includes/db.php';
+require_once '../includes/config.php';
+require_once '../includes/functions.php';
+require_once '../includes/database.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
@@ -60,16 +61,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            db()->execute("
-                INSERT INTO forum_threads (category_id, user_id, title, content, last_activity_at)
-                VALUES (?, ?, ?, ?, NOW())
-            ", [$category_id, $user_id, $title, $content]);
+            $thread_id = db()->insert('forum_threads', [
+                'category_id' => $category_id,
+                'user_id' => $user_id,
+                'title' => $title,
+                'content' => $content,
+                'last_activity_at' => date('Y-m-d H:i:s')
+            ]);
 
-            $thread_id = db()->lastInsertId();
-
-            $_SESSION['success_message'] = "Thread created successfully!";
-            header("Location: thread.php?id=" . $thread_id);
-            exit;
+            if ($thread_id) {
+                $_SESSION['success_message'] = "Thread created successfully!";
+                header("Location: thread.php?id=" . $thread_id);
+                exit;
+            } else {
+                $errors[] = "Failed to create thread. Please try again.";
+            }
         } catch (Exception $e) {
             $errors[] = "Failed to create thread. Please try again.";
         }

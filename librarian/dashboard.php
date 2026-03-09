@@ -1,16 +1,90 @@
 <?php
+
+/**
+ * SAMS Librarian Dashboard - Modern Library Management Interface
+ * Professional dashboard with library insights and AI-powered features
+ */
 session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
 require_login('../login.php');
-
 if (!has_role('librarian') && !has_role('admin')) {
     redirect('../login.php', 'Access denied. Librarian privileges required.', 'error');
 }
 
-$full_name = $_SESSION['full_name'] ?? 'User';
-$tenant_id = (int)($_SESSION['tenant_id'] ?? 1);
+$librarian_id = $_SESSION['user_id'];
+$tenantId = $_SESSION['tenant_id'] ?? 1;
+$full_name = $_SESSION['full_name'];
+
+// Get library statistics
+$library_stats = [
+    'total_books' => lib_count('library_books', 'tenant_id = ?', [$tenantId]),
+    'borrowed_books' => lib_count('library_loans', 'tenant_id = ? AND status = "active"', [$tenantId]),
+    'overdue_books' => lib_count('library_loans', 'tenant_id = ? AND status = "active" AND due_date < CURDATE()', [$tenantId]),
+    'available_books' => lib_count('library_books', 'tenant_id = ? AND status = "available"', [$tenantId]),
+];
+
+// Get recent loans
+$recent_loans = db()->fetchAll("
+    SELECT ll.*, u.first_name, u.last_name, lb.title, lb.author, lb.isbn
+    FROM library_loans ll
+    JOIN users u ON ll.student_id = u.id
+    JOIN library_books lb ON ll.book_id = lb.id
+    WHERE ll.tenant_id = ?
+    ORDER BY ll.loan_date DESC
+    LIMIT 10
+", [$tenantId]);
+
+// Get overdue books
+$overdue_books = db()->fetchAll("
+    SELECT ll.*, u.first_name, u.last_name, lb.title, lb.author,
+           DATEDIFF(CURDATE(), ll.due_date) as days_overdue
+    FROM library_loans ll
+    JOIN users u ON ll.student_id = u.id
+    JOIN library_books lb ON ll.book_id = lb.id
+    WHERE ll.tenant_id = ? AND ll.status = 'active' AND ll.due_date < CURDATE()
+    ORDER BY ll.due_date ASC
+", [$tenantId]);
+
+// Get popular books
+$popular_books = db()->fetchAll("
+    SELECT lb.*, COUNT(ll.id) as loan_count
+    FROM library_books lb
+    LEFT JOIN library_loans ll ON lb.id = ll.book_id
+    WHERE lb.tenant_id = ?
+    GROUP BY lb.id
+    HAVING loan_count > 0
+    ORDER BY loan_count DESC
+    LIMIT 5
+", [$tenantId]);
+
+// AI Library Insights
+$ai_insights = [];
+try {
+    require_once '../includes/sams-init.php';
+    try {
+        if (class_exists('SAMS_LibraryBot')) {
+            $libraryBot = new SAMS_LibraryBot();
+            $ai_insights = $libraryBot->getLibraryInsights($tenantId);
+        }
+    } catch (Throwable $e) {
+        // Fallback insights
+        $ai_insights = [
+            'library_health' => $library_stats['overdue_books'] > 5 ? 'needs_attention' : 'good',
+            'reading_trend' => 'stable',
+            'recommendation' => $library_stats['overdue_books'] > 0 ? 'Follow up on overdue books to improve circulation' : 'Library operations are running smoothly'
+        ];
+    }
+} catch (Throwable $e) {
+    $ai_insights = [
+        'library_health' => 'good',
+        'reading_trend' => 'stable',
+        'recommendation' => 'Continue regular library monitoring and book maintenance'
+    ];
+}
+
+$csrf = generate_csrf_token();
 
 // Safe count helper
 function lib_count($table, $where = '1=1', $params = []) {
