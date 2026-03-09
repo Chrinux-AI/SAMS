@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         executionOrder="defects"
+         requireCoverageMetadata="true"
+         beStrictAboutCoverageMetadata="true"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory suffix="Test.php">tests/Integration</directory>
+        </testsuite>
+        <testsuite name="API">
+            <directory suffix="Test.php">tests/API</directory>
+        </testsuite>
+        <testsuite name="Security">
+            <directory suffix="Test.php">tests/Security</directory>
+        </testsuite>
+    </testsuites>
+    
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+            <directory suffix=".php">core</directory>
+            <directory suffix=".php">includes</directory>
+            <directory suffix=".php">ai</directory>
+        </include>
+        <exclude>
+            <directory>vendor</directory>
+            <directory>tests</directory>
+            <directory>logs</directory>
+            <directory>uploads</directory>
+        </exclude>
+    </source>
+    
+    <coverage>
+        <report>
+            <html outputDirectory="reports/coverage"/>
+            <text outputFile="reports/coverage.txt"/>
+            <clover outputFile="reports/coverage.xml"/>
+        </report>
+        <include>
+            <directory suffix=".php">src</directory>
+            <directory suffix=".php">core</directory>
+            <directory suffix=".php">includes</directory>
+            <directory suffix=".php">ai</directory>
+        </include>
+        <exclude>
+            <directory>vendor</directory>
+            <directory>tests</directory>
+            <directory>logs</directory>
+            <directory>uploads</directory>
+            <file>src/bootstrap.php</file>
+            <file>src/config.php</file>
+        </exclude>
+    </coverage>
+    
+    <logging>
+        <junit outputFile="reports/junit.xml"/>
+        <teamcity outputFile="reports/teamcity.txt"/>
+    </logging>
+    
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="DB_HOST" value="localhost"/>
+        <env name="DB_NAME" value="sams_test"/>
+        <env name="DB_USER" value="root"/>
+        <env name="DB_PASS" value=""/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="MAIL_DRIVER" value="array"/>
+    </php>
+    
+    <groups>
+        <exclude>
+            <group>integration</group>
+            <group>slow</group>
+        </exclude>
+    </groups>
+</phpunit>

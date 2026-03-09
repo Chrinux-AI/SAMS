@@ -1,0 +1,172 @@
+{
+  "name": "sams/school-management",
+  "description": "School Attendance Management System - Enhanced with Modern Features",
+  "version": "2.0.0",
+  "type": "project",
+  "require": {
+    "php": ">=8.0",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-curl": "*",
+    "ext-gd": "*",
+    "twilio/sdk": "^8.8",
+    "phpmailer/phpmailer": "^7.0",
+    "predis/predis": "^2.0",
+    "monolog/monolog": "^3.0",
+    "phpunit/phpunit": "^10.0",
+    "phpstan/phpstan": "^1.10",
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "twig/twig": "^3.0",
+    "swiftmailer/swiftmailer": "^6.0",
+    "firebase/php-jwt": "^6.0",
+    "ramsey/uuid": "^4.0",
+    "vlucas/phpdotenv": "^5.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0",
+    "phpstan/phpstan": "^1.10",
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "symfony/var-dumper": "^6.0",
+    "mockery/mockery": "^1.0",
+    "phpmd/phpmd": "^2.0",
+    "squizlabs/php_codesniffer": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SAMS\\": "src/",
+      "SAMS\\Core\\": "src/Core/",
+      "SAMS\\API\\": "src/API/",
+      "SAMS\\Cache\\": "src/Cache/",
+      "SAMS\\Security\\": "src/Security/",
+      "SAMS\\Validation\\": "src/Validation/",
+      "SAMS\\Monitoring\\": "src/Monitoring/",
+      "SAMS\\WebSocket\\": "src/WebSocket/",
+      "SAMS\\Notifications\\": "src/Notifications/",
+      "SAMS\\Analytics\\": "src/Analytics/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SAMS\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@setup-env",
+      "@optimize-autoloader"
+    ],
+    "setup-env": [
+      "cp .env.example .env"
+    ],
+    "optimize-autoloader": [
+      "composer dump-autoload --optimize"
+    ],
+    "test": [
+      "phpunit --configuration phpunit.xml"
+    ],
+    "test-coverage": [
+      "phpunit --configuration phpunit.xml --coverage-html reports/coverage"
+    ],
+    "analyze": [
+      "phpstan analyse src --memory-limit=1G"
+    ],
+    "analyze-baseline": [
+      "phpstan analyse src --memory-limit=1G --generate-baseline phpstan-baseline.neon"
+    ],
+    "fix": [
+      "php-cs-fixer fix --config=.php-cs-fixer.php --diff --verbose"
+    ],
+    "fix-dry-run": [
+      "php-cs-fixer fix --config=.php-cs-fixer.php --diff --dry-run --verbose"
+    ],
+    "check": [
+      "php-cs-fixer fix --config=.php-cs-fixer.php --diff --dry-run --verbose",
+      "phpstan analyse src --memory-limit=1G",
+      "phpunit --configuration phpunit.xml"
+    ],
+    "quality": [
+      "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode",
+      "phpcs --standard=PSR12 src",
+      "phploc src"
+    ],
+    "security": [
+      "security-checker security:check"
+    ],
+    "build": [
+      "npm run build",
+      "@optimize-autoloader"
+    ],
+    "deploy-staging": [
+      "@test",
+      "@analyze",
+      "@build"
+    ],
+    "deploy-production": [
+      "@test-coverage",
+      "@analyze",
+      "@quality",
+      "@build"
+    ],
+    "start": [
+      "php -S localhost:8000 -t public"
+    ],
+    "cache-clear": [
+      "php scripts/cache-clear.php"
+    ],
+    "migrate": [
+      "php scripts/migrate.php"
+    ],
+    "seed": [
+      "php scripts/seed.php"
+    ],
+    "backup": [
+      "php scripts/backup.php"
+    ],
+    "monitor": [
+      "php scripts/monitor.php"
+    ]
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "platform-check": true,
+    "allow-plugins": {
+      "php-http/discovery": true,
+      "phpstan/phpstan": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "SAMS Development Team",
+      "email": "dev@sams.com"
+    }
+  ],
+  "keywords": [
+    "school",
+    "attendance",
+    "management",
+    "education",
+    "php",
+    "mysql",
+    "ai",
+    "analytics"
+  ],
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/sams/school-management/issues",
+    "source": "https://github.com/sams/school-management",
+    "docs": "https://docs.sams.com"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://repo.packagist.org"
+    }
+  ]
+}

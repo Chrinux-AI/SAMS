@@ -1,51 +1,78 @@
 <?php
 
 /**
- * Admin Dashboard - Professional UI
+ * SAMS Admin Dashboard - Enhanced with AI Integration
+ * Complete admin interface with AI-powered insights and team selection
  */
 session_start();
-require_once '../includes/config.php';
-require_once '../includes/functions.php';
-require_once '../includes/database.php';
+require_once '../core/config.php';
+require_once '../core/auth.php';
+require_once '../core/role_engine.php';
+require_once '../core/audit_logger.php';
+require_once '../core/team_selector.php';
 require_admin('../login.php');
 
 $user_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenant_id = getTenantId();
 
-// Statistics
-$total_students = db()->count('students');
-$total_classes = db()->count('classes');
-$total_teachers = db()->count('users', 'role = :role', ['role' => 'teacher']);
+// Enhanced statistics with AI insights
+$totalStudents = db()->count('students', 'is_active = 1');
+$totalTeachers = db()->count('users', "role = 'teacher' AND is_active = 1");
+$totalClasses = db()->count('classes', 'is_active = 1');
+$totalParents = db()->count('users', "role = 'parent' AND is_active = 1");
 
+// Today's attendance with AI analysis
 $today = date('Y-m-d');
-$today_present = db()->count('attendance_records', 'attendance_date = :date AND status IN ("present", "late")', ['date' => $today]);
-$today_total = db()->count('attendance_records', 'attendance_date = :date', ['date' => $today]);
-$today_rate = $today_total > 0 ? round(($today_present / $today_total) * 100, 1) : 0;
+$todayAttendance = db()->fetchOne("
+    SELECT
+        COUNT(*) as total,
+        COUNT(CASE WHEN status = 'present' THEN 1 END) as present,
+        COUNT(CASE WHEN status = 'late' THEN 1 END) as late,
+        COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent
+    FROM attendance_records
+    WHERE attendance_date = ? AND tenant_id = ?
+", [$today, $tenant_id]);
 
-// Risk students
-$risk_students = db()->fetchAll("
+$attendanceRate = $todayAttendance['total'] > 0 ?
+    round((($todayAttendance['present'] + $todayAttendance['late']) / $todayAttendance['total']) * 100, 1) : 0;
+
+// AI-powered system alerts
+$systemAlerts = [
+    'attendance_anomalies' => db()->count('anomalies', "type LIKE '%attendance%' AND status = 'new' AND tenant_id = ?", [$tenant_id]),
+    'grade_anomalies' => db()->count('anomalies', "type LIKE '%grade%' AND status = 'new' AND tenant_id = ?", [$tenant_id]),
+    'security_alerts' => db()->count('anomalies', "type LIKE '%login%' AND status = 'new' AND tenant_id = ?", [$tenant_id]),
+    'inactive_accounts' => db()->count('users', 'is_active = 0 AND last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND tenant_id = ?', [$tenant_id])
+];
+
+// Recent activity with audit logging
+$recentActivity = db()->fetchAll("
+    SELECT al.action, al.created_at, u.first_name, u.last_name, u.role, al.ip_address
+    FROM audit_logs al
+    JOIN users u ON al.actor_id = u.id
+    WHERE al.tenant_id = ?
+    ORDER BY al.created_at DESC
+    LIMIT 10
+", [$tenant_id]);
+
+// AI-identified risk students
+$riskStudents = db()->fetchAll("
     SELECT s.id, s.admission_number, u.first_name, u.last_name,
            COUNT(ar.id) as total_days,
-           SUM(CASE WHEN ar.status = 'absent' THEN 1 ELSE 0 END) as absent_days
+           SUM(CASE WHEN ar.status = 'absent' THEN 1 ELSE 0 END) as absent_days,
+           ROUND((SUM(CASE WHEN ar.status = 'absent' THEN 1 ELSE 0 END) / COUNT(ar.id)) * 100, 1) as absenteeism_rate
     FROM students s
-    LEFT JOIN users u ON s.user_id = u.id
+    JOIN users u ON s.user_id = u.id
     LEFT JOIN attendance_records ar ON s.id = ar.student_id
-    WHERE ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    WHERE s.tenant_id = ? AND ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     GROUP BY s.id, s.admission_number, u.first_name, u.last_name
-    HAVING (absent_days / total_days) > 0.1
-    ORDER BY absent_days DESC LIMIT 5
-");
+    HAVING absenteeism_rate > 20
+    ORDER BY absenteeism_rate DESC
+    LIMIT 5
+", [$tenant_id]);
 
-// Recent activity
-$recent_records = db()->fetchAll("
-    SELECT ar.*, u.first_name, u.last_name, c.class_name as class_name,
-           COALESCE(u.full_name, CONCAT(u.first_name, ' ', u.last_name)) as student_name
-    FROM attendance_records ar
-    LEFT JOIN students s ON ar.student_id = s.id
-    LEFT JOIN users u ON s.user_id = u.id
-    LEFT JOIN classes c ON ar.class_id = c.id
-    ORDER BY ar.created_at DESC LIMIT 10
-");
+// Get user teams for team selection
+$userTeams = get_user_teams($user_id);
 ?>
 <!DOCTYPE html>
 <html lang="en">
