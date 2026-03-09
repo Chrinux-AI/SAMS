@@ -1,0 +1,117 @@
+{
+  "name": "SAMS - Attendance Management",
+  "short_name": "SAMS",
+  "description": "Student Attendance Management System - Track attendance, grades, and stay connected with your school community",
+  "start_url": "/attendance/",
+  "display": "standalone",
+  "background_color": "#4F46E5",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "scope": "/attendance/",
+  "icons": [
+    {
+      "src": "/attendance/assets/images/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/attendance/assets/images/icons/icon-32x32.svg",
+      "sizes": "32x32",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/attendance/assets/images/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/attendance/assets/images/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/attendance/assets/images/screenshots/dashboard-mobile.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/attendance/assets/images/screenshots/dashboard-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Check In",
+      "short_name": "Check In",
+      "description": "Quick attendance check-in",
+      "url": "/attendance/student/checkin.php",
+      "icons": [
+        {
+          "src": "/attendance/assets/images/icons/icon-192x192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "My Schedule",
+      "short_name": "Schedule",
+      "description": "View class schedule",
+      "url": "/attendance/student/schedule.php",
+      "icons": [
+        {
+          "src": "/attendance/assets/images/icons/icon-192x192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "description": "Check messages",
+      "url": "/attendance/messages.php",
+      "icons": [
+        {
+          "src": "/attendance/assets/images/icons/icon-192x192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "share_target": {
+    "action": "/attendance/api/share.php",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["image/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+sams",
+      "url": "/attendance/?action=%s"
+    }
+  ]
+}

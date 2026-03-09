@@ -1,0 +1,14 @@
+{
+  "name": "attendance-system",
+  "version": "2.1.0",
+  "description": "Student Attendance Management System",
+  "scripts": {
+    "test": "phpunit",
+    "test:unit": "phpunit tests/unit",
+    "test:integration": "phpunit tests/integration",
+    "test:coverage": "phpunit --coverage-html coverage"
+  },
+  "devDependencies": {
+    "phpunit/phpunit": "^9.5"
+  }
+}

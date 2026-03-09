@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+    <msapplication>
+        <tile>
+            <square70x70logo src="/attendance/assets/images/icons/icon-192x192.svg"/>
+            <square150x150logo src="/attendance/assets/images/icons/icon-192x192.svg"/>
+            <square310x310logo src="/attendance/assets/images/icons/icon-512x512.svg"/>
+            <TileColor>#4F46E5</TileColor>
+        </tile>
+    </msapplication>
+</browserconfig>

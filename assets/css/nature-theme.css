@@ -1,0 +1,775 @@
+/**
+ * Nature-Themed UI System for SAMS
+ * Inspired by organic, eco-friendly design with green gradients, leaf motifs, and natural animations
+ * Version: 2.1.0
+ * Last Updated: November 24, 2025
+ */
+@import url('professional-ui.css');
+
+/* ============================================
+   1. CSS CUSTOM PROPERTIES (DESIGN TOKENS)
+   ============================================ */
+:root {
+    /* Primary Green Palette */
+    --nature-green-50: #E8F5E9;
+    --nature-green-100: #C8E6C9;
+    --nature-green-200: #A5D6A7;
+    --nature-green-300: #81C784;
+    --nature-green-400: #66BB6A;
+    --nature-green-500: #4CAF50;  /* Primary */
+    --nature-green-600: #43A047;
+    --nature-green-700: #388E3C;
+    --nature-green-800: #2E7D32;  /* Dark Accent */
+    --nature-green-900: #1B5E20;
+
+    /* Earth Tones (Browns/Beiges) */
+    --earth-brown-100: #D7CCC8;
+    --earth-brown-200: #BCAAA4;
+    --earth-brown-300: #A1887F;
+    --earth-brown-400: #8D6E63;  /* Card Accent */
+    --earth-brown-500: #795548;
+    --earth-brown-600: #6D4C41;
+    --earth-brown-700: #5D4037;
+
+    /* Gold Highlights */
+    --gold-100: #FFF9C4;
+    --gold-200: #FFF176;
+    --gold-300: #FFEB3B;
+    --gold-400: #FFD700;  /* Primary Gold */
+    --gold-500: #FFC107;
+    --gold-600: #FFB300;
+
+    /* Neutral Whites/Grays */
+    --white: #FFFFFF;
+    --off-white: #F9FBF9;
+    --gray-100: #F5F5F5;
+    --gray-200: #EEEEEE;
+    --gray-300: #E0E0E0;
+    --gray-400: #BDBDBD;
+    --gray-500: #9E9E9E;
+    --gray-600: #757575;
+    --gray-700: #616161;
+    --gray-800: #424242;
+    --gray-900: #212121;
+
+    /* Semantic Colors */
+    --success: var(--nature-green-600);
+    --warning: #FF9800;
+    --error: #F44336;
+    --info: #2196F3;
+
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    /* Font Sizes */
+    --text-xs: 0.75rem;    /* 12px */
+    --text-sm: 0.875rem;   /* 14px */
+    --text-base: 1rem;     /* 16px */
+    --text-lg: 1.125rem;   /* 18px */
+    --text-xl: 1.25rem;    /* 20px */
+    --text-2xl: 1.5rem;    /* 24px */
+    --text-3xl: 1.875rem;  /* 30px */
+    --text-4xl: 2.25rem;   /* 36px */
+    --text-5xl: 3rem;      /* 48px */
+
+    /* Spacing Scale */
+    --space-1: 0.25rem;  /* 4px */
+    --space-2: 0.5rem;   /* 8px */
+    --space-3: 0.75rem;  /* 12px */
+    --space-4: 1rem;     /* 16px */
+    --space-5: 1.25rem;  /* 20px */
+    --space-6: 1.5rem;   /* 24px */
+    --space-8: 2rem;     /* 32px */
+    --space-10: 2.5rem;  /* 40px */
+    --space-12: 3rem;    /* 48px */
+    --space-16: 4rem;    /* 64px */
+
+    /* Border Radius */
+    --radius-sm: 0.25rem;  /* 4px */
+    --radius-md: 0.5rem;   /* 8px */
+    --radius-lg: 1rem;     /* 16px */
+    --radius-xl: 1.5rem;   /* 24px */
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(46, 125, 50, 0.1);
+    --shadow-md: 0 4px 8px rgba(46, 125, 50, 0.15);
+    --shadow-lg: 0 8px 16px rgba(46, 125, 50, 0.2);
+    --shadow-xl: 0 12px 24px rgba(46, 125, 50, 0.25);
+    --shadow-glow: 0 0 20px rgba(255, 215, 0, 0.4);
+
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Z-index Layers */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+}
+
+:root[data-theme="ocean"] {
+    --nature-green-500: #0f766e;
+    --nature-green-600: #0d9488;
+    --nature-green-700: #0f766e;
+    --nature-green-800: #115e59;
+}
+
+:root[data-theme="forest"] {
+    --nature-green-500: #22c55e;
+    --nature-green-600: #16a34a;
+    --nature-green-700: #15803d;
+    --nature-green-800: #166534;
+}
+
+:root[data-theme="sunset"] {
+    --nature-green-500: #ea580c;
+    --nature-green-600: #c2410c;
+    --nature-green-700: #9a3412;
+    --nature-green-800: #7c2d12;
+}
+
+:root[data-theme="midnight"] {
+    --nature-green-500: #3b82f6;
+    --nature-green-600: #2563eb;
+    --nature-green-700: #1d4ed8;
+    --nature-green-800: #1e40af;
+}
+
+/* ============================================
+   2. GLOBAL RESET & BASE STYLES
+   ============================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--gray-800);
+    background: linear-gradient(135deg, var(--nature-green-50) 0%, var(--nature-green-100) 50%, var(--off-white) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Leaf Background Overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 10 Q70 30 80 50 T50 90 Q30 70 20 50 T50 10' fill='%234CAF50' opacity='0.03'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    pointer-events: none;
+    z-index: 0;
+    animation: leafDrift 60s linear infinite;
+}
+
+@keyframes leafDrift {
+    0% { background-position: 0 0; }
+    100% { background-position: 200px 200px; }
+}
+
+/* ============================================
+   3. TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--nature-green-800);
+    margin-bottom: var(--space-4);
+}
+
+h1 { font-size: var(--text-5xl); }
+h2 { font-size: var(--text-4xl); }
+h3 { font-size: var(--text-3xl); }
+h4 { font-size: var(--text-2xl); }
+h5 { font-size: var(--text-xl); }
+h6 { font-size: var(--text-lg); }
+
+p {
+    margin-bottom: var(--space-4);
+}
+
+a {
+    color: var(--nature-green-600);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--nature-green-800);
+    text-decoration: underline;
+}
+
+/* Drop Caps for Paragraphs */
+.drop-cap::first-letter {
+    float: left;
+    font-size: 3.5em;
+    line-height: 0.8;
+    margin: 0.1em 0.1em 0 0;
+    color: var(--nature-green-700);
+    font-family: var(--font-serif);
+}
+
+/* ============================================
+   4. NATURE-THEMED GRADIENTS
+   ============================================ */
+.gradient-primary {
+    background: linear-gradient(135deg, var(--nature-green-400) 0%, var(--nature-green-600) 100%);
+}
+
+.gradient-earth {
+    background: linear-gradient(135deg, var(--earth-brown-300) 0%, var(--earth-brown-500) 100%);
+}
+
+.gradient-gold {
+    background: linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 100%);
+}
+
+.gradient-hero {
+    background: linear-gradient(135deg,
+        var(--nature-green-300) 0%,
+        var(--nature-green-500) 35%,
+        var(--nature-green-700) 70%,
+        var(--nature-green-900) 100%);
+}
+
+.gradient-card {
+    background: linear-gradient(135deg, var(--white) 0%, var(--nature-green-50) 100%);
+}
+
+/* Dynamic Gradient Animation */
+.gradient-animated {
+    background: linear-gradient(270deg,
+        var(--nature-green-400),
+        var(--nature-green-600),
+        var(--gold-400));
+    background-size: 600% 600%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============================================
+   5. CARD COMPONENTS
+   ============================================ */
+.nature-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.nature-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--nature-green-100) 0%, transparent 70%);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.nature-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Card with Leaf Border */
+.card-leaf-border {
+    border: 3px solid transparent;
+    background-image:
+        linear-gradient(white, white),
+        linear-gradient(135deg, var(--nature-green-400), var(--gold-400));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* Beige Card Variant */
+.nature-card-beige {
+    background: linear-gradient(135deg, var(--earth-brown-100) 0%, var(--white) 100%);
+    border-left: 4px solid var(--earth-brown-400);
+}
+
+/* 3D Card Tilt Effect */
+.card-3d {
+    transform-style: preserve-3d;
+    transition: transform var(--transition-slow);
+}
+
+.card-3d:hover {
+    transform: perspective(1000px) rotateY(5deg) rotateX(2deg);
+}
+
+/* ============================================
+   6. BUTTONS
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width var(--transition-slow), height var(--transition-slow);
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Primary Button (Green) */
+.btn-primary {
+    background: var(--nature-green-600);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    background: var(--nature-green-700);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Gold Button */
+.btn-gold {
+    background: var(--gold-400);
+    color: var(--gray-900);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-gold:hover {
+    background: var(--gold-500);
+    transform: scale(1.05);
+}
+
+/* Earth Tone Button */
+.btn-earth {
+    background: var(--earth-brown-400);
+    color: var(--white);
+}
+
+.btn-earth:hover {
+    background: var(--earth-brown-500);
+}
+
+/* Outline Button */
+.btn-outline {
+    background: transparent;
+    color: var(--nature-green-700);
+    border: 2px solid var(--nature-green-600);
+}
+
+.btn-outline:hover {
+    background: var(--nature-green-600);
+    color: var(--white);
+}
+
+/* Growth Animation on Click */
+.btn-grow {
+    animation: btnGrow var(--transition-bounce);
+}
+
+@keyframes btnGrow {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ============================================
+   7. ICON STYLES
+   ============================================ */
+.icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: var(--nature-green-500);
+    color: var(--white);
+    font-size: var(--text-xl);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-base);
+}
+
+.icon-circle:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+.icon-gold {
+    color: var(--gold-400);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+}
+
+/* ============================================
+   8. HERO SECTIONS
+   ============================================ */
+.hero-nature {
+    position: relative;
+    min-height: 400px;
+    padding: var(--space-12) var(--space-6);
+    background: linear-gradient(135deg,
+        var(--nature-green-600) 0%,
+        var(--nature-green-800) 100%);
+    color: var(--white);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Leaf Overlay on Hero */
+.hero-nature::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 20 Q140 60 160 100 T100 180 Q60 140 40 100 T100 20' fill='white' opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 300px 300px;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.hero-title {
+    font-size: var(--text-5xl);
+    font-family: var(--font-serif);
+    margin-bottom: var(--space-4);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-subtitle {
+    font-size: var(--text-xl);
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto var(--space-6);
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   9. FORM ELEMENTS
+   ============================================ */
+.form-group {
+    margin-bottom: var(--space-5);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: 600;
+    color: var(--nature-green-800);
+    font-size: var(--text-sm);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    border: 2px solid var(--earth-brown-200);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--gray-800);
+    transition: all var(--transition-base);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--gold-400);
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.2);
+}
+
+.form-input::placeholder {
+    color: var(--gray-400);
+}
+
+/* Vine Border Effect on Focus */
+.form-input-vine {
+    position: relative;
+}
+
+.form-input-vine:focus {
+    border-image: linear-gradient(135deg, var(--nature-green-500), var(--gold-400)) 1;
+    animation: vineBorderGrow var(--transition-slow);
+}
+
+@keyframes vineBorderGrow {
+    0% { border-width: 2px; }
+    50% { border-width: 3px; }
+    100% { border-width: 2px; }
+}
+
+/* ============================================
+   10. ANIMATIONS
+   ============================================ */
+
+/* Leaf Fall Animation */
+@keyframes leafFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.leaf-particle {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background: var(--nature-green-400);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    opacity: 0.6;
+    animation: leafFall 10s linear infinite;
+    pointer-events: none;
+    z-index: var(--z-base);
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.pulse-animate {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Glow Animation */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px var(--gold-400); }
+    50% { box-shadow: 0 0 25px var(--gold-500), 0 0 35px var(--gold-400); }
+}
+
+.glow-animate {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* Fade In */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-slow);
+}
+
+/* Slide Up */
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-up {
+    animation: slideUp var(--transition-base);
+}
+
+/* ============================================
+   11. UTILITY CLASSES
+   ============================================ */
+
+/* Spacing */
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+.p-2 { padding: var(--space-2); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+/* Text Alignment */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Flexbox */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: var(--space-2); }
+.gap-4 { gap: var(--space-4); }
+
+/* Grid */
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Visibility */
+.hidden { display: none; }
+.visible { display: block; }
+
+/* Positioning */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+
+/* Overflow */
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+
+/* Cursor */
+.cursor-pointer { cursor: pointer; }
+
+/* ============================================
+   12. RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+    :root {
+        --text-5xl: 2rem;
+        --text-4xl: 1.75rem;
+        --text-3xl: 1.5rem;
+    }
+
+    .grid-cols-2,
+    .grid-cols-3,
+    .grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-nature {
+        min-height: 300px;
+        padding: var(--space-8) var(--space-4);
+    }
+
+    .nature-card {
+        padding: var(--space-4);
+    }
+}
+
+/* ============================================
+   13. ACCESSIBILITY
+   ============================================ */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus Styles */
+*:focus-visible {
+    outline: 3px solid var(--gold-400);
+    outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --nature-green-500: #2E7D32;
+        --nature-green-800: #1B5E20;
+    }
+
+    .nature-card {
+        border: 2px solid var(--gray-800);
+    }
+}

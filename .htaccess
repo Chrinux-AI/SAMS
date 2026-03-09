@@ -1,0 +1,15 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to backup/legacy PHP pages.
+    RewriteRule (^|/).*(?:_backup|old_backup|old-backup|_old)\.php$ - [F,L,NC]
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    # Block raw project artifacts from web access.
+    <FilesMatch "\.(md|sql|sh|py)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>

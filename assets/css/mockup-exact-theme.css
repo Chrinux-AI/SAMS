@@ -1,0 +1,468 @@
+/**
+ * EXACT UI MOCKUP THEME - Matching UI1.png Design
+ * Teal/Sage Green with Earth Tones and Leaf Patterns
+ * Version: 3.0 - PRECISE MATCH
+ */
+
+/* ============================================
+   EXACT COLOR PALETTE FROM UI1.PNG
+   ============================================ */
+:root {
+    /* Primary Teal/Sage Greens (from mockup) */
+    --sage-dark: #2D5F5D;          /* Dark teal background */
+    --sage-primary: #4A7C7A;       /* Medium teal */
+    --sage-light: #6B9B99;         /* Light teal */
+    --sage-pale: #8AB5B3;          /* Pale teal accent */
+
+    /* Card Colors (exact from mockup) */
+    --card-sage: #8FA878;          /* Sage green card */
+    --card-brown: #7D5E4F;         /* Brown card */
+    --card-tan: #B89968;           /* Tan/gold card */
+    --card-beige: #C4B5A0;         /* Light beige card */
+    --card-forest: #5C7A5C;        /* Forest green overlay */
+
+    /* Background Colors */
+    --bg-primary: linear-gradient(180deg, #4A7C7A 0%, #2D5F5D 100%);
+    --bg-leaf-pattern: #3A6A68;    /* Background with leaf pattern */
+
+    /* Text Colors */
+    --text-white: #FFFFFF;
+    --text-light: #F5F5F5;
+    --text-cream: #F9F6F2;
+    --text-dark: #2D3436;
+
+    /* Leaf & Nature Accent */
+    --leaf-green: #6B8E5F;
+    --leaf-brown: #8B7355;
+    --leaf-highlight: #A8C595;
+
+    /* Buttons */
+    --btn-primary: #B89968;        /* Tan/beige button from mockup */
+    --btn-hover: #A88858;
+    --btn-text: #2D3436;
+
+    /* Shadows & Overlays */
+    --shadow-card: 0 8px 24px rgba(45, 95, 93, 0.3);
+    --shadow-hover: 0 12px 32px rgba(45, 95, 93, 0.4);
+    --overlay-dark: rgba(45, 95, 93, 0.85);
+
+    /* Typography */
+    --font-primary: 'Poppins', 'Roboto', sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+
+    /* Spacing (from mockup proportions) */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+
+    /* Border Radius (rounded corners from mockup) */
+    --radius-sm: 0.5rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+    --radius-xl: 2rem;
+    --radius-card: 1.25rem;        /* Specific card radius */
+
+    /* Transitions */
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   GLOBAL RESET & BASE STYLES
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background: var(--sage-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Leaf Pattern Background (like mockup) */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path d="M50,100 Q70,80 100,100 Q70,120 50,100" fill="rgba(107,142,95,0.1)"/><path d="M120,80 Q140,60 170,80 Q140,100 120,80" fill="rgba(139,115,85,0.08)"/></svg>'),
+        linear-gradient(180deg, #4A7C7A 0%, #2D5F5D 100%);
+    background-size: 300px 300px, 100% 100%;
+    background-position: 0 0, center;
+    opacity: 0.95;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--text-white);
+    font-weight: 600;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+    line-height: 1.6;
+    color: var(--text-light);
+}
+
+/* ============================================
+   LAYOUT STRUCTURE (Matching Mockup)
+   ============================================ */
+.ui-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+}
+
+/* Hero Section (like "Rennale Renuelly" banner in mockup) */
+.hero-banner {
+    background: linear-gradient(135deg, var(--sage-primary) 0%, var(--sage-dark) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 400px;
+    height: 400px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path d="M100,20 Q150,50 160,100 Q150,150 100,180 Q50,150 40,100 Q50,50 100,20" fill="rgba(168,197,149,0.2)"/></svg>');
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.hero-title {
+    font-size: 3rem;
+    color: var(--text-white);
+    margin-bottom: var(--space-sm);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-cream);
+    margin-bottom: var(--space-md);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-button {
+    background: var(--btn-primary);
+    color: var(--btn-text);
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-button:hover {
+    background: var(--btn-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* ============================================
+   ICON FEATURE ROW (4 icons section from mockup)
+   ============================================ */
+.feature-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    background: var(--overlay-dark);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+}
+
+.feature-item {
+    text-align: center;
+    padding: var(--space-md);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--space-sm);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: var(--text-white);
+}
+
+.feature-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: 0.5rem;
+}
+
+.feature-desc {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    opacity: 0.9;
+}
+
+/* ============================================
+   CARD GRID (Matching Mockup Layout)
+   ============================================ */
+.card-grid-mockup {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+/* Individual Cards (Exact colors from mockup) */
+.ui-card {
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-smooth);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ui-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Card Color Variants (from mockup) */
+.ui-card.sage {
+    background: linear-gradient(135deg, var(--card-sage) 0%, #7A9168 100%);
+}
+
+.ui-card.brown {
+    background: linear-gradient(135deg, var(--card-brown) 0%, #6D5143 100%);
+}
+
+.ui-card.tan {
+    background: linear-gradient(135deg, var(--card-tan) 0%, #A88858 100%);
+}
+
+.ui-card.beige {
+    background: linear-gradient(135deg, var(--card-beige) 0%, #B4A590 100%);
+}
+
+.ui-card.forest {
+    background: linear-gradient(135deg, var(--card-forest) 0%, #4A6A4A 100%);
+}
+
+.ui-card.image-card {
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+}
+
+/* Card Icon */
+.card-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-white);
+    margin-bottom: var(--space-md);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: var(--space-sm);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.card-description {
+    font-size: 0.875rem;
+    color: var(--text-cream);
+    line-height: 1.5;
+    opacity: 0.95;
+}
+
+/* ============================================
+   SIDEBAR NAVIGATION (Matching Mockup Style)
+   ============================================ */
+.mockup-sidebar {
+    width: 280px;
+    background: var(--sage-dark);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: var(--space-lg);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.sidebar-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-lg);
+    background: var(--card-tan);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--text-white);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.sidebar-title {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--text-white);
+    margin-bottom: var(--space-xl);
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    margin-bottom: var(--space-xs);
+    border-radius: var(--radius-md);
+    color: var(--text-light);
+    transition: all var(--transition-smooth);
+    cursor: pointer;
+}
+
+.sidebar-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    transform: translateX(5px);
+}
+
+.sidebar-nav-item.active {
+    background: var(--card-tan);
+    color: var(--text-dark);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ============================================
+   BUTTONS & INTERACTIVE ELEMENTS
+   ============================================ */
+.btn-mockup {
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    font-family: var(--font-primary);
+}
+
+.btn-primary-mockup {
+    background: var(--btn-primary);
+    color: var(--btn-text);
+}
+
+.btn-primary-mockup:hover {
+    background: var(--btn-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.btn-sage {
+    background: var(--card-sage);
+    color: var(--text-white);
+}
+
+.btn-sage:hover {
+    background: #7A9168;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+    .card-grid-mockup {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mockup-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .mockup-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-center { text-align: center; }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mt-lg { margin-top: var(--space-lg); }
+
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,147 @@
+# School Attendance System - .gitignore
+
+# Dependencies
+node_modules/
+bower_components/
+vendor/
+
+# Production build files
+dist/
+build/
+*.min.js
+*.min.css
+
+# Environment and configuration
+.env
+.env.local
+.env.*.local
+config/env-settings.json
+config/integration-keys.ini
+*.key
+*.pem
+*.cert
+
+# Secrets and credentials
+secrets/
+*.secret
+credentials.json
+service-account.json
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+db-data/
+database.sql
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+*.iml
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+*.test.js
+*.spec.js
+e2e/screenshots/
+e2e/videos/
+
+# Backup files
+backups/
+*.backup
+*.bak
+*.tar.gz
+*.zip
+*.sql.gz
+
+# Upload and media files
+uploads/
+media/
+user-uploads/
+attachments/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pdf
+*.doc
+*.docx
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+
+# Package manager lock files (optional - uncomment if needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+
+# PHP (if applicable)
+composer.phar
+composer.lock
+
+# OS-specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Documentation builds
+docs/_build/
+site/
+
+# Sensitive data
+student-data/
+personal-info/
+gdpr-data/

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature UI - Component Showcase | SAMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Nature Theme CSS -->
+    <link rel="stylesheet" href="assets/css/nature-theme.css">
+    <link rel="stylesheet" href="assets/css/nature-components.css">
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero-nature">
+        <div>
+            <h1 class="hero-title">Nature-Themed UI Components</h1>
+            <p class="hero-subtitle">Experience the organic, eco-friendly design system for SAMS</p>
+            <button class="btn btn-gold">Explore Components</button>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <div style="max-width: 1400px; margin: 0 auto; padding: 3rem 1.5rem; position: relative; z-index: 1;">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <div class="breadcrumb-item"><a href="#">Home</a></div>
+            <span class="breadcrumb-separator">/</span>
+            <div class="breadcrumb-item"><a href="#">UI</a></div>
+            <span class="breadcrumb-separator">/</span>
+            <div class="breadcrumb-item active">Components</div>
+        </nav>
+
+        <!-- Stat Cards Grid -->
+        <section class="card-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value" data-counter="1248">0</div>
+                <div class="stat-label">Total Students</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> 12% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--gold-400);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" data-counter="96">0</div>
+                <div class="stat-label">Attendance Rate (%)</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> 3% increase
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--earth-brown-400);">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                </div>
+                <div class="stat-value" data-counter="42">0</div>
+                <div class="stat-label">Active Classes</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i> 2 classes paused
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--info);">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </div>
+                <div class="stat-value" data-counter="18">0</div>
+                <div class="stat-label">Pending Alerts</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-check"></i> 5 resolved today
+                </div>
+            </div>
+        </section>
+
+        <!-- Buttons Showcase -->
+        <section class="nature-card mb-8">
+            <h2>Button Styles</h2>
+            <div class="flex gap-4" style="flex-wrap: wrap;">
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Primary Button
+                </button>
+                <button class="btn btn-gold">
+                    <i class="fas fa-star"></i> Gold Button
+                </button>
+                <button class="btn btn-earth">
+                    <i class="fas fa-save"></i> Earth Button
+                </button>
+                <button class="btn btn-outline">
+                    <i class="fas fa-download"></i> Outline Button
+                </button>
+            </div>
+        </section>
+
+        <!-- Icon Grid -->
+        <section class="mb-8">
+            <h2 class="mb-4">Quick Actions</h2>
+            <div class="icon-grid">
+                <div class="icon-card">
+                    <div class="icon-card-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="icon-card-title">Check-In</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-card-icon" style="background: var(--gold-400);">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="icon-card-title">Schedule</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-card-icon" style="background: var(--earth-brown-400);">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="icon-card-title">Assignments</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-card-icon" style="background: var(--info);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="icon-card-title">Grades</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-card-icon" style="background: var(--warning);">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="icon-card-title">Messages</div>
+                </div>
+                <div class="icon-card">
+                    <div class="icon-card-icon" style="background: var(--nature-green-700);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="icon-card-title">Analytics</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alerts -->
+        <section class="nature-card mb-8">
+            <h2>Alert Messages</h2>
+            <div class="nature-alert alert-success">
+                <i class="fas fa-check-circle alert-icon" style="color: var(--success);"></i>
+                <div class="alert-content">
+                    <div class="alert-title">Success!</div>
+                    <div class="alert-message">Your attendance has been recorded successfully.</div>
+                </div>
+            </div>
+            <div class="nature-alert alert-warning">
+                <i class="fas fa-exclamation-triangle alert-icon" style="color: var(--warning);"></i>
+                <div class="alert-content">
+                    <div class="alert-title">Warning</div>
+                    <div class="alert-message">Your attendance is below 75%. This may affect your eligibility.</div>
+                </div>
+            </div>
+            <div class="nature-alert alert-error">
+                <i class="fas fa-times-circle alert-icon" style="color: var(--error);"></i>
+                <div class="alert-content">
+                    <div class="alert-title">Error</div>
+                    <div class="alert-message">Failed to submit assignment. Please try again.</div>
+                </div>
+            </div>
+            <div class="nature-alert alert-info">
+                <i class="fas fa-info-circle alert-icon" style="color: var(--info);"></i>
+                <div class="alert-content">
+                    <div class="alert-title">Information</div>
+                    <div class="alert-message">New class materials have been uploaded for Mathematics 101.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <section class="nature-tabs mb-8">
+            <div class="tab-nav">
+                <button class="tab-button active" data-tab="overview">Overview</button>
+                <button class="tab-button" data-tab="details">Details</button>
+                <button class="tab-button" data-tab="analytics">Analytics</button>
+            </div>
+            <div class="tab-content">
+                <div class="tab-panel active" id="overview">
+                    <h3>Overview Panel</h3>
+                    <p>This is the overview content with important information displayed in a clean, nature-themed interface.</p>
+                </div>
+                <div class="tab-panel" id="details">
+                    <h3>Details Panel</h3>
+                    <p>Detailed information goes here with comprehensive data views.</p>
+                </div>
+                <div class="tab-panel" id="analytics">
+                    <h3>Analytics Panel</h3>
+                    <p>Charts and graphs would be displayed here for data visualization.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Table -->
+        <section class="nature-table-container mb-8">
+            <h2 class="mb-4">Student Attendance Records</h2>
+            <table class="nature-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>STU2025001</td>
+                        <td>John Doe</td>
+                        <td>Computer Science 101</td>
+                        <td>Nov 24, 2025</td>
+                        <td><span class="nature-badge badge-success">Present</span></td>
+                        <td>
+                            <button class="btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>STU2025002</td>
+                        <td>Jane Smith</td>
+                        <td>Mathematics 201</td>
+                        <td>Nov 24, 2025</td>
+                        <td><span class="nature-badge badge-error">Absent</span></td>
+                        <td>
+                            <button class="btn-earth" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>STU2025003</td>
+                        <td>Mike Johnson</td>
+                        <td>Physics 301</td>
+                        <td>Nov 24, 2025</td>
+                        <td><span class="nature-badge badge-warning">Late</span></td>
+                        <td>
+                            <button class="btn-gold" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">
+                                <i class="fas fa-clock"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Form Elements -->
+        <section class="nature-card mb-8">
+            <h2>Form Elements</h2>
+            <form id="sampleForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input form-input-vine" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input form-input-vine" placeholder="your.email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Class</label>
+                    <select class="form-select" required>
+                        <option value="">Choose a class...</option>
+                        <option>Computer Science 101</option>
+                        <option>Mathematics 201</option>
+                        <option>Physics 301</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-textarea" rows="4" placeholder="Enter your message..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Form</button>
+            </form>
+        </section>
+
+        <!-- Progress Bars -->
+        <section class="nature-card mb-8">
+            <h2>Progress Indicators</h2>
+            <div class="mb-4">
+                <div class="flex justify-between mb-2">
+                    <span>Attendance Rate</span>
+                    <span class="font-weight-600">85%</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 85%;"></div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <div class="flex justify-between mb-2">
+                    <span>Assignment Completion</span>
+                    <span class="font-weight-600">92%</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar progress-vine" style="width: 92%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Badges -->
+        <section class="nature-card mb-8">
+            <h2>Badges & Status Indicators</h2>
+            <div class="flex gap-2" style="flex-wrap: wrap;">
+                <span class="nature-badge badge-success">Active</span>
+                <span class="nature-badge badge-warning">Pending</span>
+                <span class="nature-badge badge-error">Suspended</span>
+                <span class="nature-badge badge-gold">Premium</span>
+            </div>
+        </section>
+
+        <!-- Modal Trigger -->
+        <section class="nature-card mb-8">
+            <h2>Modal Dialog</h2>
+            <button class="btn btn-primary" data-modal-target="exampleModal">
+                <i class="fas fa-window-maximize"></i> Open Modal
+            </button>
+        </section>
+
+        <!-- Pagination -->
+        <nav class="pagination">
+            <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+            <button class="page-link active">1</button>
+            <button class="page-link">2</button>
+            <button class="page-link">3</button>
+            <button class="page-link">4</button>
+            <button class="page-link">5</button>
+            <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+        </nav>
+
+    </div>
+
+    <!-- Example Modal -->
+    <div class="modal-backdrop" id="exampleModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Example Modal</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <p>This is an example modal with the nature theme. It features a green gradient header, leaf-bordered container, and smooth animations.</p>
+                <div class="nature-alert alert-info">
+                    <i class="fas fa-lightbulb alert-icon" style="color: var(--info);"></i>
+                    <div class="alert-content">
+                        <div class="alert-message">All modals support dynamic content and can be triggered programmatically.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-modal-close>Cancel</button>
+                <button class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container (auto-created by JS) -->
+
+    <!-- Scripts -->
+    <script src="assets/js/nature-animations.js"></script>
+    <script>
+        // Animate counters on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-counter]').forEach(el => {
+                const target = parseInt(el.dataset.counter);
+                NatureUI.animateCounter(el, target);
+            });
+
+            // Form validation example
+            document.getElementById('sampleForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (NatureUI.validateForm(e.target)) {
+                    window.showToast('Form submitted successfully!', 'success');
+                } else {
+                    window.showToast('Please fill in all required fields', 'error');
+                }
+            });
+
+            // Show example toast after 2 seconds
+            setTimeout(() => {
+                window.showToast('Welcome to the Nature UI Showcase!', 'info', 5000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

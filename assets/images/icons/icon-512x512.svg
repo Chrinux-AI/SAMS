@@ -1,0 +1,43 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow512" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.25"/>
+    </filter>
+    <radialGradient id="highlight">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="256" cy="256" r="256" fill="url(#bg512)" filter="url(#shadow512)"/>
+  
+  <!-- Highlight -->
+  <circle cx="180" cy="180" r="120" fill="url(#highlight)"/>
+  
+  <!-- Graduation Cap -->
+  <g transform="translate(256, 256)">
+    <!-- Cap Base -->
+    <path d="M-160 32 L0 -64 L160 32 L0 96 Z" fill="#FFFFFF" opacity="0.95"/>
+    
+    <!-- Cap Top -->
+    <path d="M-160 32 L0 96 L160 32 L0 160 Z" fill="#FFFFFF" opacity="0.9"/>
+    
+    <!-- Tassel -->
+    <line x1="0" y1="160" x2="0" y2="224" stroke="#FCD34D" stroke-width="12"/>
+    <circle cx="0" cy="232" r="16" fill="#FCD34D"/>
+    
+    <!-- Book -->
+    <rect x="-96" y="112" width="192" height="128" rx="8" fill="#FFFFFF" opacity="0.9"/>
+    <line x1="-64" y1="152" x2="64" y2="152" stroke="#4F46E5" stroke-width="6"/>
+    <line x1="-64" y1="184" x2="32" y2="184" stroke="#4F46E5" stroke-width="6"/>
+    <line x1="-64" y1="216" x2="48" y2="216" stroke="#4F46E5" stroke-width="6"/>
+  </g>
+  
+  <!-- Decorative Ring -->
+  <circle cx="256" cy="256" r="480" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.15"/>
+</svg>

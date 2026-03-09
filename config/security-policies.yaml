@@ -1,0 +1,437 @@
+# School Attendance System - Security Policies Configuration
+# Version: 1.0.0
+# Last Updated: 2025-11-18
+
+# Role-Based Access Control (RBAC) Definitions
+rbac:
+  roles:
+    admin:
+      displayName: "Administrator"
+      description: "Full system access and configuration"
+      permissions:
+        - "*" # All permissions
+      inheritFrom: []
+
+    teacher:
+      displayName: "Teacher/Instructor"
+      description: "Mark attendance and view class data"
+      permissions:
+        - "attendance:mark"
+        - "attendance:edit:own"
+        - "attendance:view:assigned"
+        - "students:view:assigned"
+        - "reports:generate:basic"
+        - "excuses:review"
+        - "notifications:send:students"
+      inheritFrom: []
+
+    student:
+      displayName: "Student"
+      description: "View personal attendance and submit excuses"
+      permissions:
+        - "attendance:view:own"
+        - "excuses:submit:own"
+        - "notifications:receive"
+        - "profile:view:own"
+        - "profile:edit:own"
+      inheritFrom: []
+
+    parent:
+      displayName: "Parent/Guardian"
+      description: "Monitor child's attendance"
+      permissions:
+        - "attendance:view:children"
+        - "excuses:submit:children"
+        - "notifications:receive"
+        - "reports:view:children"
+      inheritFrom: []
+
+    support:
+      displayName: "Support Staff"
+      description: "Read-only access for counselors and advisors"
+      permissions:
+        - "attendance:view:supervised"
+        - "students:view:supervised"
+        - "reports:view:assigned"
+        - "behavior:view:supervised"
+      inheritFrom: []
+
+    supervisor:
+      displayName: "District Supervisor"
+      description: "Multi-school oversight and reporting"
+      permissions:
+        - "attendance:view:district"
+        - "reports:generate:advanced"
+        - "reports:view:district"
+        - "analytics:view:district"
+        - "students:view:district"
+        - "policies:view"
+      inheritFrom: []
+
+    substitute:
+      displayName: "Substitute Teacher"
+      description: "Temporary class access"
+      permissions:
+        - "attendance:mark"
+        - "attendance:view:assigned"
+        - "students:view:assigned"
+      inheritFrom: ["teacher"]
+      temporary: true
+      maxDuration: 86400 # 24 hours in seconds
+
+# Permission Definitions
+permissions:
+  categories:
+    attendance:
+      - name: "attendance:mark"
+        description: "Mark attendance for students"
+      - name: "attendance:edit:own"
+        description: "Edit own attendance records"
+      - name: "attendance:edit:any"
+        description: "Edit any attendance record"
+      - name: "attendance:view:own"
+        description: "View personal attendance"
+      - name: "attendance:view:assigned"
+        description: "View attendance for assigned classes"
+      - name: "attendance:view:all"
+        description: "View all attendance records"
+      - name: "attendance:view:district"
+        description: "View district-wide attendance"
+      - name: "attendance:delete"
+        description: "Delete attendance records"
+
+    students:
+      - name: "students:create"
+        description: "Add new students"
+      - name: "students:edit"
+        description: "Modify student information"
+      - name: "students:delete"
+        description: "Remove students from system"
+      - name: "students:view:own"
+        description: "View own student profile"
+      - name: "students:view:assigned"
+        description: "View assigned students"
+      - name: "students:view:all"
+        description: "View all students"
+      - name: "students:view:district"
+        description: "View district students"
+
+    reports:
+      - name: "reports:generate:basic"
+        description: "Generate basic reports"
+      - name: "reports:generate:advanced"
+        description: "Generate advanced analytics"
+      - name: "reports:view:own"
+        description: "View personal reports"
+      - name: "reports:view:assigned"
+        description: "View reports for assigned entities"
+      - name: "reports:view:all"
+        description: "View all reports"
+      - name: "reports:export"
+        description: "Export reports"
+
+    system:
+      - name: "system:configure"
+        description: "Modify system settings"
+      - name: "system:users:manage"
+        description: "Manage user accounts"
+      - name: "system:roles:manage"
+        description: "Manage roles and permissions"
+      - name: "system:audit:view"
+        description: "View audit logs"
+      - name: "system:backup"
+        description: "Perform system backups"
+
+# Authentication Policies
+authentication:
+  passwordPolicy:
+    minLength: 12
+    maxLength: 128
+    requireUppercase: true
+    requireLowercase: true
+    requireNumbers: true
+    requireSpecialChars: true
+    specialChars: "!@#$%^&*()_+-=[]{}|;:,.<>?"
+    preventCommonPasswords: true
+    preventUserInfo: true # Username, email in password
+    expiryDays: 90
+    historyCount: 5 # Cannot reuse last 5 passwords
+
+  multiFactorAuthentication:
+    required:
+      - admin
+      - supervisor
+    optional:
+      - teacher
+      - support
+    methods:
+      - totp # Time-based One-Time Password
+      - sms
+      - email
+    backupCodes: 10
+
+  sessionManagement:
+    timeout: 1800 # 30 minutes in seconds
+    maxConcurrentSessions: 3
+    rememberMe:
+      enabled: true
+      duration: 2592000 # 30 days
+    invalidateOnPasswordChange: true
+
+  loginAttempts:
+    maxAttempts: 5
+    lockoutDuration: 900 # 15 minutes
+    resetAfter: 3600 # Reset counter after 1 hour
+    captchaAfter: 3 # Show CAPTCHA after 3 failed attempts
+
+# Data Privacy and Protection
+privacy:
+  dataClassification:
+    public:
+      - "School name"
+      - "Class schedules"
+    internal:
+      - "Aggregate attendance statistics"
+      - "Anonymous reports"
+    confidential:
+      - "Student names"
+      - "Individual attendance records"
+      - "Contact information"
+    restricted:
+      - "Behavioral data"
+      - "Health information"
+      - "Disciplinary records"
+
+  encryption:
+    atRest:
+      enabled: true
+      algorithm: "AES-256-GCM"
+      keyRotation: 90 # days
+    inTransit:
+      enabled: true
+      protocol: "TLS 1.3"
+      minProtocol: "TLS 1.2"
+      cipherSuites:
+        - "TLS_AES_256_GCM_SHA384"
+        - "TLS_CHACHA20_POLY1305_SHA256"
+        - "TLS_AES_128_GCM_SHA256"
+
+  dataRetention:
+    attendanceRecords:
+      duration: 1825 # 5 years in days
+      archiveAfter: 730 # 2 years
+    auditLogs:
+      duration: 2555 # 7 years
+      archiveAfter: 365
+    behaviorData:
+      duration: 1825 # 5 years
+      requiresConsent: true
+    personalData:
+      deleteUponRequest: true
+      gracePeriod: 30 # days before permanent deletion
+
+  consentManagement:
+    required:
+      - "Behavior tracking"
+      - "AI analytics on personal data"
+      - "Photo/video capture"
+      - "Location tracking"
+    optional:
+      - "Marketing communications"
+      - "Gamification features"
+    minorConsent:
+      requireParental: true
+      ageThreshold: 13
+    withdrawal:
+      allowed: true
+      effectiveImmediately: true
+
+# Audit and Compliance
+audit:
+  logging:
+    enabled: true
+    events:
+      authentication:
+        - login
+        - logout
+        - failed_login
+        - password_change
+        - mfa_setup
+      dataAccess:
+        - view_student_record
+        - view_attendance_record
+        - export_report
+      dataModification:
+        - create_student
+        - edit_student
+        - delete_student
+        - mark_attendance
+        - edit_attendance
+        - approve_excuse
+      systemChanges:
+        - modify_settings
+        - create_user
+        - assign_role
+        - delete_user
+      security:
+        - permission_denied
+        - suspicious_activity
+        - data_breach_attempt
+
+    retention: 2555 # 7 years
+    storage: "encrypted"
+    tamperProof: true
+
+  compliance:
+    frameworks:
+      - FERPA
+      - GDPR
+      - COPPA
+      - SOC2
+      - ISO27001
+    automaticReporting: true
+    reportSchedule: "quarterly"
+    dataProtectionOfficer:
+      required: true
+      contact: "dpo@attendance-system.edu"
+
+# Access Control Policies
+accessControl:
+  ipWhitelist:
+    enabled: false
+    allowedRanges:
+      - "192.168.0.0/16" # Internal network
+      - "10.0.0.0/8" # VPN range
+
+  geolocation:
+    restrictByCountry: false
+    allowedCountries: []
+    blockSuspiciousLocations: true
+
+  deviceTrust:
+    enabled: false
+    requireRegistration: false
+    maxDevicesPerUser: 5
+
+  timeBasedAccess:
+    enabled: false
+    allowedHours:
+      start: "06:00"
+      end: "22:00"
+    timezone: "America/New_York"
+    exceptions:
+      - admin
+      - supervisor
+
+# Security Monitoring
+monitoring:
+  realTime:
+    enabled: true
+    alerts:
+      multipleFailedLogins:
+        threshold: 5
+        window: 300 # 5 minutes
+        action: "lock_account"
+      suspiciousActivity:
+        enabled: true
+        actions:
+          - "log"
+          - "alert_admin"
+          - "require_mfa"
+      dataExfiltration:
+        enabled: true
+        threshold: 1000 # records
+        window: 3600 # 1 hour
+
+  vulnerabilityScanning:
+    enabled: true
+    schedule: "weekly"
+    autoRemediate: false
+
+  penetrationTesting:
+    frequency: "quarterly"
+    scope: "full"
+    reportTo:
+      - "security@attendance-system.edu"
+      - "admin@attendance-system.edu"
+
+# Incident Response
+incidentResponse:
+  enabled: true
+  dataBreachProtocol:
+    autoLockdown: true
+    notifyUsers: true
+    notifyWithin: 72 # hours (GDPR requirement)
+    investigationRequired: true
+
+  responsePlan:
+    contactList:
+      - role: "Security Officer"
+        email: "security@attendance-system.edu"
+        phone: "+1-555-0100"
+      - role: "Data Protection Officer"
+        email: "dpo@attendance-system.edu"
+        phone: "+1-555-0101"
+    escalationLevels:
+      low:
+        responseTime: 24 # hours
+        autoResolve: true
+      medium:
+        responseTime: 4
+        requireApproval: true
+      high:
+        responseTime: 1
+        alertAllAdmins: true
+      critical:
+        responseTime: 0.25 # 15 minutes
+        lockdownSystem: true
+        alertAuthorities: true
+
+# API Security
+api:
+  authentication:
+    methods:
+      - jwt
+      - apiKey
+    tokenExpiry: 3600 # 1 hour
+    refreshTokenExpiry: 604800 # 7 days
+
+  rateLimit:
+    enabled: true
+    default:
+      requests: 100
+      window: 60 # seconds
+    perRole:
+      admin:
+        requests: 1000
+        window: 60
+      teacher:
+        requests: 200
+        window: 60
+      student:
+        requests: 50
+        window: 60
+
+  cors:
+    enabled: true
+    allowedOrigins:
+      - "https://attendance-system.edu"
+      - "https://app.attendance-system.edu"
+    allowedMethods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    allowCredentials: true
+    maxAge: 86400
+
+  inputValidation:
+    enabled: true
+    sanitizeInputs: true
+    maxPayloadSize: 10485760 # 10MB
+
+  outputEncoding:
+    enabled: true
+    preventXSS: true
+    preventSQLi: true
