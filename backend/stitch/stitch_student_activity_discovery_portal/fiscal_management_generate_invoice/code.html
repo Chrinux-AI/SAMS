@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Generate Invoice - SAMS Academic Sentinel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#071e27",
+              "surface-container-high": "#e7e8e9",
+              "secondary": "#4c616c",
+              "primary-container": "#1a237e",
+              "on-tertiary-fixed": "#390c00",
+              "surface-tint": "#4c56af",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "error": "#ba1a1a",
+              "primary-fixed-dim": "#bdc2ff",
+              "surface": "#f8f9fa",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-container": "#edeeef",
+              "on-secondary-container": "#526772",
+              "background": "#f8f9fa",
+              "on-secondary-fixed-variant": "#354a53",
+              "outline-variant": "#c6c5d4",
+              "secondary-fixed": "#cfe6f2",
+              "on-error-container": "#93000a",
+              "on-primary-container": "#8690ee",
+              "on-surface": "#191c1d",
+              "inverse-primary": "#bdc2ff",
+              "primary": "#000666",
+              "on-surface-variant": "#454652",
+              "on-secondary": "#ffffff",
+              "tertiary": "#380b00",
+              "on-tertiary-container": "#e17c5a",
+              "inverse-on-surface": "#f0f1f2",
+              "secondary-fixed-dim": "#b4cad6",
+              "on-background": "#191c1d",
+              "surface-container-highest": "#e1e3e4",
+              "inverse-surface": "#2e3132",
+              "secondary-container": "#cfe6f2",
+              "error-container": "#ffdad6",
+              "surface-bright": "#f8f9fa",
+              "on-error": "#ffffff",
+              "outline": "#767683",
+              "primary-fixed": "#e0e0ff",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-dim": "#d9dadb",
+              "on-primary-fixed": "#000767",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "tertiary-container": "#5c1800",
+              "surface-variant": "#e1e3e4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #c6c5d4;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="flex flex-col fixed left-0 top-0 h-full h-screen w-64 bg-slate-50 dark:bg-slate-900 font-manrope text-sm font-medium z-50">
+<div class="px-6 py-8">
+<h1 class="text-2xl font-bold tracking-tight text-blue-950 dark:text-white">SAMS</h1>
+<p class="text-xs text-on-surface-variant tracking-wider mt-1 opacity-70 uppercase">Academic Sentinel</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-blue-900 font-bold text-blue-950 dark:text-white dark:border-blue-400 bg-slate-200/50 dark:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span>Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span>Communication</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 py-6 mt-auto border-t border-slate-200 dark:border-slate-800">
+<button class="w-full flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                Check In
+            </button>
+<a class="mt-4 flex items-center gap-3 px-4 py-2 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors text-xs" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="upload_file">upload_file</span>
+<span>Bulk Import</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center w-full px-6 py-3 sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm dark:shadow-none ml-64 w-[calc(100%-16rem)]">
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm w-80 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400" placeholder="Search student by name or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-600 dark:text-slate-400">
+<button class="hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-300"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-300"><span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span></button>
+<button class="hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-300"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-slate-200 dark:border-slate-800">
+<div class="text-right">
+<p class="text-xs font-bold text-blue-950 dark:text-white">Admin User</p>
+<p class="text-[10px] text-on-surface-variant">Registrar Office</p>
+</div>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border-2 border-primary-container" data-alt="professional headshot of a male school administrator in a clean modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTIzwglxzLRWWUPckt3aqFMHXruZ9t9QeJcdfCydoK_T8Y9Ux5NCA5cmHYnBt2PwHvVlaRrZT03kHsNtlcsg75AQ-CZsp6GNV9_2SQ-La4s08uxlyjQWuz9IHhYu9Puh45pnUzk5EjEiBlFztkvv3DL69WfEIfe1vR0tzW4rPX0AbstWzVEW9aK-Gyt4hSOaeE-Hnn2II0hDyT49EgdnEoFsR-ogLxR2MjGhq0AujY0K3qXmZaArPBrwm-tjNZu6M7ohpEizgq7ns"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-8 min-h-screen">
+<div class="max-w-7xl mx-auto">
+<!-- Breadcrumbs and Header -->
+<div class="flex justify-between items-end mb-10">
+<div>
+<nav class="flex gap-2 text-xs text-on-surface-variant font-medium mb-3">
+<span class="hover:text-primary cursor-pointer">Finance</span>
+<span>/</span>
+<span class="hover:text-primary cursor-pointer">Invoicing</span>
+<span>/</span>
+<span class="text-primary font-bold">Generate New</span>
+</nav>
+<h2 class="text-4xl font-headline font-extrabold text-primary tracking-tight">Generate Invoice</h2>
+<p class="text-on-surface-variant mt-2 max-w-lg">Create professional billing for tuition, auxiliary services, and academic fees using the Digital Registrar system.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 rounded-lg border border-outline-variant/30 font-semibold text-sm hover:bg-white transition-all">Cancel Entry</button>
+<button class="px-8 py-2.5 rounded-lg bg-gradient-to-br from-primary to-primary-container text-white font-bold text-sm shadow-xl shadow-primary/20">Finalize &amp; Issue</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Form Controls -->
+<div class="lg:col-span-7 space-y-8">
+<!-- Student Selection Section -->
+<section class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10 shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="person_search">person_search</span>
+<h3 class="font-headline font-bold text-lg">Student Beneficiary</h3>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="col-span-2">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Student Identity</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" readonly="" type="text" value="Alexander Hamilton (ID: #SAM-2024-089)"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xs font-bold">Change</button>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Academic Program</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm opacity-70" readonly="" type="text" value="Bachelor of Arts"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Financial Tier</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm opacity-70" readonly="" type="text" value="International Standard"/>
+</div>
+</div>
+</section>
+<!-- Line Items Section -->
+<section class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="receipt_long">receipt_long</span>
+<h3 class="font-headline font-bold text-lg">Invoice Line Items</h3>
+</div>
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm" data-icon="add_circle">add_circle</span>
+                                Add Custom Fee
+                            </button>
+</div>
+<div class="space-y-4">
+<!-- Tuition Fee Item -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/5">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold">Tuition Fee - Semester 1</p>
+<p class="text-xs text-on-surface-variant">Standard academic instruction</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$12,500.00</p>
+<button class="text-[10px] text-error font-medium hover:underline">Remove</button>
+</div>
+</div>
+<!-- Transport Fee Item -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/5">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="directions_bus">directions_bus</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold">Transport Service</p>
+<p class="text-xs text-on-surface-variant">Zone 3 - Door-to-door shuttle</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$450.00</p>
+<button class="text-[10px] text-error font-medium hover:underline">Remove</button>
+</div>
+</div>
+<!-- Library Fee Item -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/5">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="local_library">local_library</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold">Library Access &amp; Digital Journals</p>
+<p class="text-xs text-on-surface-variant">Annual premium subscription</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$125.00</p>
+<button class="text-[10px] text-error font-medium hover:underline">Remove</button>
+</div>
+</div>
+</div>
+<!-- Adjustments -->
+<div class="mt-8 pt-6 border-t border-outline-variant/10 grid grid-cols-2 gap-6">
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Scholarship / Discount</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20">
+<option>Academic Merit (-15%)</option>
+<option>No Discount Applied</option>
+<option>Financial Aid (-50%)</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Due Date</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" type="date" value="2024-09-15"/>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Live Preview -->
+<div class="lg:col-span-5">
+<div class="sticky top-24">
+<div class="bg-white rounded-xl shadow-2xl shadow-blue-900/10 border border-outline-variant/20 overflow-hidden transform rotate-1">
+<!-- Invoice Header -->
+<div class="p-8 bg-slate-50 border-b border-slate-100 flex justify-between items-start">
+<div>
+<div class="bg-primary text-white text-[10px] font-black px-2 py-1 rounded mb-4 inline-block tracking-tighter">OFFICIAL INVOICE</div>
+<h4 class="font-headline font-extrabold text-2xl tracking-tighter text-primary">SAMS</h4>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Academic Sentinel Registrar</p>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-primary mb-1">#INV-2024-0442</p>
+<p class="text-[10px] text-on-surface-variant">Issue Date: 24 Aug 2024</p>
+</div>
+</div>
+<!-- Invoice Content -->
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-2">Student Details</p>
+<p class="text-xs font-bold">Alexander Hamilton</p>
+<p class="text-xs text-on-surface-variant">ID: #SAM-2024-089</p>
+<p class="text-xs text-on-surface-variant">Year 2 • Arts &amp; Humanities</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-2">Billing Address</p>
+<p class="text-xs text-on-surface-variant">122 West End St, Block 4</p>
+<p class="text-xs text-on-surface-variant">New York, NY 10001</p>
+</div>
+</div>
+<div class="space-y-3">
+<table class="w-full text-left text-xs">
+<thead>
+<tr class="text-on-surface-variant border-b border-slate-100">
+<th class="pb-2 font-medium">Description</th>
+<th class="pb-2 font-medium text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="text-on-surface font-medium">
+<tr>
+<td class="pt-3">Tuition Fee - Semester 1</td>
+<td class="pt-3 text-right font-bold">$12,500.00</td>
+</tr>
+<tr>
+<td class="pt-2">Transport Service (Zone 3)</td>
+<td class="pt-2 text-right font-bold">$450.00</td>
+</tr>
+<tr>
+<td class="pt-2">Library &amp; Digital Resources</td>
+<td class="pt-2 text-right font-bold">$125.00</td>
+</tr>
+<tr class="text-error font-bold">
+<td class="pt-2">Merit Scholarship (-15%)</td>
+<td class="pt-2 text-right">-$1,961.25</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pt-6 border-t border-dashed border-slate-200">
+<div class="flex justify-between items-center bg-primary-container/10 p-4 rounded-lg">
+<div>
+<p class="text-[10px] font-bold text-primary uppercase">Total Payable</p>
+<p class="text-[10px] text-on-primary-container italic">Due by Sep 15, 2024</p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-black text-primary">$11,113.75</p>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<p class="text-[9px] text-on-surface-variant leading-relaxed">
+                                        * Please note that late payments may incur a 2% monthly interest fee. Payments can be made via student portal or bank transfer using the invoice number as reference.
+                                    </p>
+</div>
+</div>
+<!-- Footer Ribbon -->
+<div class="bg-primary px-8 py-3 text-center">
+<p class="text-[10px] text-white font-bold tracking-widest uppercase">Verified Academic Document • SAMS</p>
+</div>
+</div>
+<!-- Preview Actions -->
+<div class="mt-6 flex justify-center gap-3">
+<button class="p-3 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="print">print</span>
+</button>
+<button class="p-3 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+<button class="p-3 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Global Footer -->
+<footer class="ml-64 flex justify-between items-center px-8 py-4 w-full mt-auto bg-slate-50 dark:bg-slate-950 font-manrope text-xs tracking-wide uppercase">
+<div class="text-slate-500 dark:text-slate-400">
+            v2.0.4 © SAMS Academic Sentinel
+        </div>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-blue-600 transition-all duration-300 opacity-80 hover:opacity-100" href="#">Help</a>
+<a class="text-slate-500 hover:text-blue-600 transition-all duration-300 opacity-80 hover:opacity-100" href="#">Support</a>
+<a class="text-slate-500 hover:text-blue-600 transition-all duration-300 opacity-80 hover:opacity-100" href="#">Privacy</a>
+</div>
+</footer>
+</body></html>

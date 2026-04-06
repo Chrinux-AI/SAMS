@@ -1,0 +1,1302 @@
+{
+    "/activate-account.php": {
+        "file": "activate-account.php",
+        "exists": true,
+        "size": 1828
+    },
+    "/confirm-account.php": {
+        "file": "confirm-account.php",
+        "exists": true,
+        "size": 18904
+    },
+    "/example-usage.php": {
+        "file": "example-usage.php",
+        "exists": true,
+        "size": 1430
+    },
+    "/fix-code-problems.php": {
+        "file": "fix-code-problems.php",
+        "exists": true,
+        "size": 8357
+    },
+    "/fix-dashboard.php": {
+        "file": "fix-dashboard.php",
+        "exists": true,
+        "size": 8307
+    },
+    "/fix-database-session.php": {
+        "file": "fix-database-session.php",
+        "exists": true,
+        "size": 6233
+    },
+    "/fix-database.php": {
+        "file": "fix-database.php",
+        "exists": true,
+        "size": 1952
+    },
+    "/fix-entire-system.php": {
+        "file": "fix-entire-system.php",
+        "exists": true,
+        "size": 12799
+    },
+    "/forgot-password.php": {
+        "file": "forgot-password.php",
+        "exists": true,
+        "size": 36280
+    },
+    "/index.php": {
+        "file": "index.php",
+        "exists": true,
+        "size": 99086
+    },
+    "/list_users.php": {
+        "file": "list_users.php",
+        "exists": true,
+        "size": 528
+    },
+    "/login.php": {
+        "file": "login.php",
+        "exists": true,
+        "size": 17636
+    },
+    "/logout.php": {
+        "file": "logout.php",
+        "exists": true,
+        "size": 460
+    },
+    "/migrate-notices.php": {
+        "file": "migrate-notices.php",
+        "exists": true,
+        "size": 997
+    },
+    "/migrate-phase2.php": {
+        "file": "migrate-phase2.php",
+        "exists": true,
+        "size": 6848
+    },
+    "/migrate-phase3.php": {
+        "file": "migrate-phase3.php",
+        "exists": true,
+        "size": 7900
+    },
+    "/migrate-profile.php": {
+        "file": "migrate-profile.php",
+        "exists": true,
+        "size": 2053
+    },
+    "/migrate.php": {
+        "file": "migrate.php",
+        "exists": true,
+        "size": 5991
+    },
+    "/notices.php": {
+        "file": "notices.php",
+        "exists": true,
+        "size": 11302
+    },
+    "/register.php": {
+        "file": "register.php",
+        "exists": true,
+        "size": 26686
+    },
+    "/reset-password.php": {
+        "file": "reset-password.php",
+        "exists": true,
+        "size": 8968
+    },
+    "/setup-admin.php": {
+        "file": "setup-admin.php",
+        "exists": true,
+        "size": 19788
+    },
+    "/system-overview.php": {
+        "file": "system-overview.php",
+        "exists": true,
+        "size": 33826
+    },
+    "/universal-role-fix.php": {
+        "file": "universal-role-fix.php",
+        "exists": true,
+        "size": 8596
+    },
+    "/updates.php": {
+        "file": "updates.php",
+        "exists": true,
+        "size": 11369
+    },
+    "/verify-email.php": {
+        "file": "verify-email.php",
+        "exists": true,
+        "size": 5755
+    },
+    "/verify-otp.php": {
+        "file": "verify-otp.php",
+        "exists": true,
+        "size": 9762
+    },
+    "/verify-system.php": {
+        "file": "verify-system.php",
+        "exists": true,
+        "size": 6529
+    },
+    "/admin/activity-monitor.php": {
+        "file": "admin/activity-monitor.php",
+        "exists": true,
+        "size": 16885
+    },
+    "/admin/advanced-admin.php": {
+        "file": "admin/advanced-admin.php",
+        "exists": true,
+        "size": 20730
+    },
+    "/admin/ai-user-creator.php": {
+        "file": "admin/ai-user-creator.php",
+        "exists": true,
+        "size": 16581
+    },
+    "/admin/ai-user-management.php": {
+        "file": "admin/ai-user-management.php",
+        "exists": true,
+        "size": 15963
+    },
+    "/admin/analytics.php": {
+        "file": "admin/analytics.php",
+        "exists": true,
+        "size": 4797
+    },
+    "/admin/announcements-system.php": {
+        "file": "admin/announcements-system.php",
+        "exists": true,
+        "size": 16646
+    },
+    "/admin/announcements.php": {
+        "file": "admin/announcements.php",
+        "exists": true,
+        "size": 3348
+    },
+    "/admin/approve-users.php": {
+        "file": "admin/approve-users.php",
+        "exists": true,
+        "size": 25740
+    },
+    "/admin/attendance.php": {
+        "file": "admin/attendance.php",
+        "exists": true,
+        "size": 20287
+    },
+    "/admin/attendance_new.php": {
+        "file": "admin/attendance_new.php",
+        "exists": true,
+        "size": 15382
+    },
+    "/admin/audit-logs.php": {
+        "file": "admin/audit-logs.php",
+        "exists": true,
+        "size": 19856
+    },
+    "/admin/backup-export.php": {
+        "file": "admin/backup-export.php",
+        "exists": true,
+        "size": 13891
+    },
+    "/admin/biometric-scan.php": {
+        "file": "admin/biometric-scan.php",
+        "exists": true,
+        "size": 19049
+    },
+    "/admin/bulk-import.php": {
+        "file": "admin/bulk-import.php",
+        "exists": true,
+        "size": 16118
+    },
+    "/admin/class-enrollment.php": {
+        "file": "admin/class-enrollment.php",
+        "exists": true,
+        "size": 20267
+    },
+    "/admin/class-management.php": {
+        "file": "admin/class-management.php",
+        "exists": true,
+        "size": 30384
+    },
+    "/admin/classes.php": {
+        "file": "admin/classes.php",
+        "exists": true,
+        "size": 33785
+    },
+    "/admin/cloud-storage.php": {
+        "file": "admin/cloud-storage.php",
+        "exists": true,
+        "size": 22160
+    },
+    "/admin/cognitive-center.php": {
+        "file": "admin/cognitive-center.php",
+        "exists": true,
+        "size": 19158
+    },
+    "/admin/create-tenant.php": {
+        "file": "admin/create-tenant.php",
+        "exists": true,
+        "size": 18873
+    },
+    "/admin/dashboard-enhanced.php": {
+        "file": "admin/dashboard-enhanced.php",
+        "exists": true,
+        "size": 14483
+    },
+    "/admin/dashboard.php": {
+        "file": "admin/dashboard.php",
+        "exists": true,
+        "size": 14932
+    },
+    "/admin/emergency-alerts.php": {
+        "file": "admin/emergency-alerts.php",
+        "exists": true,
+        "size": 18402
+    },
+    "/admin/enhanced-analytics.php": {
+        "file": "admin/enhanced-analytics.php",
+        "exists": true,
+        "size": 19774
+    },
+    "/admin/enhanced-super-admin-dashboard.php": {
+        "file": "admin/enhanced-super-admin-dashboard.php",
+        "exists": true,
+        "size": 28991
+    },
+    "/admin/events.php": {
+        "file": "admin/events.php",
+        "exists": true,
+        "size": 14566
+    },
+    "/admin/facilities.php": {
+        "file": "admin/facilities.php",
+        "exists": true,
+        "size": 15335
+    },
+    "/admin/fee-management.php": {
+        "file": "admin/fee-management.php",
+        "exists": true,
+        "size": 22767
+    },
+    "/admin/financial-management.php": {
+        "file": "admin/financial-management.php",
+        "exists": true,
+        "size": 30748
+    },
+    "/admin/id-management.php": {
+        "file": "admin/id-management.php",
+        "exists": true,
+        "size": 18087
+    },
+    "/admin/intelligence-center.php": {
+        "file": "admin/intelligence-center.php",
+        "exists": true,
+        "size": 19788
+    },
+    "/admin/library-management.php": {
+        "file": "admin/library-management.php",
+        "exists": true,
+        "size": 26684
+    },
+    "/admin/lms-settings.php": {
+        "file": "admin/lms-settings.php",
+        "exists": true,
+        "size": 27770
+    },
+    "/admin/manage-ids.php": {
+        "file": "admin/manage-ids.php",
+        "exists": true,
+        "size": 21769
+    },
+    "/admin/management.php": {
+        "file": "admin/management.php",
+        "exists": true,
+        "size": 26723
+    },
+    "/admin/mobile-api.php": {
+        "file": "admin/mobile-api.php",
+        "exists": true,
+        "size": 24232
+    },
+    "/admin/notices.php": {
+        "file": "admin/notices.php",
+        "exists": true,
+        "size": 27277
+    },
+    "/admin/overview.php": {
+        "file": "admin/overview.php",
+        "exists": true,
+        "size": 37799
+    },
+    "/admin/parents.php": {
+        "file": "admin/parents.php",
+        "exists": true,
+        "size": 20618
+    },
+    "/admin/pwa-management.php": {
+        "file": "admin/pwa-management.php",
+        "exists": true,
+        "size": 21393
+    },
+    "/admin/realtime-sync.php": {
+        "file": "admin/realtime-sync.php",
+        "exists": true,
+        "size": 21046
+    },
+    "/admin/registrations.php": {
+        "file": "admin/registrations.php",
+        "exists": true,
+        "size": 24130
+    },
+    "/admin/reports.php": {
+        "file": "admin/reports.php",
+        "exists": true,
+        "size": 19327
+    },
+    "/admin/reset-system.php": {
+        "file": "admin/reset-system.php",
+        "exists": true,
+        "size": 4217
+    },
+    "/admin/role-management.php": {
+        "file": "admin/role-management.php",
+        "exists": true,
+        "size": 20046
+    },
+    "/admin/security-center.php": {
+        "file": "admin/security-center.php",
+        "exists": true,
+        "size": 21382
+    },
+    "/admin/security-logs.php": {
+        "file": "admin/security-logs.php",
+        "exists": true,
+        "size": 14442
+    },
+    "/admin/settings.php": {
+        "file": "admin/settings.php",
+        "exists": true,
+        "size": 134402
+    },
+    "/admin/student-add.php": {
+        "file": "admin/student-add.php",
+        "exists": true,
+        "size": 21627
+    },
+    "/admin/student-edit.php": {
+        "file": "admin/student-edit.php",
+        "exists": true,
+        "size": 18790
+    },
+    "/admin/student-view.php": {
+        "file": "admin/student-view.php",
+        "exists": true,
+        "size": 20760
+    },
+    "/admin/students-bulk-import.php": {
+        "file": "admin/students-bulk-import.php",
+        "exists": true,
+        "size": 13393
+    },
+    "/admin/students.php": {
+        "file": "admin/students.php",
+        "exists": true,
+        "size": 19983
+    },
+    "/admin/super-admin-dashboard.php": {
+        "file": "admin/super-admin-dashboard.php",
+        "exists": true,
+        "size": 14824
+    },
+    "/admin/switch-tenant.php": {
+        "file": "admin/switch-tenant.php",
+        "exists": true,
+        "size": 1836
+    },
+    "/admin/system-health.php": {
+        "file": "admin/system-health.php",
+        "exists": true,
+        "size": 21574
+    },
+    "/admin/system-management.php": {
+        "file": "admin/system-management.php",
+        "exists": true,
+        "size": 12688
+    },
+    "/admin/system-monitor.php": {
+        "file": "admin/system-monitor.php",
+        "exists": true,
+        "size": 31695
+    },
+    "/admin/teachers.php": {
+        "file": "admin/teachers.php",
+        "exists": true,
+        "size": 20221
+    },
+    "/admin/team-selection.php": {
+        "file": "admin/team-selection.php",
+        "exists": true,
+        "size": 12076
+    },
+    "/admin/timetable.php": {
+        "file": "admin/timetable.php",
+        "exists": true,
+        "size": 10941
+    },
+    "/admin/transport-management.php": {
+        "file": "admin/transport-management.php",
+        "exists": true,
+        "size": 25338
+    },
+    "/admin/unapproved-users.php": {
+        "file": "admin/unapproved-users.php",
+        "exists": true,
+        "size": 15929
+    },
+    "/admin/users.php": {
+        "file": "admin/users.php",
+        "exists": true,
+        "size": 34251
+    },
+    "/developer/ai-center.php": {
+        "file": "developer/ai-center.php",
+        "exists": true,
+        "size": 3864
+    },
+    "/developer/autofix-center.php": {
+        "file": "developer/autofix-center.php",
+        "exists": true,
+        "size": 14386
+    },
+    "/developer/debug-overlay.php": {
+        "file": "developer/debug-overlay.php",
+        "exists": true,
+        "size": 11690
+    },
+    "/developer/devops-center.php": {
+        "file": "developer/devops-center.php",
+        "exists": true,
+        "size": 20615
+    },
+    "/developer/ecosystem-center.php": {
+        "file": "developer/ecosystem-center.php",
+        "exists": true,
+        "size": 11322
+    },
+    "/developer/healing-center.php": {
+        "file": "developer/healing-center.php",
+        "exists": true,
+        "size": 11976
+    },
+    "/developer/index.php": {
+        "file": "developer/index.php",
+        "exists": true,
+        "size": 6985
+    },
+    "/developer/intelligence-center.php": {
+        "file": "developer/intelligence-center.php",
+        "exists": true,
+        "size": 19783
+    },
+    "/developer/logs.php": {
+        "file": "developer/logs.php",
+        "exists": true,
+        "size": 3485
+    },
+    "/developer/modules.php": {
+        "file": "developer/modules.php",
+        "exists": true,
+        "size": 4181
+    },
+    "/developer/os-center.php": {
+        "file": "developer/os-center.php",
+        "exists": true,
+        "size": 11030
+    },
+    "/developer/settings.php": {
+        "file": "developer/settings.php",
+        "exists": true,
+        "size": 3915
+    },
+    "/developer/system-health.php": {
+        "file": "developer/system-health.php",
+        "exists": true,
+        "size": 5597
+    },
+    "/developer/system-monitor.php": {
+        "file": "developer/system-monitor.php",
+        "exists": true,
+        "size": 11473
+    },
+    "/developer/themes.php": {
+        "file": "developer/themes.php",
+        "exists": true,
+        "size": 2239
+    },
+    "/teacher/analytics.php": {
+        "file": "teacher/analytics.php",
+        "exists": true,
+        "size": 25714
+    },
+    "/teacher/assignments.php": {
+        "file": "teacher/assignments.php",
+        "exists": true,
+        "size": 24620
+    },
+    "/teacher/attendance.php": {
+        "file": "teacher/attendance.php",
+        "exists": true,
+        "size": 17244
+    },
+    "/teacher/behavior-logs.php": {
+        "file": "teacher/behavior-logs.php",
+        "exists": true,
+        "size": 15487
+    },
+    "/teacher/class-enrollment.php": {
+        "file": "teacher/class-enrollment.php",
+        "exists": true,
+        "size": 22761
+    },
+    "/teacher/dashboard-enhanced.php": {
+        "file": "teacher/dashboard-enhanced.php",
+        "exists": true,
+        "size": 11906
+    },
+    "/teacher/dashboard.php": {
+        "file": "teacher/dashboard.php",
+        "exists": true,
+        "size": 18842
+    },
+    "/teacher/emergency-alerts.php": {
+        "file": "teacher/emergency-alerts.php",
+        "exists": true,
+        "size": 9820
+    },
+    "/teacher/grades.php": {
+        "file": "teacher/grades.php",
+        "exists": true,
+        "size": 16329
+    },
+    "/teacher/lms-sync.php": {
+        "file": "teacher/lms-sync.php",
+        "exists": true,
+        "size": 14989
+    },
+    "/teacher/materials.php": {
+        "file": "teacher/materials.php",
+        "exists": true,
+        "size": 22756
+    },
+    "/teacher/meeting-hours.php": {
+        "file": "teacher/meeting-hours.php",
+        "exists": true,
+        "size": 12323
+    },
+    "/teacher/my-classes.php": {
+        "file": "teacher/my-classes.php",
+        "exists": true,
+        "size": 6696
+    },
+    "/teacher/parent-comms.php": {
+        "file": "teacher/parent-comms.php",
+        "exists": true,
+        "size": 27653
+    },
+    "/teacher/reports.php": {
+        "file": "teacher/reports.php",
+        "exists": true,
+        "size": 10226
+    },
+    "/teacher/resource-library.php": {
+        "file": "teacher/resource-library.php",
+        "exists": true,
+        "size": 8250
+    },
+    "/teacher/resources.php": {
+        "file": "teacher/resources.php",
+        "exists": true,
+        "size": 17104
+    },
+    "/teacher/settings.php": {
+        "file": "teacher/settings.php",
+        "exists": true,
+        "size": 5836
+    },
+    "/teacher/students.php": {
+        "file": "teacher/students.php",
+        "exists": true,
+        "size": 6317
+    },
+    "/teacher/team-selection.php": {
+        "file": "teacher/team-selection.php",
+        "exists": true,
+        "size": 11373
+    },
+    "/student/analytics.php": {
+        "file": "student/analytics.php",
+        "exists": true,
+        "size": 15667
+    },
+    "/student/assignments.php": {
+        "file": "student/assignments.php",
+        "exists": true,
+        "size": 16397
+    },
+    "/student/attendance-enhanced.php": {
+        "file": "student/attendance-enhanced.php",
+        "exists": true,
+        "size": 33088
+    },
+    "/student/attendance.php": {
+        "file": "student/attendance.php",
+        "exists": true,
+        "size": 10160
+    },
+    "/student/checkin-enhanced.php": {
+        "file": "student/checkin-enhanced.php",
+        "exists": true,
+        "size": 30904
+    },
+    "/student/checkin.php": {
+        "file": "student/checkin.php",
+        "exists": true,
+        "size": 16809
+    },
+    "/student/class-registration.php": {
+        "file": "student/class-registration.php",
+        "exists": true,
+        "size": 18392
+    },
+    "/student/dashboard-enhanced.php": {
+        "file": "student/dashboard-enhanced.php",
+        "exists": true,
+        "size": 33441
+    },
+    "/student/dashboard.php": {
+        "file": "student/dashboard.php",
+        "exists": true,
+        "size": 30725
+    },
+    "/student/emergency-alerts.php": {
+        "file": "student/emergency-alerts.php",
+        "exists": true,
+        "size": 11108
+    },
+    "/student/events.php": {
+        "file": "student/events.php",
+        "exists": true,
+        "size": 8934
+    },
+    "/student/grades.php": {
+        "file": "student/grades.php",
+        "exists": true,
+        "size": 11221
+    },
+    "/student/id-card.php": {
+        "file": "student/id-card.php",
+        "exists": true,
+        "size": 15423
+    },
+    "/student/lms-portal.php": {
+        "file": "student/lms-portal.php",
+        "exists": true,
+        "size": 17266
+    },
+    "/student/notifications.php": {
+        "file": "student/notifications.php",
+        "exists": true,
+        "size": 25031
+    },
+    "/student/profile.php": {
+        "file": "student/profile.php",
+        "exists": true,
+        "size": 9063
+    },
+    "/student/reports.php": {
+        "file": "student/reports.php",
+        "exists": true,
+        "size": 13569
+    },
+    "/student/schedule.php": {
+        "file": "student/schedule.php",
+        "exists": true,
+        "size": 8122
+    },
+    "/student/settings.php": {
+        "file": "student/settings.php",
+        "exists": true,
+        "size": 5836
+    },
+    "/student/study-groups.php": {
+        "file": "student/study-groups.php",
+        "exists": true,
+        "size": 14653
+    },
+    "/student/team-selection.php": {
+        "file": "student/team-selection.php",
+        "exists": true,
+        "size": 11373
+    },
+    "/parent/analytics.php": {
+        "file": "parent/analytics.php",
+        "exists": true,
+        "size": 20787
+    },
+    "/parent/attendance.php": {
+        "file": "parent/attendance.php",
+        "exists": true,
+        "size": 9640
+    },
+    "/parent/book-meeting.php": {
+        "file": "parent/book-meeting.php",
+        "exists": true,
+        "size": 9073
+    },
+    "/parent/children.php": {
+        "file": "parent/children.php",
+        "exists": true,
+        "size": 6710
+    },
+    "/parent/dashboard.php": {
+        "file": "parent/dashboard.php",
+        "exists": true,
+        "size": 32119
+    },
+    "/parent/emergency-alerts.php": {
+        "file": "parent/emergency-alerts.php",
+        "exists": true,
+        "size": 11635
+    },
+    "/parent/events.php": {
+        "file": "parent/events.php",
+        "exists": true,
+        "size": 18868
+    },
+    "/parent/fees.php": {
+        "file": "parent/fees.php",
+        "exists": true,
+        "size": 16854
+    },
+    "/parent/grades.php": {
+        "file": "parent/grades.php",
+        "exists": true,
+        "size": 13548
+    },
+    "/parent/link-children.php": {
+        "file": "parent/link-children.php",
+        "exists": true,
+        "size": 29901
+    },
+    "/parent/lms-overview.php": {
+        "file": "parent/lms-overview.php",
+        "exists": true,
+        "size": 21970
+    },
+    "/parent/my-meetings.php": {
+        "file": "parent/my-meetings.php",
+        "exists": true,
+        "size": 7455
+    },
+    "/parent/reports.php": {
+        "file": "parent/reports.php",
+        "exists": true,
+        "size": 21694
+    },
+    "/parent/settings.php": {
+        "file": "parent/settings.php",
+        "exists": true,
+        "size": 5833
+    },
+    "/parent/team-selection.php": {
+        "file": "parent/team-selection.php",
+        "exists": true,
+        "size": 11372
+    },
+    "/accountant/audit-trail.php": {
+        "file": "accountant/audit-trail.php",
+        "exists": true,
+        "size": 7817
+    },
+    "/accountant/balance-sheet.php": {
+        "file": "accountant/balance-sheet.php",
+        "exists": true,
+        "size": 5368
+    },
+    "/accountant/budget.php": {
+        "file": "accountant/budget.php",
+        "exists": true,
+        "size": 14016
+    },
+    "/accountant/dashboard.php": {
+        "file": "accountant/dashboard.php",
+        "exists": true,
+        "size": 18198
+    },
+    "/accountant/expenses.php": {
+        "file": "accountant/expenses.php",
+        "exists": true,
+        "size": 5801
+    },
+    "/accountant/income.php": {
+        "file": "accountant/income.php",
+        "exists": true,
+        "size": 3915
+    },
+    "/accountant/ledger.php": {
+        "file": "accountant/ledger.php",
+        "exists": true,
+        "size": 5846
+    },
+    "/accountant/payroll.php": {
+        "file": "accountant/payroll.php",
+        "exists": true,
+        "size": 5572
+    },
+    "/accountant/profit-loss.php": {
+        "file": "accountant/profit-loss.php",
+        "exists": true,
+        "size": 5992
+    },
+    "/accountant/reports.php": {
+        "file": "accountant/reports.php",
+        "exists": true,
+        "size": 10173
+    },
+    "/accountant/settings.php": {
+        "file": "accountant/settings.php",
+        "exists": true,
+        "size": 6166
+    },
+    "/accountant/tax-reports.php": {
+        "file": "accountant/tax-reports.php",
+        "exists": true,
+        "size": 4347
+    },
+    "/accountant/team-selection.php": {
+        "file": "accountant/team-selection.php",
+        "exists": true,
+        "size": 11382
+    },
+    "/librarian/active-loans.php": {
+        "file": "librarian/active-loans.php",
+        "exists": true,
+        "size": 8435
+    },
+    "/librarian/add-book.php": {
+        "file": "librarian/add-book.php",
+        "exists": true,
+        "size": 9258
+    },
+    "/librarian/books.php": {
+        "file": "librarian/books.php",
+        "exists": true,
+        "size": 11247
+    },
+    "/librarian/categories.php": {
+        "file": "librarian/categories.php",
+        "exists": true,
+        "size": 11993
+    },
+    "/librarian/dashboard.php": {
+        "file": "librarian/dashboard.php",
+        "exists": true,
+        "size": 10669
+    },
+    "/librarian/digital-resources.php": {
+        "file": "librarian/digital-resources.php",
+        "exists": true,
+        "size": 6652
+    },
+    "/librarian/fines.php": {
+        "file": "librarian/fines.php",
+        "exists": true,
+        "size": 10494
+    },
+    "/librarian/inventory.php": {
+        "file": "librarian/inventory.php",
+        "exists": true,
+        "size": 2971
+    },
+    "/librarian/issue-return.php": {
+        "file": "librarian/issue-return.php",
+        "exists": true,
+        "size": 14959
+    },
+    "/librarian/overdue.php": {
+        "file": "librarian/overdue.php",
+        "exists": true,
+        "size": 8725
+    },
+    "/librarian/reports.php": {
+        "file": "librarian/reports.php",
+        "exists": true,
+        "size": 14610
+    },
+    "/librarian/reservations.php": {
+        "file": "librarian/reservations.php",
+        "exists": true,
+        "size": 13832
+    },
+    "/librarian/settings.php": {
+        "file": "librarian/settings.php",
+        "exists": true,
+        "size": 5796
+    },
+    "/librarian/team-selection.php": {
+        "file": "librarian/team-selection.php",
+        "exists": true,
+        "size": 11381
+    },
+    "/bursar/daily-summary.php": {
+        "file": "bursar/daily-summary.php",
+        "exists": true,
+        "size": 4393
+    },
+    "/bursar/dashboard.php": {
+        "file": "bursar/dashboard.php",
+        "exists": true,
+        "size": 8412
+    },
+    "/bursar/defaulters.php": {
+        "file": "bursar/defaulters.php",
+        "exists": true,
+        "size": 3547
+    },
+    "/bursar/export.php": {
+        "file": "bursar/export.php",
+        "exists": true,
+        "size": 5276
+    },
+    "/bursar/fee-collection.php": {
+        "file": "bursar/fee-collection.php",
+        "exists": true,
+        "size": 8311
+    },
+    "/bursar/fee-structure.php": {
+        "file": "bursar/fee-structure.php",
+        "exists": true,
+        "size": 5897
+    },
+    "/bursar/invoices.php": {
+        "file": "bursar/invoices.php",
+        "exists": true,
+        "size": 7504
+    },
+    "/bursar/payment-plans.php": {
+        "file": "bursar/payment-plans.php",
+        "exists": true,
+        "size": 3079
+    },
+    "/bursar/receipts.php": {
+        "file": "bursar/receipts.php",
+        "exists": true,
+        "size": 2720
+    },
+    "/bursar/reports.php": {
+        "file": "bursar/reports.php",
+        "exists": true,
+        "size": 5924
+    },
+    "/bursar/scholarships.php": {
+        "file": "bursar/scholarships.php",
+        "exists": true,
+        "size": 5499
+    },
+    "/bursar/settings.php": {
+        "file": "bursar/settings.php",
+        "exists": true,
+        "size": 6150
+    },
+    "/bursar/team-selection.php": {
+        "file": "bursar/team-selection.php",
+        "exists": true,
+        "size": 11378
+    },
+    "/transport/dashboard.php": {
+        "file": "transport/dashboard.php",
+        "exists": true,
+        "size": 11831
+    },
+    "/transport/drivers.php": {
+        "file": "transport/drivers.php",
+        "exists": true,
+        "size": 8488
+    },
+    "/transport/fuel-log.php": {
+        "file": "transport/fuel-log.php",
+        "exists": true,
+        "size": 10205
+    },
+    "/transport/maintenance.php": {
+        "file": "transport/maintenance.php",
+        "exists": true,
+        "size": 10338
+    },
+    "/transport/reports.php": {
+        "file": "transport/reports.php",
+        "exists": true,
+        "size": 9553
+    },
+    "/transport/routes.php": {
+        "file": "transport/routes.php",
+        "exists": true,
+        "size": 10275
+    },
+    "/transport/settings.php": {
+        "file": "transport/settings.php",
+        "exists": true,
+        "size": 6162
+    },
+    "/transport/student-allocation.php": {
+        "file": "transport/student-allocation.php",
+        "exists": true,
+        "size": 10999
+    },
+    "/transport/team-selection.php": {
+        "file": "transport/team-selection.php",
+        "exists": true,
+        "size": 11381
+    },
+    "/transport/trip-logs.php": {
+        "file": "transport/trip-logs.php",
+        "exists": true,
+        "size": 10320
+    },
+    "/transport/vehicles.php": {
+        "file": "transport/vehicles.php",
+        "exists": true,
+        "size": 8514
+    },
+    "/api/ai-process-form.php": {
+        "file": "api/ai-process-form.php",
+        "exists": true,
+        "size": 2186
+    },
+    "/api/assignments.php": {
+        "file": "api/assignments.php",
+        "exists": true,
+        "size": 423
+    },
+    "/api/attendance.php": {
+        "file": "api/attendance.php",
+        "exists": true,
+        "size": 281
+    },
+    "/api/biometric-auth.php": {
+        "file": "api/biometric-auth.php",
+        "exists": true,
+        "size": 10453
+    },
+    "/api/biometric-quick-scan.php": {
+        "file": "api/biometric-quick-scan.php",
+        "exists": true,
+        "size": 7775
+    },
+    "/api/biometric.php": {
+        "file": "api/biometric.php",
+        "exists": true,
+        "size": 10064
+    },
+    "/api/chatbot.php": {
+        "file": "api/chatbot.php",
+        "exists": true,
+        "size": 1589
+    },
+    "/api/class-schedules.php": {
+        "file": "api/class-schedules.php",
+        "exists": true,
+        "size": 578
+    },
+    "/api/class.php": {
+        "file": "api/class.php",
+        "exists": true,
+        "size": 581
+    },
+    "/api/delete-user.php": {
+        "file": "api/delete-user.php",
+        "exists": true,
+        "size": 7411
+    },
+    "/api/device-sync.php": {
+        "file": "api/device-sync.php",
+        "exists": true,
+        "size": 3656
+    },
+    "/api/download-resource.php": {
+        "file": "api/download-resource.php",
+        "exists": true,
+        "size": 883
+    },
+    "/api/error-log.php": {
+        "file": "api/error-log.php",
+        "exists": true,
+        "size": 613
+    },
+    "/api/export-transcripts.php": {
+        "file": "api/export-transcripts.php",
+        "exists": true,
+        "size": 3640
+    },
+    "/api/forum-report.php": {
+        "file": "api/forum-report.php",
+        "exists": true,
+        "size": 1408
+    },
+    "/api/get-assignment-submissions.php": {
+        "file": "api/get-assignment-submissions.php",
+        "exists": true,
+        "size": 1976
+    },
+    "/api/get-teacher-slots.php": {
+        "file": "api/get-teacher-slots.php",
+        "exists": true,
+        "size": 881
+    },
+    "/api/google-form-webhook.php": {
+        "file": "api/google-form-webhook.php",
+        "exists": true,
+        "size": 3842
+    },
+    "/api/health.php": {
+        "file": "api/health.php",
+        "exists": true,
+        "size": 1909
+    },
+    "/api/intelligence.php": {
+        "file": "api/intelligence.php",
+        "exists": true,
+        "size": 941
+    },
+    "/api/lti.php": {
+        "file": "api/lti.php",
+        "exists": true,
+        "size": 11627
+    },
+    "/api/mobile.php": {
+        "file": "api/mobile.php",
+        "exists": true,
+        "size": 9059
+    },
+    "/api/notifications.php": {
+        "file": "api/notifications.php",
+        "exists": true,
+        "size": 11294
+    },
+    "/api/process-form-submission.php": {
+        "file": "api/process-form-submission.php",
+        "exists": true,
+        "size": 2924
+    },
+    "/api/public-ai.php": {
+        "file": "api/public-ai.php",
+        "exists": true,
+        "size": 10159
+    },
+    "/api/push.php": {
+        "file": "api/push.php",
+        "exists": true,
+        "size": 13097
+    },
+    "/api/pwa-analytics.php": {
+        "file": "api/pwa-analytics.php",
+        "exists": true,
+        "size": 642
+    },
+    "/api/resend-verification.php": {
+        "file": "api/resend-verification.php",
+        "exists": true,
+        "size": 5378
+    },
+    "/api/sams-bot.php": {
+        "file": "api/sams-bot.php",
+        "exists": true,
+        "size": 4181
+    },
+    "/api/save-theme.php": {
+        "file": "api/save-theme.php",
+        "exists": true,
+        "size": 1275
+    },
+    "/api/session-heartbeat.php": {
+        "file": "api/session-heartbeat.php",
+        "exists": true,
+        "size": 1006
+    },
+    "/api/session.php": {
+        "file": "api/session.php",
+        "exists": true,
+        "size": 326
+    },
+    "/api/sse.php": {
+        "file": "api/sse.php",
+        "exists": true,
+        "size": 5542
+    },
+    "/api/sync.php": {
+        "file": "api/sync.php",
+        "exists": true,
+        "size": 14707
+    },
+    "/api/system-validate.php": {
+        "file": "api/system-validate.php",
+        "exists": true,
+        "size": 3499
+    },
+    "/api/upload-avatar.php": {
+        "file": "api/upload-avatar.php",
+        "exists": true,
+        "size": 6212
+    },
+    "/api/verify-field.php": {
+        "file": "api/verify-field.php",
+        "exists": true,
+        "size": 1594
+    },
+    "/api/wellness.php": {
+        "file": "api/wellness.php",
+        "exists": true,
+        "size": 14656
+    },
+    "/ecosystem/register-school.php": {
+        "file": "ecosystem/register-school.php",
+        "exists": true,
+        "size": 1908
+    },
+    "/ecosystem/sync-patterns.php": {
+        "file": "ecosystem/sync-patterns.php",
+        "exists": true,
+        "size": 1918
+    },
+    "/public-ai/assistant.php": {
+        "file": "public-ai/assistant.php",
+        "exists": true,
+        "size": 13567
+    },
+    "/developer/settings?tab=ai": {
+        "file": "developer/tabs/ai.php",
+        "exists": true,
+        "size": 2484
+    },
+    "/developer/settings?tab=general": {
+        "file": "developer/tabs/general.php",
+        "exists": true,
+        "size": 2125
+    },
+    "/developer/settings?tab=integrations": {
+        "file": "developer/tabs/integrations.php",
+        "exists": true,
+        "size": 1486
+    },
+    "/developer/settings?tab=security": {
+        "file": "developer/tabs/security.php",
+        "exists": true,
+        "size": 2768
+    },
+    "/developer/settings?tab=themes": {
+        "file": "developer/tabs/themes.php",
+        "exists": true,
+        "size": 1824
+    }
+}

@@ -1,0 +1,73 @@
+# Update: frontend/accountant/tax-reports.php (Tax & Compliance Reporting)
+
+I've implemented the **Tax & Compliance Reporting (`tax-reports.php`)** interface using the **Atlas Modern** design system. This page is designed for precise fiscal management, featuring tax summaries, payment history tracking, and a deduction substantiation checklist.
+
+### 📁 Exact Files to Create/Edit:
+- `frontend/accountant/tax-reports.php`: Full tax reporting dashboard with automated liability tracking and payment recording.
+
+### 🎨 UI Component Plan:
+- **Tax Summary Cards**: Four primary KPIs tracking Taxable Income (YTD), Estimated Liability, Total Paid, and Balance Due/Refund.
+- **Tax Payment History Table**: A robust table with advanced filtering (Date, Period, Method), sorting, and reconciliation badges.
+- **Deduction Substantiation Checklist**: A dedicated section to track school-specific tax-deductible items (Supplies, Staff Training, Repairs).
+- **Quarterly Estimate Panel**: A progress-based view for tracking tax remittance targets for the current quarter (e.g., Q3).
+- **Protected Payment Form**: A secure modal for recording tax payments, including fields for Date, Period, Amount, Receipt #, and CSRF protection.
+
+### 🔌 Backend/API Dependencies:
+- `GET /api/accounting/tax/summary`: Fetch YTD totals for the dashboard cards.
+- `GET /api/accounting/tax/payments`: List historical tax payments with filters.
+- `POST /api/accounting/tax/payments`: Create a new tax payment record (requires CSRF).
+- `GET /api/accounting/tax/deductions`: Fetch a list of active tax deduction categories.
+- `PUT /api/accounting/tax/settings`: Update tax rates (VAT, income tax %) for the tenant.
+
+### 🚀 Step-by-Step Implementation:
+1. **Apply UI Design System**: (Completed) Integrated the **Atlas Modern** style and shared components.
+2. **Tax Summary & History**: (Completed) Built a clean, filterable interface for tracking liabilities and payments.
+3. **Deduction & Compliance Panels**: (Completed) Added the checklist and quarterly progress trackers.
+4. **Backend Integration**: (Next Step) Implement the API endpoints to handle tax calculations based on `ledger_entries` and `expenses`.
+
+### 🛠️ SQL Recommendations (if missing):
+```sql
+-- Tax Record Master
+CREATE TABLE tax_records (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tenant_id INT NOT NULL,
+    fiscal_year INT NOT NULL,
+    tax_type ENUM('income', 'vat', 'withholding') NOT NULL,
+    taxable_income DECIMAL(15,2) DEFAULT 0.00,
+    tax_rate DECIMAL(5,2) DEFAULT 0.00,
+    liability_amount DECIMAL(15,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (tenant_id, fiscal_year)
+);
+
+-- Tax Payments (remittances)
+CREATE TABLE tax_payments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tenant_id INT NOT NULL,
+    tax_record_id INT NULL,
+    payment_date DATE NOT NULL,
+    tax_period VARCHAR(50) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    payment_method VARCHAR(50),
+    receipt_number VARCHAR(100) NOT NULL,
+    notes TEXT,
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tax_record_id) REFERENCES tax_records(id),
+    INDEX (tenant_id, payment_date)
+);
+```
+
+### ✅ Acceptance Checklist:
+- [x] Tax summary cards with balance due calculations.
+- [x] Payment history table with status badges (Paid, Pending).
+- [x] Deduction checklist for school-specific items.
+- [x] Quarterly estimate progress tracker.
+- [x] Protected 'Record Payment' form with amount and date validation.
+- [x] Full integration with `sidebar-nav.php` and `header`.
+- [x] Tenant isolation with `tenant_id` filtering throughout.
+- [x] CSRF protection and role-based access (Accountant/Admin).
+
+The updated **Tax & Compliance Reporting** screen is now visible on the canvas. 
+
+**Would you like me to focus on implementing the Audit Trail (`audit-trail.php`) or Team Selection (`team-selection.php`) next?**

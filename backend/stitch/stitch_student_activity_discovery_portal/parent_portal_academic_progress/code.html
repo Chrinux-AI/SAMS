@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Parent Academic Overview | SAMS Core</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-fixed": "#e0e0ff",
+            "on-tertiary-container": "#e17c5a",
+            "secondary": "#4c616c",
+            "on-surface-variant": "#454652",
+            "on-primary-fixed": "#000767",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#cfe6f2",
+            "on-secondary": "#ffffff",
+            "secondary-fixed-dim": "#b4cad6",
+            "outline-variant": "#c6c5d4",
+            "tertiary-container": "#5c1800",
+            "tertiary-fixed-dim": "#ffb59d",
+            "on-secondary-fixed": "#071e27",
+            "background": "#f8f9fa",
+            "inverse-primary": "#bdc2ff",
+            "primary": "#000666",
+            "inverse-on-surface": "#f0f1f2",
+            "on-secondary-container": "#526772",
+            "on-primary-fixed-variant": "#343d96",
+            "surface-container-highest": "#e1e3e4",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed-variant": "#354a53",
+            "outline": "#767683",
+            "on-tertiary-fixed-variant": "#7b2e12",
+            "surface-container": "#edeeef",
+            "on-error-container": "#93000a",
+            "secondary-container": "#cfe6f2",
+            "surface-bright": "#f8f9fa",
+            "on-tertiary-fixed": "#390c00",
+            "inverse-surface": "#2e3132",
+            "surface-dim": "#d9dadb",
+            "surface-container-low": "#f3f4f5",
+            "primary-fixed-dim": "#bdc2ff",
+            "on-tertiary": "#ffffff",
+            "on-primary": "#ffffff",
+            "surface-tint": "#4c56af",
+            "on-primary-container": "#8690ee",
+            "surface-variant": "#e1e3e4",
+            "on-error": "#ffffff",
+            "primary-container": "#1a237e",
+            "tertiary-fixed": "#ffdbd0",
+            "tertiary": "#380b00",
+            "on-background": "#191c1d",
+            "surface": "#f8f9fa",
+            "on-surface": "#191c1d",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#e7e8e9"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .frosted-archive {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+    }
+    .primary-gradient {
+      background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fa;
+    }
+    h1, h2, h3 {
+      font-family: 'Manrope', sans-serif;
+    }
+  </style>
+</head>
+<body class="text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none font-['Manrope'] antialiased flex justify-between items-center px-6 py-3">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-950 dark:text-white">SAMS Core</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-blue-900 dark:text-blue-400 font-bold border-b-2 border-blue-900 dark:border-blue-400 pb-1" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors" href="#">Reports</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors" href="#">Schedule</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2">
+<button class="px-4 py-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all rounded-lg text-sm">Help</button>
+<button class="primary-gradient text-white px-5 py-1.5 rounded-lg text-sm font-semibold active:scale-95 duration-150">Check In</button>
+</div>
+<div class="flex items-center gap-2 border-l border-slate-200 dark:border-slate-700 ml-2 pl-4">
+<span class="material-symbols-outlined text-slate-500 p-2 cursor-pointer hover:bg-slate-100 rounded-full transition-all">notifications</span>
+<span class="material-symbols-outlined text-slate-500 p-2 cursor-pointer hover:bg-slate-100 rounded-full transition-all">settings</span>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-slate-200" data-alt="professional headshot of a middle-aged parent with a kind smile, clean corporate background, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-ZK74XGbQPsWNyetUoyM9xJ_Zhw5ZfTTTHUwFt3aqq4oJ6Dysz2AgOMIjFcsZyvIU3ql0Lt_7jTbbSos1njFMM_R6kLNjEepkm3AFOV6YM5iYKFYJcGhopmxcKog0l7Iv_hq7uIvW2iz8LbxbYtuduVk1ET2yHGMUn_urmhmDzef7pdxq9mh9_edQyaWnWgPiqs-6IUF5JWrTIZWpm9-KkI1HIux8CDLZ0lywlU3SOe1Y7-ih01_XN79YtgyuM2-3z6z0D-DHf6s"/>
+</div>
+</div>
+</nav>
+<main class="pt-20 pb-12 px-6 lg:px-12 max-w-screen-2xl mx-auto">
+<!-- Hero Section: Child Selection -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div>
+<p class="text-sm font-bold tracking-widest text-on-surface-variant uppercase mb-2">Academic Overview</p>
+<h1 class="text-4xl lg:text-5xl font-extrabold text-primary tracking-tight">Parent Portal</h1>
+</div>
+<!-- Child Selector -->
+<div class="flex items-center gap-4 bg-surface-container-low p-3 rounded-full">
+<button class="group relative">
+<img class="w-12 h-12 rounded-full ring-4 ring-primary ring-offset-2 transition-transform group-hover:scale-105" data-alt="portrait of a 12-year-old boy with glasses and a bright smile, wearing a navy school uniform sweater, warm indoor light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYQp1IPV2ZWzNcJsmxe9sfdBsICZgXLAVHjIlNbCk81X-e0tfW_9GTKptvcXvVCqZ2WsqySfHjVKUXrsh2vna0XYL12h5uax5lypBcpCNUO-DlRWQO5aa9JRcfPWSu1XNOLpt9WU2VWEXreDUcMYS6JZ9rY_zMXPRieLvpCTunSVBsC-HKkHIF3pbTy1kWk-g5ybXzdtEghDya0gtKRzS6RM-iDH_g1bkB0dFpXZPPQfu4RvbfWI5C9u7fTaO6YdhDE2q1QlSiJv4"/>
+<span class="absolute -bottom-1 -right-1 bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Active</span>
+</button>
+<button class="group">
+<img class="w-12 h-12 rounded-full opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all" data-alt="portrait of an 8-year-old girl with braided hair and a joyful expression, wearing a plaid school uniform, soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4eT3tbc1Q5ykXRGAYfNqhLoQg_5d-fTB4gfb3w5V7dJtbSIkifTcJjtCj8jgktAub3CtK8EtYPD7yNoO92_skAjak8gZbJtnWstjhePBizC6mxLKXx39Wld9KBZao4nGjdj7z35z3FDpwmu6cSCUiyjTj-hf0JvijcCdoHP_LbeDeAXOlkpEHIY7oSYWNUQWpigRjHQNDJ4fMnq26C7kcJEgBwOQlsRyyduFRQuQ8t88XACfsaaSLHVR3wlfiEHZANrRsfWek-DQ"/>
+</button>
+<div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+<div class="pr-4">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">Viewing Portfolio</p>
+<p class="text-sm font-bold text-primary">Julian Sterling (Grade 7)</p>
+</div>
+</div>
+</header>
+<!-- Performance Bento Grid -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+<!-- GPA Summary (Main Canvas Card) -->
+<div class="lg:col-span-4 bg-surface-container-lowest p-8 rounded-xl shadow-sm border-b-4 border-primary/10">
+<div class="flex justify-between items-start mb-8">
+<h3 class="text-lg font-bold text-primary">Current GPA</h3>
+<span class="material-symbols-outlined text-primary-fixed-dim bg-primary p-2 rounded-lg">insights</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-7xl font-black text-primary tracking-tighter">3.88</span>
+<span class="text-lg font-semibold text-on-surface-variant">/ 4.0</span>
+</div>
+<div class="flex items-center gap-2 text-on-tertiary-container mb-6">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-sm font-bold">+0.2 from last term</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant font-medium">Class Rank</span>
+<span class="text-primary font-bold">12 / 140</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+</div>
+<!-- Attendance Trends (Main Canvas Card) -->
+<div class="lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-sm">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="text-lg font-bold text-primary">Attendance Consistency</h3>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Academic Year 2024</p>
+</div>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full bg-surface-container text-on-surface-variant">Present 98.2%</span>
+</div>
+</div>
+<!-- Mock Chart Visualization -->
+<div class="relative h-48 flex items-end gap-4 overflow-hidden">
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+<div class="border-b border-on-surface w-full"></div>
+<div class="border-b border-on-surface w-full"></div>
+<div class="border-b border-on-surface w-full"></div>
+<div class="border-b border-on-surface w-full"></div>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[80%] hover:bg-primary/20 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">Sep</div>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[95%] hover:bg-primary/20 transition-colors"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg h-[100%] border-t-4 border-primary relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded">Nov</div>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[90%] hover:bg-primary/20 transition-colors"></div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[85%] hover:bg-primary/20 transition-colors"></div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[98%] hover:bg-primary/20 transition-colors"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest px-2">
+<span>September</span>
+<span>October</span>
+<span>November</span>
+<span>December</span>
+<span>January</span>
+<span>February</span>
+</div>
+</div>
+</section>
+<!-- Secondary Modules -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Recent Grade Updates (Feed Style) -->
+<div class="lg:col-span-7">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-extrabold text-primary">Academic Feed</h2>
+<button class="text-xs font-bold text-primary hover:underline">View All Scores</button>
+</div>
+<div class="space-y-4">
+<!-- Grade Item -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex gap-6 items-start transition-transform hover:scale-[1.01] hover:shadow-md cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-primary font-black text-xl">A</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-primary">Advanced Calculus - Quiz 4</h4>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container px-2 py-0.5 rounded">2h ago</span>
+</div>
+<p class="text-sm text-on-surface mb-3">Score: <span class="font-bold">94/100</span></p>
+<div class="flex items-start gap-3 bg-surface-container-low p-3 rounded-lg border-l-4 border-primary/20">
+<img class="w-6 h-6 rounded-full" data-alt="close-up of an elderly professor with a grey beard and friendly eyes, classroom setting, focused lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ4oDB3XO0H_oNoMBzGktxlmIl8vqsTnvh14yUcDJlzBEkNLWOO7JtDzURvnu8e90CtakQgqw1ocD4mpJx0ZhhtXBxWlLNGizfT83pWxkZqb00QD9BuUi98cBPEKPka13heCZ894ApmJyJHAOOj88rok-m0CWEQfwFzxJFuVXNM21z89m7SwazqfR5RWXIVAUO6RUVkr5Dv1qKdmNaNXzvEqNA4fyrPUW58YKXKB28UUShBnjr4EkZGUpZfOr6Yh9_6dT-zPVxFFs"/>
+<p class="text-xs italic text-on-secondary-container">"Excellent grasp of differential equations. The logic flow was impeccable. Keep it up Julian!" — Mr. H. Abernathy</p>
+</div>
+</div>
+</div>
+<!-- Grade Item -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex gap-6 items-start transition-transform hover:scale-[1.01] hover:shadow-md cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-on-tertiary-container font-black text-xl">B+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-primary">World History - Mid-term Essay</h4>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container px-2 py-0.5 rounded">Yesterday</span>
+</div>
+<p class="text-sm text-on-surface mb-3">Score: <span class="font-bold">88/100</span></p>
+<div class="flex items-start gap-3 bg-surface-container-low p-3 rounded-lg border-l-4 border-on-tertiary-container/20">
+<img class="w-6 h-6 rounded-full" data-alt="portrait of a young female teacher with dark hair pulled back, wearing glasses, brightly lit modern library background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSegoQw78JoF8rScBolivg_Vr3EZvDLUO90NnZLbL4IYBaT_C6BsS3eSb6GVTcGTTsmSTxfBDZJRTrmL--Xdc5SZWx6HmhMNGObEaz7Grw87uzKlCHwKRwE2RGkuBZzrk7sVIiaEj11rap_8aZeU4zcVQCC_C498SiSESzp1D5BDGadA8z3dihnKT9__nXUWHvOS74OUHL498UTKyZE4JvVLNWzUE8iTUSwoRJNtG_xCLB0gB6UMtjCeMWMgT_zt_tyGnd-fcNXag"/>
+<p class="text-xs italic text-on-secondary-container">"A very strong thesis on the Industrial Revolution. Watch for citation formatting in the bibliography." — Ms. Sarah Vance</p>
+</div>
+</div>
+</div>
+<!-- Grade Item -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex gap-6 items-start transition-transform hover:scale-[1.01] hover:shadow-md cursor-pointer opacity-80">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-primary font-black text-xl">A-</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-primary">Biology - Lab Report 07</h4>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container px-2 py-0.5 rounded">Dec 02</span>
+</div>
+<p class="text-sm text-on-surface">Score: <span class="font-bold">91/100</span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- Final Exams/Deadlines (Calendar Style) -->
+<div class="lg:col-span-5">
+<h2 class="text-2xl font-extrabold text-primary mb-6">Upcoming Milestones</h2>
+<div class="bg-surface-container-low rounded-2xl overflow-hidden">
+<div class="primary-gradient p-6 text-white">
+<div class="flex justify-between items-center mb-4">
+<span class="font-bold text-lg">December 2024</span>
+<div class="flex gap-2">
+<span class="material-symbols-outlined cursor-pointer hover:bg-white/20 p-1 rounded">chevron_left</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-white/20 p-1 rounded">chevron_right</span>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold opacity-60 uppercase tracking-widest">
+<span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+</div>
+</div>
+<div class="p-6 space-y-6">
+<!-- Event Item -->
+<div class="flex gap-4 group">
+<div class="flex-shrink-0 w-12 text-center">
+<p class="text-xs font-bold text-on-surface-variant uppercase">Dec</p>
+<p class="text-2xl font-black text-primary">12</p>
+</div>
+<div class="flex-1 border-l-2 border-primary/10 pl-4 py-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">event</span>
+<h5 class="font-bold text-sm text-primary group-hover:underline">Final Exam: Chemistry</h5>
+</div>
+<p class="text-xs text-on-surface-variant">09:00 AM — Main Auditorium</p>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4 group">
+<div class="flex-shrink-0 w-12 text-center">
+<p class="text-xs font-bold text-on-surface-variant uppercase">Dec</p>
+<p class="text-2xl font-black text-primary">15</p>
+</div>
+<div class="flex-1 border-l-2 border-primary/10 pl-4 py-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<h5 class="font-bold text-sm text-primary group-hover:underline">Project Submission: Coding</h5>
+</div>
+<p class="text-xs text-on-surface-variant">11:59 PM — Portal Upload</p>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4 group">
+<div class="flex-shrink-0 w-12 text-center">
+<p class="text-xs font-bold text-on-surface-variant uppercase">Dec</p>
+<p class="text-2xl font-black text-primary">18</p>
+</div>
+<div class="flex-1 border-l-2 border-primary/10 pl-4 py-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-variant" style="font-variation-settings: 'FILL' 1;">school</span>
+<h5 class="font-bold text-sm text-primary group-hover:underline">Winter Recess Begins</h5>
+</div>
+<p class="text-xs text-on-surface-variant">All Day — Campus Closed</p>
+</div>
+</div>
+<button class="w-full py-4 mt-4 bg-white text-primary text-xs font-bold uppercase tracking-widest border border-outline-variant/20 rounded-xl hover:bg-primary hover:text-white transition-all">
+              Sync to My Calendar
+            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full py-6 px-8 mt-auto flex flex-col md:flex-row justify-between items-center bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 font-['Inter'] text-xs uppercase tracking-tighter">
+<span class="text-slate-400 dark:text-slate-500 mb-4 md:mb-0">© 2024 Academic Sentinel SAMS. Version 2.4.0-archive</span>
+<div class="flex gap-6">
+<a class="text-slate-400 dark:text-slate-500 hover:text-blue-700 transition-colors hover:underline" href="#">Support Center</a>
+<a class="text-slate-400 dark:text-slate-500 hover:text-blue-700 transition-colors hover:underline" href="#">Privacy Policy</a>
+<a class="text-slate-400 dark:text-slate-500 hover:text-blue-700 transition-colors hover:underline" href="#">Terms of Service</a>
+<a class="text-slate-400 dark:text-slate-500 hover:text-blue-700 transition-colors hover:underline" href="#">Security</a>
+</div>
+</footer>
+</body></html>

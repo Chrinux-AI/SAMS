@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Export Configuration | SAMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#071e27",
+              "surface-container-high": "#e7e8e9",
+              "secondary": "#4c616c",
+              "primary-container": "#1a237e",
+              "on-tertiary-fixed": "#390c00",
+              "surface-tint": "#4c56af",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "error": "#ba1a1a",
+              "primary-fixed-dim": "#bdc2ff",
+              "surface": "#f8f9fa",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-container": "#edeeef",
+              "on-secondary-container": "#526772",
+              "background": "#f8f9fa",
+              "on-secondary-fixed-variant": "#354a53",
+              "outline-variant": "#c6c5d4",
+              "secondary-fixed": "#cfe6f2",
+              "on-error-container": "#93000a",
+              "on-primary-container": "#8690ee",
+              "on-surface": "#191c1d",
+              "inverse-primary": "#bdc2ff",
+              "primary": "#000666",
+              "on-surface-variant": "#454652",
+              "on-secondary": "#ffffff",
+              "tertiary": "#380b00",
+              "on-tertiary-container": "#e17c5a",
+              "inverse-on-surface": "#f0f1f2",
+              "secondary-fixed-dim": "#b4cad6",
+              "on-background": "#191c1d",
+              "surface-container-highest": "#e1e3e4",
+              "inverse-surface": "#2e3132",
+              "secondary-container": "#cfe6f2",
+              "error-container": "#ffdad6",
+              "surface-bright": "#f8f9fa",
+              "on-error": "#ffffff",
+              "outline": "#767683",
+              "primary-fixed": "#e0e0ff",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-dim": "#d9dadb",
+              "on-primary-fixed": "#000767",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "tertiary-container": "#5c1800",
+              "surface-variant": "#e1e3e4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="flex flex-col fixed left-0 top-0 h-full h-screen w-64 bg-slate-50 dark:bg-slate-900 font-manrope text-sm font-medium duration-200 ease-in-out z-50">
+<div class="px-6 py-8">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-blue-950 dark:text-white leading-none">SAMS</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">Academic Sentinel</p>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span>Management</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span>Communication</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg border-l-4 border-blue-900 font-bold text-blue-950 dark:text-white dark:border-blue-400 bg-slate-100 dark:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto px-6 py-6 border-t border-slate-200 dark:border-slate-800">
+<button class="flex items-center gap-4 px-4 py-3 w-full rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 transition-colors">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+<span>Bulk Import</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar Component -->
+<header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm dark:shadow-none font-manrope text-sm transition-all duration-300">
+<div class="flex items-center gap-8">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+<span class="material-symbols-outlined text-sm" data-icon="search">search</span>
+</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-900 border-none rounded-full w-64 focus:ring-2 focus:ring-primary/20 text-xs" placeholder="Search reports..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-600 dark:text-slate-400">
+<button class="hover:text-blue-700 dark:hover:text-blue-300 transition-all"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="hover:text-blue-700 dark:hover:text-blue-300 transition-all"><span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span></button>
+<button class="hover:text-blue-700 dark:hover:text-blue-300 transition-all"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+</div>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-bold text-blue-950 dark:text-white">Admin Registrar</p>
+<p class="text-[10px] text-slate-500">Global Permissions</p>
+</div>
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10" data-alt="professional headshot of a middle-aged male administrator in a light grey suit with a friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ5F5NuAgs0D_2wVPBsJtV7uPQjoLnYYJwWdtKfx2QzSP0H8tLl1jXUw4P_NvzGiEEe3vwd4latHrx21k1xYuVixGv5x19wkE_R3Rl8iJ-PsHKSMKVFl_wYEC316K4ktQeQqLxsdwlAWYIPNAdfSFCQY6MtQx-i9B1SBYBj1iSFZvqxVaQDT0m40zq7Hrix0BRJVWtDBe63r5o2SyjT_2ZPpYIjLLTpIpKRiTRezs2PGCewHmiBbUs79L8aqZmeMd2gOmdBF4EOOE"/>
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<section class="p-12 max-w-7xl mx-auto w-full">
+<div class="flex justify-between items-end mb-12">
+<div class="space-y-2">
+<span class="text-xs font-bold tracking-[0.2em] text-primary/60 uppercase font-headline">Intelligence Module</span>
+<h2 class="text-5xl font-extrabold tracking-tight text-blue-950 font-headline">Report Configuration</h2>
+<p class="text-on-surface-variant max-w-md">Fine-tune the parameters for your academic data export. Select datasets, timeframes, and formats.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-md font-bold text-primary border border-outline-variant/20 hover:bg-surface-container transition-colors font-headline">Discard</button>
+<button class="px-8 py-3 rounded-md font-bold text-white btn-primary-gradient shadow-xl shadow-primary/20 flex items-center gap-2 font-headline">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                        Generate Report
+                    </button>
+</div>
+</div>
+<!-- Bento Layout for Configuration -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Primary Selection Card -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 border-none shadow-[0_20px_40px_rgba(0,7,103,0.04)]">
+<div class="flex items-center gap-3 mb-8">
+<span class="w-8 h-8 rounded bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="analytics">analytics</span>
+</span>
+<h3 class="text-xl font-bold font-headline text-blue-950">Data Parameters</h3>
+</div>
+<div class="space-y-10">
+<!-- Date Range Selection -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-3">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Start Date</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/10 text-on-surface font-medium" type="date"/>
+</div>
+</div>
+<div class="space-y-3">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">End Date</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/10 text-on-surface font-medium" type="date"/>
+</div>
+</div>
+</div>
+<!-- Department Multiselect -->
+<div class="space-y-4">
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Active Departments</label>
+<div class="flex flex-wrap gap-3">
+<button class="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold transition-all flex items-center gap-2">
+<span>Faculty of Arts</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="close">close</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold transition-all flex items-center gap-2">
+<span>Sciences</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="close">close</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold hover:bg-primary/10 transition-all flex items-center gap-2">
+<span>Engineering</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold hover:bg-primary/10 transition-all flex items-center gap-2">
+<span>Administration</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold hover:bg-primary/10 transition-all flex items-center gap-2">
+<span>Medical</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<!-- Report Type Sub-Selection -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-4 rounded-xl border border-outline-variant/20 hover:border-primary/40 cursor-pointer transition-all group">
+<span class="material-symbols-outlined text-primary mb-2 block" data-icon="group">group</span>
+<p class="text-sm font-bold text-blue-950">Student Success</p>
+<p class="text-[10px] text-slate-500">GPA and performance trends</p>
+</div>
+<div class="p-4 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer transition-all group">
+<div class="flex justify-between">
+<span class="material-symbols-outlined text-primary mb-2 block" data-icon="event_available">event_available</span>
+<span class="material-symbols-outlined text-primary text-sm" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<p class="text-sm font-bold text-blue-950">Attendance Matrix</p>
+<p class="text-[10px] text-slate-500">Daily rolls and absence logs</p>
+</div>
+<div class="p-4 rounded-xl border border-outline-variant/20 hover:border-primary/40 cursor-pointer transition-all group">
+<span class="material-symbols-outlined text-primary mb-2 block" data-icon="receipt_long">receipt_long</span>
+<p class="text-sm font-bold text-blue-950">Financial Audit</p>
+<p class="text-[10px] text-slate-500">Tuition and ledger records</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Export Format Sidebar -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-low rounded-xl p-8 border-none flex-1">
+<div class="flex items-center gap-3 mb-6">
+<span class="w-8 h-8 rounded bg-secondary-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="output">output</span>
+</span>
+<h3 class="text-xl font-bold font-headline text-blue-950">Export Format</h3>
+</div>
+<div class="space-y-4">
+<label class="flex items-center p-4 bg-white rounded-lg border border-transparent hover:border-primary/20 cursor-pointer transition-all">
+<input checked="" class="text-primary focus:ring-primary h-4 w-4" name="format" type="radio"/>
+<div class="ml-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-red-50 text-red-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-sm font-bold text-blue-950">Adobe PDF</p>
+<p class="text-[10px] text-slate-500">High-fidelity print format</p>
+</div>
+</div>
+</label>
+<label class="flex items-center p-4 bg-white rounded-lg border border-transparent hover:border-primary/20 cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary h-4 w-4" name="format" type="radio"/>
+<div class="ml-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-green-50 text-green-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="table_view">table_view</span>
+</div>
+<div>
+<p class="text-sm font-bold text-blue-950">Comma Separated (CSV)</p>
+<p class="text-[10px] text-slate-500">Universal raw data</p>
+</div>
+</div>
+</label>
+<label class="flex items-center p-4 bg-white rounded-lg border border-transparent hover:border-primary/20 cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary h-4 w-4" name="format" type="radio"/>
+<div class="ml-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="description">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-blue-950">Excel Spreadsheet (XLS)</p>
+<p class="text-[10px] text-slate-500">Analysis-ready workbook</p>
+</div>
+</div>
+</label>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/10">
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Export Settings</h4>
+<div class="space-y-3">
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="text-sm text-slate-600 group-hover:text-primary transition-colors">Include PII Data</span>
+<input class="rounded text-primary focus:ring-primary h-5 w-5 border-slate-300" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="text-sm text-slate-600 group-hover:text-primary transition-colors">Compress as ZIP</span>
+<input class="rounded text-primary focus:ring-primary h-5 w-5 border-slate-300" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="text-sm text-slate-600 group-hover:text-primary transition-colors">Notify via Email</span>
+<input checked="" class="rounded text-primary focus:ring-primary h-5 w-5 border-slate-300" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Exports Preview (Asymmetric Bottom) -->
+<div class="col-span-12 bg-white rounded-xl p-8 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+</span>
+<h3 class="text-xl font-bold font-headline text-blue-950">Historical Log</h3>
+</div>
+<button class="text-xs font-bold text-primary hover:underline">View Full Archive</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-slate-100">
+<th class="pb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Report Reference</th>
+<th class="pb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Requested By</th>
+<th class="pb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+<th class="pb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Format</th>
+<th class="pb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-4">
+<p class="text-sm font-bold text-blue-950">Q3_Attendance_Final_v1</p>
+<p class="text-[10px] text-slate-400">Oct 12, 2023 • 14:32</p>
+</td>
+<td class="py-4 text-sm text-slate-600">Admin Registrar</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">Ready</span>
+</td>
+<td class="py-4 text-sm font-bold text-slate-400 uppercase">PDF</td>
+<td class="py-4 text-right">
+<button class="text-primary hover:text-primary-container"><span class="material-symbols-outlined" data-icon="download">download</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-4">
+<p class="text-sm font-bold text-blue-950">Student_GPA_Spread_2023</p>
+<p class="text-[10px] text-slate-400">Oct 11, 2023 • 09:15</p>
+</td>
+<td class="py-4 text-sm text-slate-600">Academic Dean</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wider">Processing</span>
+</td>
+<td class="py-4 text-sm font-bold text-slate-400 uppercase">XLS</td>
+<td class="py-4 text-right">
+<button class="text-slate-300 cursor-not-allowed"><span class="material-symbols-outlined" data-icon="sync">sync</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Component -->
+<footer class="flex justify-between items-center px-8 py-4 w-full mt-auto bg-slate-50 dark:bg-slate-950 opacity-80 hover:opacity-100 transition-all font-manrope text-xs tracking-wide uppercase">
+<div class="text-slate-500 dark:text-slate-400">
+                v2.0.4 © SAMS Academic Sentinel
+            </div>
+<div class="flex gap-6 text-slate-500">
+<a class="hover:text-blue-600" href="#">Help</a>
+<a class="hover:text-blue-600" href="#">Support</a>
+<a class="hover:text-blue-600" href="#">Privacy</a>
+</div>
+</footer>
+</main>
+</body></html>

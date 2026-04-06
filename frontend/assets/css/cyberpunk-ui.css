@@ -1,0 +1,930 @@
+﻿/*
+ * CYBERPUNK UI FRAMEWORK - BRIDGE FILE
+ * This file imports the professional UI and maps old CSS variables
+ * All pages using cyberpunk-ui.css now get the professional design
+ * Version 3.0 - Professional Upgrade
+ */
+@import url('professional-ui.css');
+
+/* ========================================
+   LEGACY VARIABLE MAPPING
+   Map old cyberpunk variables to professional equivalents
+   so inline styles and page-specific CSS still work
+   ======================================== */
+:root {
+    /* Map old cyberpunk vars to professional palette */
+    --void-black: var(--gray-900);
+    --space-dark: var(--gray-800);
+    --card-dark: var(--bg-white);
+    --cyber-cyan: var(--primary);
+    --cyber-purple: var(--primary-dark);
+    --neon-green: var(--success);
+    --cyber-red: var(--danger);
+    --hologram-purple: #7c3aed;
+    --golden-pulse: var(--warning);
+    --cyber-green: var(--success);
+    --cyber-blue: var(--info);
+    --status-online: var(--success);
+    --status-away: var(--warning);
+    --status-offline: var(--danger);
+    --glass-border: var(--border-color);
+    --glass-bg: var(--bg-white);
+    --glass-shadow: var(--shadow);
+    --holo-glow: var(--shadow-md);
+    --cyber-glow: var(--shadow-md);
+    --neon-glow: var(--shadow-md);
+    --fire-glow: var(--shadow-md);
+    --transition-fast: 0.15s ease;
+    --transition-smooth: 0.2s ease;
+    --transition-slow: 0.3s ease;
+    --text-body: var(--text-secondary);
+}
+
+/* ========================================
+   HIDE OLD DECORATIVE ELEMENTS
+   ======================================== */
+.starfield,
+.cyber-grid,
+.particle {
+    display: none !important;
+}
+
+/* ========================================
+   FONT OVERRIDE — Replace Orbitron with Inter
+   ======================================== */
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+code, pre, .otp-digit, [style*="monospace"], [style*="Courier"] {
+    font-family: 'Courier New', monospace !important;
+}
+
+/* ========================================
+   HARDCODED CYBERPUNK COLOR OVERRIDES
+   For inline styles using hardcoded hex values
+   ======================================== */
+[style*="#00BFFF"], [style*="#00bfff"] {
+    color: var(--primary) !important;
+}
+
+[style*="rgb(0, 191, 255)"], [style*="rgba(0, 191, 255"] {
+    border-color: var(--primary) !important;
+}
+
+/* ========================================
+   BODY CLASS OVERRIDES
+   ======================================== */
+.cyber-bg {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary);
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.cyber-bg::before {
+    display: none !important;
+}
+
+/* ========================================
+   LAYOUT MAPPING
+   Map old class-based layout to professional layout
+   ======================================== */
+.cyber-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.cyber-main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    background: var(--bg-primary);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.cyber-header {
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: none;
+}
+
+.page-title-section {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.page-icon-orb {
+    width: 44px;
+    height: 44px;
+    background: var(--primary-50);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    animation: none;
+}
+
+.page-icon-orb i {
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: var(--text-primary);
+    color: var(--text-primary);
+    letter-spacing: 0;
+}
+
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.cyber-content {
+    padding: 24px;
+}
+
+/* ========================================
+   CARD MAPPING
+   ======================================== */
+.holo-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 0;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: none;
+    transition: box-shadow var(--transition);
+    overflow: hidden;
+}
+
+.holo-card::before {
+    display: none;
+}
+
+.holo-card:hover {
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-md);
+    transform: none;
+}
+
+.holo-card .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--gray-50);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.holo-card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+}
+
+.holo-card .card-title i {
+    color: var(--primary);
+}
+
+.holo-card .card-body {
+    padding: 20px;
+}
+
+/* ========================================
+   STAT ORB -> STAT CARD
+   ======================================== */
+.stats-grid,
+.orb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.stat-orb {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: none;
+    transition: box-shadow var(--transition);
+}
+
+.stat-orb::after {
+    display: none;
+}
+
+.stat-orb:hover {
+    box-shadow: var(--shadow-md);
+    transform: none;
+    border-color: var(--border-color);
+}
+
+.stat-orb .stat-icon,
+.stat-orb .orb-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: none;
+    animation: none;
+    background: var(--primary-50);
+    color: var(--primary);
+}
+
+.stat-orb .stat-icon.cyber,
+.stat-orb .stat-icon.blue,
+.orb-icon-wrapper.cyan {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+.stat-orb .stat-icon.green,
+.orb-icon-wrapper.green {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.stat-orb .stat-icon.purple,
+.orb-icon-wrapper.purple {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.stat-orb .stat-icon.red,
+.stat-orb .stat-icon.yellow,
+.orb-icon-wrapper.red {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.stat-orb .stat-label,
+.orb-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.stat-orb .stat-value,
+.orb-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.2;
+}
+
+/* ========================================
+   BUTTON MAPPING
+   ======================================== */
+.cyber-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+    background: var(--primary);
+    color: #fff;
+}
+
+.cyber-btn::before {
+    display: none;
+}
+
+.cyber-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.cyber-btn:active {
+    transform: scale(0.98);
+}
+
+.cyber-btn-primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: none;
+}
+
+.cyber-btn-primary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+}
+
+.cyber-btn-success {
+    background: var(--success);
+    color: #fff;
+    box-shadow: none;
+}
+
+.cyber-btn-success:hover {
+    background: #047857;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.cyber-btn-danger {
+    background: var(--danger);
+    color: #fff;
+    box-shadow: none;
+}
+
+.cyber-btn-danger:hover {
+    background: #b91c1c;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.cyber-btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.cyber-btn-outline:hover {
+    background: var(--gray-50);
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: none;
+}
+
+.cyber-btn.btn-sm {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+}
+
+.cyber-btn.btn-icon {
+    padding: 8px;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: var(--border-radius-sm);
+    position: relative;
+}
+
+.cyber-btn.btn-icon:hover {
+    background: var(--gray-50);
+    color: var(--text-primary);
+}
+
+.cyber-btn.btn-icon .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* ========================================
+   TABLE MAPPING
+   ======================================== */
+.holo-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.holo-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    background: var(--gray-50);
+    font-family: 'Inter', sans-serif;
+}
+
+.holo-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    transition: background var(--transition);
+}
+
+.holo-table tbody tr:hover {
+    background: var(--gray-50);
+    box-shadow: none;
+    transform: none;
+    border-color: transparent;
+}
+
+.holo-table tbody td {
+    padding: 14px 16px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 0;
+}
+
+.holo-table tbody tr td:first-child,
+.holo-table tbody tr td:last-child {
+    border: none;
+    border-radius: 0;
+}
+
+/* ========================================
+   FORM ELEMENTS MAPPING
+   ======================================== */
+.cyber-input-group {
+    margin-bottom: 20px;
+}
+
+.cyber-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.cyber-input,
+.cyber-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-white);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    transition: all var(--transition);
+}
+
+.cyber-input:focus,
+.cyber-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: var(--bg-white);
+}
+
+.cyber-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Password wrapper */
+.pw-wrapper {
+    position: relative;
+}
+
+.pw-wrapper .cyber-input {
+    padding-right: 48px;
+}
+
+.pw-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.pw-toggle:hover {
+    color: var(--primary);
+}
+
+/* ========================================
+   BADGE MAPPING
+   ======================================== */
+.cyber-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border: none;
+    box-shadow: none;
+}
+
+.cyber-badge.success {
+    background: var(--success-light);
+    color: var(--success);
+    border: none;
+    box-shadow: none;
+}
+
+.cyber-badge.warning {
+    background: var(--warning-light);
+    color: var(--warning);
+    border: none;
+    box-shadow: none;
+}
+
+.cyber-badge.danger {
+    background: var(--danger-light);
+    color: var(--danger);
+    border: none;
+    box-shadow: none;
+}
+
+.cyber-badge.primary {
+    background: var(--primary-50);
+    color: var(--primary);
+    border: none;
+    box-shadow: none;
+}
+
+/* ========================================
+   2-COLUMN GRID
+   ======================================== */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   LIST ITEMS
+   ======================================== */
+.list-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-sm);
+    background: var(--primary-50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.item-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.3;
+    display: block;
+}
+
+.empty-state p {
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   STATUS BADGES (attendance)
+   ======================================== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge.present {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.status-badge.late {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+/* ========================================
+   AGGRESSIVE INLINE STYLE OVERRIDES
+   Neutralize hardcoded cyberpunk hex colors
+   in <style> blocks across pages
+   ======================================== */
+
+/* Override neon method cards / interactive cards */
+.method-card {
+    background: var(--bg-white) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    color: var(--text-primary) !important;
+}
+
+.method-card:hover {
+    border-color: var(--primary) !important;
+    background: var(--primary-50) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.method-card.active {
+    border-color: var(--success) !important;
+    background: var(--success-light) !important;
+}
+
+.method-icon {
+    color: var(--primary) !important;
+}
+
+.method-card.active .method-icon {
+    color: var(--success) !important;
+}
+
+.method-title,
+.method-desc {
+    color: var(--text-primary) !important;
+}
+
+/* Video/QR containers */
+#qr-video-container {
+    background: var(--gray-100) !important;
+    border-color: var(--border-color) !important;
+}
+
+.qr-overlay {
+    border-color: var(--primary) !important;
+}
+
+/* Override common neon accents used in inline styles */
+.checkin-section,
+.checkin-container,
+.scan-area {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Status result displays */
+.checkin-result,
+.result-card,
+.verification-result {
+    background: var(--bg-white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override page-specific neon section headers */
+.section-header,
+.card-section {
+    color: var(--text-primary) !important;
+}
+
+/* Override neon pulse/glow animations */
+@keyframes pulse-neon { to { box-shadow: none; } }
+@keyframes neon-glow { to { box-shadow: none; } }
+@keyframes cyber-pulse { to { box-shadow: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } }
+@keyframes glow { to { box-shadow: none; } }
+
+/* Fee management neon overrides */
+.fee-card,
+.fee-summary,
+.payment-card {
+    background: var(--bg-white) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Analytics chart label overrides */
+.chart-label,
+.chart-legend,
+.trend-label {
+    color: var(--text-secondary) !important;
+}
+
+/* Override misc dark modals/panels */
+.modal-content,
+.popup-content,
+.dialog-content {
+    background: var(--bg-white) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Override announcement/alert system neon */
+.alert-card,
+.announcement-card,
+.notice-card {
+    background: var(--bg-white) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override progress/status indicators */
+.progress-ring,
+.status-indicator {
+    color: var(--primary) !important;
+}
+
+/* Mobile responsive for theme switcher + chatbot */
+@media (max-width: 768px) {
+    .sams-theme-switcher {
+        left: 12px !important;
+        bottom: 80px !important;
+    }
+    .cyber-main,
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+.status-badge.absent {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+/* ========================================
+   DATETIME DISPLAY
+   ======================================== */
+.datetime-display {
+    text-align: right;
+}
+
+.date-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.time-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+    .cyber-main {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .cyber-header {
+        padding: 12px 16px;
+    }
+
+    .page-title {
+        font-size: 1.2rem;
+    }
+
+    .cyber-content {
+        padding: 16px;
+    }
+
+    .stats-grid,
+    .orb-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid,
+    .orb-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   ANIMATIONS (kept but toned down)
+   ======================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ========================================
+   LOADING
+   ======================================== */
+.cyber-loading {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   NOTICE BOARD OVERRIDE
+   ======================================== */
+.notice-board {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+}

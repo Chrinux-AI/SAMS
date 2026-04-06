@@ -1,0 +1,14 @@
+{
+    "cognitive_score": 93,
+    "intelligence_score": 94,
+    "academic_score": 90,
+    "adaptive_score": 100,
+    "interaction_score": 88,
+    "ethics_safe": true,
+    "insights_generated": 2,
+    "policies_triggered": 0,
+    "policies_recommended": 1,
+    "frictions_detected": 3,
+    "elapsed_ms": 1931,
+    "timestamp": "2026-03-12 09:48:56"
+}

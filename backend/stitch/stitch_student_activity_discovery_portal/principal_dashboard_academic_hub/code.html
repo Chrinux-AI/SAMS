@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academic Sentinel | Principal Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary": "#4c616c",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary-fixed": "#390c00",
+              "secondary-container": "#cfe6f2",
+              "on-primary-fixed": "#000767",
+              "primary-fixed": "#e0e0ff",
+              "tertiary": "#380b00",
+              "outline": "#767683",
+              "on-surface": "#191c1d",
+              "on-secondary-fixed": "#071e27",
+              "inverse-on-surface": "#f0f1f2",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-container-high": "#e7e8e9",
+              "primary": "#000666",
+              "on-surface-variant": "#454652",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#e1e3e4",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-container-low": "#f3f4f5",
+              "surface": "#f8f9fa",
+              "on-error": "#ffffff",
+              "surface-container": "#edeeef",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-tertiary-container": "#e17c5a",
+              "inverse-primary": "#bdc2ff",
+              "on-error-container": "#93000a",
+              "surface-tint": "#4c56af",
+              "on-primary-container": "#8690ee",
+              "tertiary-container": "#5c1800",
+              "background": "#f8f9fa",
+              "error": "#ba1a1a",
+              "primary-container": "#1a237e",
+              "secondary-fixed": "#cfe6f2",
+              "inverse-surface": "#2e3132",
+              "on-secondary-container": "#526772",
+              "on-primary-fixed-variant": "#343d96",
+              "on-background": "#191c1d",
+              "outline-variant": "#c6c5d4",
+              "error-container": "#ffdad6",
+              "surface-bright": "#f8f9fa",
+              "on-tertiary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#b4cad6",
+              "on-secondary-fixed-variant": "#354a53",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dadb"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+        .frosted-archive {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-100 font-headline">Academic Sentinel</span>
+<div class="hidden md:flex items-center bg-slate-100/50 dark:bg-slate-800/50 rounded-full px-4 py-1.5 gap-2">
+<span class="material-symbols-outlined text-slate-500 text-sm">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 w-64 placeholder:text-slate-400" placeholder="Search institutional records..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden ml-2 bg-slate-200">
+<img alt="Administrator Profile" class="h-full w-full object-cover" data-alt="professional portrait of a middle-aged male school administrator in a navy suit against a clean architectural background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO6e4CEtPgoNc5J1CrnShbXlNecvBHgKMHT9yhbHiIMh12idqMPR8Z_y-h03XW58C5RtDmZT8iV3JW3rjzKuZddQHjhcrDqND1Y56ED3GSw5wPJrjilz9Bh9qQv1zcxucP0YjfU4neVoIjSe8rVrE9nxPP77wd6oh54SINlfEmo3FOmz7YGmoX4VdV7ST53JvU9d1y30p9nClPYqzEmXwmubQb2lDqCJhdVhczu24IubqPrgUlnj1H0pl6aGJqk-Ot3TpZcmimg7M"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<nav class="h-screen w-64 fixed left-0 top-0 pt-20 bg-slate-50 dark:bg-slate-950 flex flex-col space-y-2">
+<div class="px-6 mb-8">
+<h2 class="font-manrope font-extrabold text-blue-900 text-lg">SAMS Admin</h2>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-medium">Academic Year 2024</p>
+</div>
+<div class="flex-1 flex flex-col space-y-1">
+<a class="flex items-center gap-3 border-l-4 border-blue-900 text-blue-900 dark:text-blue-400 font-bold bg-white dark:bg-slate-900 px-6 py-3 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-6 py-3 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-inter text-sm font-medium">Attendance</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-6 py-3 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-inter text-sm font-medium">Students</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-6 py-3 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-inter text-sm font-medium">Staff</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-6 py-3 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-inter text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-6 py-3 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-inter text-sm font-medium">Settings</span>
+</a>
+</div>
+<div class="p-6 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full bg-primary-gradient text-white py-2.5 rounded-xl font-medium text-sm shadow-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">bolt</span>
+                Quick Action
+            </button>
+</div>
+<div class="mt-auto pb-4">
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-6 py-3 hover:text-error transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-inter text-sm font-medium">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="ml-64 pt-24 pb-12 px-10 min-h-screen">
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-10">
+<div class="space-y-1">
+<p class="text-on-surface-variant font-medium tracking-wide text-xs uppercase">Institutional Oversight</p>
+<h1 class="text-4xl font-extrabold font-headline text-primary tracking-tight">Principal's Console</h1>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 rounded-lg border border-outline/20 text-primary font-semibold text-sm hover:bg-surface-container-low transition-colors">
+                    Export Audit
+                </button>
+<button class="px-5 py-2.5 rounded-lg bg-primary-gradient text-white font-semibold text-sm shadow-lg hover:shadow-primary/20 transition-all">
+                    Generate Report
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Urgent Alert Center (High Priority) -->
+<div class="col-span-12 lg:col-span-4 bg-tertiary-container text-white p-6 rounded-xl relative overflow-hidden group shadow-2xl">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">campaign</span>
+<span class="font-headline font-bold text-lg">Urgent Alert Center</span>
+</div>
+<div class="space-y-4">
+<div class="bg-black/20 p-3 rounded-lg border-l-4 border-error">
+<p class="text-xs font-bold uppercase tracking-widest text-error-container mb-1">Critical Absence</p>
+<p class="text-sm font-medium">Physics Dept. Head reported absent. Substitute required for Room 302.</p>
+</div>
+<div class="bg-black/20 p-3 rounded-lg border-l-4 border-tertiary-fixed-dim">
+<p class="text-xs font-bold uppercase tracking-widest text-on-tertiary-container mb-1">Facility Issue</p>
+<p class="text-sm font-medium">Main Server Room temperature spike detected. IT notified.</p>
+</div>
+</div>
+</div>
+<button class="mt-6 w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition-colors">
+                        View All Incidents
+                    </button>
+</div>
+</div>
+<!-- Performance Trends (Medium Priority) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/20">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline font-bold text-xl text-primary">Academic Performance Trends</h3>
+<p class="text-on-surface-variant text-sm">School-wide average GPA vs Attendance Correlation</p>
+</div>
+<div class="flex bg-surface-container rounded-lg p-1">
+<button class="px-4 py-1 text-xs font-bold bg-white shadow-sm rounded-md">Term 2</button>
+<button class="px-4 py-1 text-xs font-bold text-on-surface-variant">Annual</button>
+</div>
+</div>
+<!-- Visual Data Placeholder -->
+<div class="h-48 flex items-end justify-between gap-4 px-4">
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-32">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">78%</div>
+<div class="w-full bg-primary/40 rounded-t-lg h-2/3 absolute bottom-0 transition-all hover:bg-primary/60"></div>
+<p class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-on-surface-variant">WK 01</p>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-40">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">82%</div>
+<div class="w-full bg-primary/40 rounded-t-lg h-3/4 absolute bottom-0 transition-all hover:bg-primary/60"></div>
+<p class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-on-surface-variant">WK 02</p>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-36">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">80%</div>
+<div class="w-full bg-primary/40 rounded-t-lg h-4/5 absolute bottom-0 transition-all hover:bg-primary/60"></div>
+<p class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-on-surface-variant">WK 03</p>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-44">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">89%</div>
+<div class="w-full bg-primary/40 rounded-t-lg h-5/6 absolute bottom-0 transition-all hover:bg-primary/60"></div>
+<p class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-on-surface-variant">WK 04</p>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-48">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">94%</div>
+<div class="w-full bg-primary/40 rounded-t-lg h-full absolute bottom-0 transition-all hover:bg-primary/60"></div>
+<p class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-on-surface-variant">WK 05</p>
+</div>
+</div>
+</div>
+<!-- Staff Attendance Summary -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline font-bold text-lg text-primary">Staff Attendance</h3>
+<span class="text-xs font-bold text-on-surface-variant px-3 py-1 bg-surface-container rounded-full">Today, 09:45 AM</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold">SM</div>
+<div>
+<p class="text-sm font-bold">Science &amp; Math</p>
+<p class="text-xs text-on-surface-variant">12/14 Present</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold text-primary">85%</span>
+<div class="w-16 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold">LA</div>
+<div>
+<p class="text-sm font-bold">Language Arts</p>
+<p class="text-xs text-on-surface-variant">18/18 Present</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold text-green-600">100%</span>
+<div class="w-16 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="bg-green-500 h-full w-[100%]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold">HU</div>
+<div>
+<p class="text-sm font-bold">Humanities</p>
+<p class="text-xs text-on-surface-variant">9/10 Present</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold text-primary">90%</span>
+<div class="w-16 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-[90%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Announcement Creator -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline font-bold text-lg text-primary">Announcement Creator</h3>
+<span class="material-symbols-outlined text-slate-400">history</span>
+</div>
+<div class="space-y-4">
+<div>
+<input class="w-full bg-surface-container border-none rounded-lg py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400" placeholder="Announcement Title" type="text"/>
+</div>
+<div>
+<textarea class="w-full bg-surface-container border-none rounded-lg py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400" placeholder="Draft your message to students and staff..." rows="4"></textarea>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<button class="p-2 bg-surface-container text-on-surface-variant rounded-md hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg">attach_file</span>
+</button>
+<button class="p-2 bg-surface-container text-on-surface-variant rounded-md hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg">alternate_email</span>
+</button>
+<select class="bg-surface-container border-none rounded-md text-xs font-bold text-on-surface-variant py-2 focus:ring-0">
+<option>Target: All Staff</option>
+<option>Target: Parents</option>
+<option>Target: Grade 12</option>
+</select>
+</div>
+<button class="px-6 py-2 bg-primary-gradient text-white text-sm font-bold rounded-lg shadow-md">
+                            Publish Now
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full py-4 mt-auto border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex justify-between items-center px-10 ml-64">
+<p class="text-slate-400 dark:text-slate-600 font-inter text-xs tracking-wide uppercase">© 2024 The Academic Sentinel. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-blue-700 dark:hover:text-blue-300 underline font-inter text-xs tracking-wide uppercase" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-blue-700 dark:hover:text-blue-300 underline font-inter text-xs tracking-wide uppercase" href="#">Terms of Service</a>
+<span class="text-slate-400 font-inter text-xs tracking-wide uppercase">v2.4.1</span>
+</div>
+</footer>
+</body></html>

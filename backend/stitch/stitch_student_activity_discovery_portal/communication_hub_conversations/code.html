@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SAMS Communication Center</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#bdc2ff",
+              "surface": "#f8f9fa",
+              "primary": "#000666",
+              "on-tertiary-container": "#e17c5a",
+              "surface-container": "#edeeef",
+              "tertiary": "#380b00",
+              "surface-container-low": "#f3f4f5",
+              "secondary": "#4c616c",
+              "error-container": "#ffdad6",
+              "surface-tint": "#4c56af",
+              "on-primary-container": "#8690ee",
+              "on-error-container": "#93000a",
+              "error": "#ba1a1a",
+              "secondary-fixed": "#cfe6f2",
+              "on-tertiary-fixed": "#390c00",
+              "inverse-on-surface": "#f0f1f2",
+              "on-secondary-container": "#526772",
+              "surface-dim": "#d9dadb",
+              "primary-container": "#1a237e",
+              "on-surface-variant": "#454652",
+              "surface-container-highest": "#e1e3e4",
+              "outline-variant": "#c6c5d4",
+              "on-surface": "#191c1d",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-variant": "#e1e3e4",
+              "surface-bright": "#f8f9fa",
+              "on-error": "#ffffff",
+              "tertiary-container": "#5c1800",
+              "on-secondary-fixed-variant": "#354a53",
+              "tertiary-fixed": "#ffdbd0",
+              "tertiary-fixed-dim": "#ffb59d",
+              "secondary-container": "#cfe6f2",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "on-primary-fixed": "#000767",
+              "background": "#f8f9fa",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#2e3132",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#b4cad6",
+              "primary-fixed": "#e0e0ff",
+              "on-secondary-fixed": "#071e27",
+              "on-background": "#191c1d",
+              "surface-container-high": "#e7e8e9",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-tertiary": "#ffffff",
+              "outline": "#767683"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .frosted-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface flex min-h-screen">
+<!-- SideNavBar (Shared Component) -->
+<aside class="flex flex-col fixed left-0 top-0 h-full h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-900 z-50">
+<div class="px-6 py-8">
+<h1 class="text-2xl font-bold tracking-tight text-blue-950 dark:text-white font-headline">SAMS</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-medium">Academic Sentinel</p>
+</div>
+<nav class="flex-1 px-0 space-y-1 font-manrope text-sm font-medium">
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">school</span>
+                Management
+            </a>
+<!-- Active Navigation State for Communication -->
+<a class="flex items-center px-6 py-3 border-l-4 border-blue-900 font-bold text-blue-950 dark:text-white dark:border-blue-400 bg-slate-100 dark:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+                Communication
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">assessment</span>
+                Reports
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="p-6 border-t border-slate-100 dark:border-slate-800">
+<button class="primary-gradient w-full py-2.5 rounded-xl text-white font-semibold text-sm shadow-lg shadow-blue-900/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm mr-2">add</span>
+                Check In
+            </button>
+<a class="mt-4 flex items-center px-0 py-2 text-slate-500 hover:text-blue-900 text-xs uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined mr-2 text-sm">upload_file</span>
+                Bulk Import
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen relative">
+<!-- TopNavBar (Shared Component) -->
+<header class="flex justify-between items-center w-full px-8 py-3 sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm dark:shadow-none font-manrope text-sm">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="Search threads or people..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-8">
+<button class="text-slate-600 dark:text-slate-400 hover:text-blue-700 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-slate-600 dark:text-slate-400 hover:text-blue-700">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<div class="flex items-center gap-3 border-l pl-6 border-slate-200">
+<div class="text-right">
+<p class="font-bold text-blue-950 text-xs">Dr. Julian Vance</p>
+<p class="text-[10px] text-slate-500">Administrator</p>
+</div>
+<img alt="User Profile Avatar" class="w-9 h-9 rounded-full object-cover" data-alt="professional headshot of a middle-aged male administrator with a kind expression in a bright office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC95qdAw5xIPHcyJlny6jznnNf6huKM9qL3byu4H3yoII36T-YNdVNZENU3JQVRa62A7cEpqb3elq5XGZleVQuDoi1WKeV8uyohIP66i1RjqLTaTazn4pU8XygFgtV7aduqoZgmIrivrZ74mUpmjuGgyA8NoI2K5p57hHBaM9L8t4MK8LsaRaKPQREdtRjptPdARArUQyCYRCXfYW7KFOy3i49z-SHyVdNVX64o6-wh9CPiPSS8pSfwAkI72Mx7SPohBrfrmeSHPms"/>
+</div>
+</div>
+</header>
+<!-- Communication Center Dashboard -->
+<div class="p-8 flex flex-col gap-8 flex-1">
+<!-- Page Header -->
+<div class="flex items-end justify-between">
+<div>
+<h2 class="text-4xl font-extrabold font-headline tracking-tight text-primary">Communication Center</h2>
+<p class="text-on-surface-variant font-body mt-2">Centralized academic announcements and social interactions.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 rounded-xl border border-outline-variant/30 text-primary font-semibold text-sm hover:bg-surface-container transition-colors">
+                        Archive
+                    </button>
+<button class="primary-gradient px-6 py-2.5 rounded-xl text-white font-semibold text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+                        New Message
+                    </button>
+</div>
+</div>
+<!-- Two Column Layout for Communication -->
+<div class="flex flex-1 gap-8 min-h-0">
+<!-- Inner Nav / Category Sidebar -->
+<div class="w-80 flex flex-col gap-6">
+<div class="bg-surface-container-lowest rounded-xl p-2 flex flex-col gap-1 shadow-sm border border-outline-variant/10">
+<button class="flex items-center justify-between w-full px-4 py-3 rounded-lg bg-primary-container/10 text-primary font-bold transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="font-headline text-sm">Notices</span>
+</div>
+<span class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full">12</span>
+</button>
+<button class="flex items-center justify-between w-full px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-headline text-sm">Chat</span>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] px-2 py-0.5 rounded-full">3</span>
+</button>
+<button class="flex items-center justify-between w-full px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-headline text-sm">Forum</span>
+</div>
+</button>
+</div>
+<!-- Pinned Contacts / Active Channels -->
+<div class="flex-1 overflow-y-auto pr-2 space-y-6">
+<div>
+<h3 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-4 mb-3">Academic Channels</h3>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-xs">F</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold truncate group-hover:text-primary">Faculty Announcements</p>
+<p class="text-[11px] text-on-surface-variant truncate">Dr. Smith: Meeting at 3pm...</p>
+</div>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xs">S</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold truncate group-hover:text-primary">Student Affairs</p>
+<p class="text-[11px] text-on-surface-variant truncate">New policy regarding...</p>
+</div>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-4 mb-3">Direct Messages</h3>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<img alt="Sarah Jenkins" class="w-8 h-8 rounded-full object-cover" data-alt="portrait of a young female educator with glasses and a friendly smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-j4iwsXxySQprPdjZ8hK1GiOOUpAnH5qEoBG3PKcuJmpcvbefdqpbil90GIhlutcJFrkbPeSxMvuRDw5UHczctN7gq1Vra3v7KW15YLMYwxasGX-D4SgJKuKkVPXE5My-fTGqvoN1Syt1VIioIayxnhGe8AjhFafhBM5YB3Nqn0CuZJa8XGOC6nDAxi7IZGhzlbq5F4uDiKuIkvRI_alHTymvSbQxUeuaLQVW6XDqBT7LnAtdqKuZxW9m25C1jdz4ytUXvUyzBEA"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<p class="text-sm font-semibold truncate group-hover:text-primary">Sarah Jenkins</p>
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+</div>
+<p class="text-[11px] font-medium text-primary truncate">Sent you a file</p>
+</div>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-low rounded-lg transition-colors group opacity-60" href="#">
+<img alt="Marcus Aurelius" class="w-8 h-8 rounded-full object-cover" data-alt="headshot of a serious looking man with short dark hair in professional attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4FkzqtwM3M-_qloTXYEz_T5PI6EI2FKD6hNLE9vWmxCuEZ5YIx3dM46ve-sbBjt-XwdPDHt5oNyhDQzkQAKEjB6vLT_rJGulAoc9c4er6DSuSR8hp8yxYM2oWTvsmovdUcBU2h2vSrwRT2vROEAWtCJBD8_wNgIapkB6AH3r5eKopr561UL7q34VtrffmMLeqTt_3QhdvzX0bEbuNk9oOuaPLjAS9JkDogaNF6TrxiVxS5PexXBbjttQQwHAZ8v4-7TsV326B1QY"/>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold truncate group-hover:text-primary">Marcus Aurelius</p>
+<p class="text-[11px] text-on-surface-variant truncate">Talk to you later.</p>
+</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Canvas: Active Threads -->
+<div class="flex-1 flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<!-- Content Header -->
+<div class="px-8 py-5 border-b border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<div>
+<h3 class="font-headline font-bold text-lg text-primary">Notices &amp; Bulletins</h3>
+<p class="text-xs text-on-surface-variant">Showing active official communication for Semester A</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Scrollable Threads List -->
+<div class="flex-1 overflow-y-auto p-8 space-y-4">
+<!-- Thread Item 1 (Urgent/Notice) -->
+<div class="group bg-surface-container-low hover:bg-surface-container transition-all p-6 rounded-xl border-l-4 border-tertiary relative">
+<div class="absolute top-6 right-6 flex items-center gap-2">
+<span class="bg-tertiary-container text-on-tertiary-container text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter">Urgent</span>
+<span class="text-[10px] text-on-surface-variant font-medium">2 hours ago</span>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-tertiary">warning</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Emergency Maintenance: Library Wing B</h4>
+<p class="mt-2 text-sm text-on-surface-variant leading-relaxed line-clamp-2">
+                                        Please be advised that Library Wing B will be closed for emergency HVAC repairs starting at 4:00 PM today. Students are advised to relocate to the South Reading Room.
+                                    </p>
+<div class="mt-4 flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">visibility</span>
+<span class="text-[11px] text-on-surface-variant">245 views</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">comment</span>
+<span class="text-[11px] text-on-surface-variant">14 comments</span>
+</div>
+<div class="flex -space-x-2 ml-auto">
+<img alt="User 1" class="w-6 h-6 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="round profile avatar of a young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI7Gr_mrsnEJT_4BYjJcqaDT61zs537qXJFdZU5RQKQFyo5MXfHFIV3QHcpjtvN0YCqE1rZ4_z6pGVoGywSWOMCZ6P5PoujmHJM_GDhzV2UfG4-684tVtypp0wmQREBhdi0FNXJL5pE1qg4HAvsVifDhgnbB0bWKTF22eIUP7LSqEzzSTYwIoAfJV3Blxmdpu_Q8RQRL7sJutP2sGPWKAdxgu-H5Wqhd2tKossIIALSGN7bkDhW-DUtLgWs0-xLOKr_UyHh8QWtp4"/>
+<img alt="User 2" class="w-6 h-6 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="round profile avatar of a young woman with curly hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBngybji2JvffTjMY0TJDAxxAsVIwNcI5SMzsgVfWZXCYzxuttSv56sYDqyGdOxLHZIhswEhk1B5HjIH97Y0yLW7mYk0gvktIZ3UD3AMCBq5JL-SuI-ER3bhYXr2i3C7ZNLsxxF40qLIAoJx3-Yn8W3or_pDJHXkebAfU3FzKL0LI0jltQ2DCxpIpkigs_Ft725AuL0acJKO9TvxgI70Jy-zw0KMqkwj_RwHwtLyVuOQ4WchchtduMxmP7D6GL8AiT55VEBD2GJlxs"/>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-surface-container-highest flex items-center justify-center text-[8px] font-bold">+12</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Thread Item 2 (Standard) -->
+<div class="group bg-white hover:bg-surface-container-low border border-outline-variant/10 transition-all p-6 rounded-xl relative">
+<div class="absolute top-6 right-6">
+<span class="text-[10px] text-on-surface-variant font-medium">Yesterday</span>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Revised Examination Timetable (Draft)</h4>
+<p class="mt-2 text-sm text-on-surface-variant leading-relaxed">
+                                        The preliminary schedule for the end-of-semester examinations has been released. Please review and submit any conflict reports by Friday.
+                                    </p>
+<div class="mt-4 flex items-center gap-6">
+<div class="px-3 py-1 bg-surface-container-low rounded-lg border border-outline-variant/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">attachment</span>
+<span class="text-[11px] font-bold text-primary">Exam_Schedule_V1.pdf</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">download</span>
+<span class="text-[11px] text-on-surface-variant">1.2k downloads</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Thread Item 3 (Social/Forum) -->
+<div class="group bg-white hover:bg-surface-container-low border border-outline-variant/10 transition-all p-6 rounded-xl relative">
+<div class="absolute top-6 right-6">
+<span class="text-[10px] text-on-surface-variant font-medium">Mar 12</span>
+</div>
+<div class="flex gap-4">
+<img alt="Prof. Aris" class="w-10 h-10 rounded-full object-cover" data-alt="portrait of a confident female professor in a lecture hall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCozihe4lwscT2X1RZS31N-kzrx-bv6heos69_bwNbLeOwEPElLkQ4SXoguaBserpbvxVT9ktR107IUUF0PAsokQs3KNlCBbpqiIwzwhicQOulXdtPJBRE6XcgifU46PeZmHoIBt2HjJDIc0e4jlmSqX-9sleezacIyOlw0DX0OTNjzllGW2-QY8o-kEJ2052peTbK3d-TbpOByXDpeemGM6wbp2RXvcbR68FbKK6IL61oHLfBJ74fO1sE8dq4VnyE5L2wWTcvzW-o"/>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Discussion: AI in Modern Pedagogy</h4>
+<p class="mt-2 text-sm text-on-surface-variant leading-relaxed">
+                                        I've started a new thread in the General Forum regarding the integration of LLMs in student research papers. Looking forward to the faculty's input.
+                                    </p>
+<div class="mt-4 flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">thumb_up</span>
+<span class="text-[11px] text-on-surface-variant">56</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">share</span>
+<span class="text-[11px] text-on-surface-variant">Share</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer of Content Area -->
+<div class="px-8 py-4 bg-surface-container-low border-t border-surface-container flex items-center justify-between">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">End of active notices</p>
+<button class="text-xs font-bold text-primary hover:underline">View Archived Communications</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Component (Only visible when appropriate) -->
+<button class="fixed bottom-10 right-10 w-14 h-14 primary-gradient text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform duration-300 z-50">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- Footer (Shared Component) -->
+<footer class="flex justify-between items-center px-8 py-4 w-full mt-auto bg-slate-50 dark:bg-slate-950">
+<p class="font-manrope text-xs tracking-wide uppercase text-slate-500 dark:text-slate-400">v2.0.4 © SAMS Academic Sentinel</p>
+<div class="flex gap-6">
+<a class="font-manrope text-xs tracking-wide uppercase text-slate-500 hover:text-blue-600 transition-all opacity-80 hover:opacity-100" href="#">Help</a>
+<a class="font-manrope text-xs tracking-wide uppercase text-slate-500 hover:text-blue-600 transition-all opacity-80 hover:opacity-100" href="#">Support</a>
+<a class="font-manrope text-xs tracking-wide uppercase text-slate-500 hover:text-blue-600 transition-all opacity-80 hover:opacity-100" href="#">Privacy</a>
+</div>
+</footer>
+</main>
+</body></html>

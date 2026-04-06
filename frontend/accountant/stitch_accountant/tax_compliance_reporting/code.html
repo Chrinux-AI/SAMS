@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tax &amp; Compliance | EduTax Compliance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#fcebff",
+                        "tertiary": "#8120b5",
+                        "surface-container-highest": "#d6e3ff",
+                        "outline-variant": "#c2c6d6",
+                        "tertiary-container": "#9c40d0",
+                        "secondary": "#835500",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#e7b4ff",
+                        "on-surface": "#091c35",
+                        "surface-container-high": "#dfe8ff",
+                        "outline": "#727785",
+                        "on-tertiary-fixed": "#30004a",
+                        "inverse-on-surface": "#ecf0ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#f5d9ff",
+                        "on-primary-fixed": "#001a43",
+                        "inverse-surface": "#20314b",
+                        "error": "#ba1a1a",
+                        "surface": "#f9f9ff",
+                        "surface-variant": "#d6e3ff",
+                        "surface-tint": "#0059c5",
+                        "surface-dim": "#cadbfc",
+                        "inverse-primary": "#aec6ff",
+                        "secondary-container": "#ffaa08",
+                        "secondary-fixed": "#ffddb4",
+                        "on-secondary-container": "#694300",
+                        "on-primary-fixed-variant": "#004397",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#7100a5",
+                        "on-secondary-fixed-variant": "#633f00",
+                        "on-secondary-fixed": "#291800",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#424753",
+                        "primary-container": "#1868db",
+                        "on-primary-container": "#ecefff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d8e2ff",
+                        "primary": "#0050b2",
+                        "on-background": "#091c35",
+                        "secondary-fixed-dim": "#ffb954",
+                        "background": "#f9f9ff",
+                        "primary-fixed-dim": "#aec6ff",
+                        "surface-container": "#e7eeff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-bright": "#f9f9ff",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none flex justify-between items-center px-8 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black text-[#091C35] dark:text-slate-100">EduTax Compliance</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#424753] dark:text-slate-400 hover:text-[#1868DB] font-manrope font-bold text-lg tracking-tight" href="#">Dashboard</a>
+<a class="text-[#1868DB] border-b-2 border-[#1868DB] pb-1 font-manrope font-bold text-lg tracking-tight" href="#">Tax History</a>
+<a class="text-[#424753] dark:text-slate-400 hover:text-[#1868DB] font-manrope font-bold text-lg tracking-tight" href="#">Deductions</a>
+<a class="text-[#424753] dark:text-slate-400 hover:text-[#1868DB] font-manrope font-bold text-lg tracking-tight" href="#">VAT Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-[#1868DB] text-white px-4 py-2 rounded-xl text-sm font-bold active:scale-95 duration-200">Quarterly Report</button>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full cursor-pointer">settings</span>
+</div>
+<img alt="Accountant Profile" class="w-10 h-10 rounded-full object-cover" data-alt="professional portrait of an accountant in a modern office with soft natural lighting and minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcSZiKPxSUNiwsx_DR01hoax9T0fogW7Vi0FZ5HSTD_4Cl2rtwCYaRTg0vp-ApfEhAa1l0buTL03yoADi6Ge6bH1moQMYGOqY5Uer2eq1DEHvmXWdcCREAfeRc7uTUklmwhbD1ubNpzko_isYwWXDxS6urpEvVdktbhp4nn7J8moBoz--4VpKQ3NP_FfoKgUt6Pit4-4VVud0THzefsKF5fv2ny7HKWtxFH9k0kNEY8HKCEd5Gy8ui2P66DRsrE8Wz9MkuON7w8oLZ"/>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f0f3ff] dark:bg-slate-950 flex flex-col py-6 px-4 gap-4 pt-20">
+<div class="flex items-center gap-3 px-2 mb-6">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<p class="font-manrope font-bold text-[#091C35] leading-tight">St. Jude Academy</p>
+<p class="text-xs text-on-surface-variant">Tax Office</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-lg transition-all duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter text-sm font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-lg transition-all duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-inter text-sm font-medium">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-[#d6e3ff] dark:bg-[#1868DB]/20 text-[#1868DB] font-semibold rounded-lg transition-all duration-150" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-inter text-sm font-medium">Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-lg transition-all duration-150" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-inter text-sm font-medium">Withholding</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-lg transition-all duration-150" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-inter text-sm font-medium">Archive</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-primary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm shadow-lg shadow-primary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                Record Tax Payment
+            </button>
+<a class="flex items-center gap-3 px-3 py-2 mt-4 text-[#424753] dark:text-slate-400 hover:bg-[#d6e3ff]/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-inter text-sm font-medium">Help Center</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 pt-24 px-8 pb-12">
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div class="max-w-2xl">
+<div class="flex items-center gap-3 mb-2">
+<div class="p-2 bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl">gavel</span>
+</div>
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface">Tax &amp; Compliance</h1>
+</div>
+<p class="text-on-surface-variant text-lg">Manage institutional tax filings, monitor VAT liabilities, and track educational sector deductions for Tenant: <span class="font-mono text-sm bg-surface-container px-2 py-0.5 rounded">TENANT_ID_4829</span></p>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-high text-primary px-6 py-3 rounded-xl font-bold text-sm hover:brightness-95 transition-all">Export Tax Summary</button>
+<button class="bg-surface-container-high text-primary px-6 py-3 rounded-xl font-bold text-sm hover:brightness-95 transition-all">Print History</button>
+</div>
+</div>
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="bg-surface-container-lowest p-6 rounded-full shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-on-surface-variant">account_balance_wallet</span>
+<span class="text-xs font-mono bg-surface-container text-on-surface-variant px-2 py-1 rounded">YTD 2024</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium mb-1">Taxable Income</p>
+<h3 class="text-2xl font-black text-on-surface">$1,482,000.00</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-full shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-on-surface-variant">calculate</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium mb-1">Estimated Liability</p>
+<h3 class="text-2xl font-black text-on-surface">$296,400.00</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-full shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium mb-1">Total Tax Paid</p>
+<h3 class="text-2xl font-black text-primary">$150,000.00</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-full shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-error">warning</span>
+</div>
+<p class="text-sm text-on-surface-variant font-medium mb-1">Balance Due</p>
+<h3 class="text-2xl font-black text-error">$146,400.00</h3>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Tabs & Main Tables -->
+<div class="col-span-12 lg:col-span-8">
+<!-- Custom Tabs Navigation -->
+<div class="flex gap-8 border-b border-outline-variant/20 mb-8">
+<button class="pb-4 text-primary border-b-2 border-primary font-bold transition-all">Overview</button>
+<button class="pb-4 text-on-surface-variant font-medium hover:text-on-surface transition-all">Payment History</button>
+<button class="pb-4 text-on-surface-variant font-medium hover:text-on-surface transition-all">Deductions</button>
+</div>
+<!-- Tab Content: Overview -->
+<div class="space-y-8">
+<!-- Quarterly Estimates Bento Section -->
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-surface-container-low p-8 rounded-full col-span-2 relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="text-xl font-bold mb-6">Quarterly Estimate Progress (Q3)</h4>
+<div class="flex items-center gap-6">
+<div class="flex-1 h-3 bg-surface rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%] rounded-full"></div>
+</div>
+<span class="text-lg font-bold">65% Target</span>
+</div>
+<p class="mt-4 text-on-surface-variant text-sm">Next filing deadline: <span class="font-bold text-on-surface">September 30, 2024</span></p>
+</div>
+<div class="absolute -right-12 -bottom-12 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+</div>
+<!-- Panel: VAT -->
+<div class="bg-surface-container-lowest border border-outline-variant/10 p-6 rounded-full">
+<div class="flex items-center justify-between mb-4">
+<h5 class="font-bold">VAT Summary</h5>
+<span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between">
+<span class="text-sm text-on-surface-variant">Output Tax</span>
+<span class="text-sm font-bold">$12,400</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm text-on-surface-variant">Input Tax Credit</span>
+<span class="text-sm font-bold text-primary">-$8,200</span>
+</div>
+<div class="pt-3 border-t border-dashed border-outline-variant flex justify-between">
+<span class="text-sm font-bold">Net Payable</span>
+<span class="text-sm font-black text-on-surface">$4,200</span>
+</div>
+</div>
+</div>
+<!-- Panel: Withholding -->
+<div class="bg-surface-container-lowest border border-outline-variant/10 p-6 rounded-full">
+<div class="flex items-center justify-between mb-4">
+<h5 class="font-bold">Withholding Tax</h5>
+<span class="material-symbols-outlined text-on-surface-variant">assured_workload</span>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between">
+<span class="text-sm text-on-surface-variant">Payroll WHT</span>
+<span class="text-sm font-bold">$45,000</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm text-on-surface-variant">Vendor WHT</span>
+<span class="text-sm font-bold">$12,500</span>
+</div>
+<div class="pt-3 border-t border-dashed border-outline-variant flex justify-between">
+<span class="text-sm font-bold">Total Remittance</span>
+<span class="text-sm font-black text-on-surface">$57,500</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Payment History Table -->
+<div class="bg-surface-container-lowest rounded-full overflow-hidden shadow-sm">
+<div class="p-6 flex justify-between items-center border-b border-outline-variant/10">
+<h4 class="font-bold">Recent Payment History</h4>
+<div class="flex gap-2">
+<div class="bg-surface p-2 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">search</span>
+<input class="bg-transparent border-none p-0 text-sm focus:ring-0 w-32" placeholder="Search receipt..." type="text"/>
+</div>
+<button class="p-2 hover:bg-surface rounded-lg"><span class="material-symbols-outlined text-sm">filter_list</span></button>
+</div>
+</div>
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+<tr>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Period</th>
+<th class="px-6 py-4">Amount</th>
+<th class="px-6 py-4">Receipt #</th>
+<th class="px-6 py-4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr>
+<td class="px-6 py-4 text-sm">Aug 12, 2024</td>
+<td class="px-6 py-4 text-sm font-medium">Q2 2024</td>
+<td class="px-6 py-4 text-sm font-bold">$50,000</td>
+<td class="px-6 py-4 text-sm font-mono">TX-882194</td>
+<td class="px-6 py-4 text-sm">
+<span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold uppercase">Paid</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Jul 15, 2024</td>
+<td class="px-6 py-4 text-sm font-medium">VAT Jun '24</td>
+<td class="px-6 py-4 text-sm font-bold">$12,400</td>
+<td class="px-6 py-4 text-sm font-mono">TX-881022</td>
+<td class="px-6 py-4 text-sm">
+<span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold uppercase">Paid</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Sep 01, 2024</td>
+<td class="px-6 py-4 text-sm font-medium">WHT Aug '24</td>
+<td class="px-6 py-4 text-sm font-bold">$8,900</td>
+<td class="px-6 py-4 text-sm font-mono">Pending</td>
+<td class="px-6 py-4 text-sm">
+<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Sidebar Context -->
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Compliance Calendar -->
+<div class="bg-surface-container-lowest p-8 rounded-full border border-outline-variant/10 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h4 class="text-xl font-bold">Tax Calendar</h4>
+<button class="text-primary text-sm font-bold">View Full</button>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4 items-start">
+<div class="flex flex-col items-center bg-error-container text-error px-3 py-2 rounded-xl min-w-[50px]">
+<span class="text-xs font-bold">SEP</span>
+<span class="text-xl font-black">15</span>
+</div>
+<div>
+<h5 class="font-bold text-sm">Payroll Tax Filing</h5>
+<p class="text-xs text-on-surface-variant">Mandatory monthly remittance for all employees.</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex flex-col items-center bg-primary-container text-white px-3 py-2 rounded-xl min-w-[50px]">
+<span class="text-xs font-bold">SEP</span>
+<span class="text-xl font-black">30</span>
+</div>
+<div>
+<h5 class="font-bold text-sm">Q3 Corporate Estimate</h5>
+<p class="text-xs text-on-surface-variant">Quarterly institutional tax estimated payment due.</p>
+</div>
+</div>
+<div class="flex gap-4 items-start opacity-50">
+<div class="flex flex-col items-center bg-surface-container text-on-surface-variant px-3 py-2 rounded-xl min-w-[50px]">
+<span class="text-xs font-bold">OCT</span>
+<span class="text-xl font-black">10</span>
+</div>
+<div>
+<h5 class="font-bold text-sm">VAT Monthly Returns</h5>
+<p class="text-xs text-on-surface-variant">Service and sales tax documentation window opens.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Deduction Checklist -->
+<div class="bg-surface-container-lowest p-8 rounded-full border border-outline-variant/10 shadow-sm">
+<h4 class="text-xl font-bold mb-6">Eligible Deductions</h4>
+<div class="space-y-4">
+<label class="flex items-center gap-4 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Educational Equipment Upgrades</span>
+</label>
+<label class="flex items-center gap-4 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Staff Professional Development</span>
+</label>
+<label class="flex items-center gap-4 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Low-Income Scholarship Fund</span>
+</label>
+<label class="flex items-center gap-4 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Campus Maintenance &amp; Repairs</span>
+</label>
+</div>
+<button class="mt-8 w-full border border-primary text-primary py-3 rounded-xl font-bold text-sm hover:bg-primary-container/10 transition-all">Claim New Deduction</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal: Record Tax Payment (Simplified Layout View) -->
+<!-- This is a floating representation of the modal mentioned in the prompt -->
+<div class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6" style="display: none;">
+<div class="bg-surface-container-lowest w-full max-w-xl rounded-full shadow-2xl overflow-hidden">
+<div class="p-8 border-b border-outline-variant/10 flex justify-between items-center">
+<div>
+<h2 class="text-2xl font-black">Record Tax Payment</h2>
+<p class="text-on-surface-variant text-sm">Ensure all financial records match the bank statement.</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full"><span class="material-symbols-outlined">close</span></button>
+</div>
+<form action="POST" class="p-8 space-y-6">
+<!-- CSRF Token Mock -->
+<input name="csrf_token" type="hidden" value="abc123456789def"/>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant px-1">Payment Date*</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 py-3" required="" type="date"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant px-1">Tax Period*</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 py-3" required="">
+<option>Q3 2024</option>
+<option>Q4 2024</option>
+<option>VAT Monthly Sep</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant px-1">Amount (USD)*</label>
+<div class="relative">
+<span class="absolute left-4 top-3.5 text-on-surface-variant">$</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 py-3 pl-8" min="0.01" placeholder="0.00" required="" step="0.01" type="number"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant px-1">Payment Method</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 py-3">
+<option>ACH Transfer</option>
+<option>Wire Transfer</option>
+<option>Check</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant px-1">Receipt/Reference*</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 py-3" placeholder="TX-XXXXXX" required="" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant px-1">Notes</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/40 py-3" placeholder="Additional details for audit trail..." rows="3"></textarea>
+</div>
+<div class="pt-4 flex gap-4">
+<button class="flex-1 bg-surface-container-high py-4 rounded-xl font-bold" type="button">Cancel</button>
+<button class="flex-1 bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/25" type="submit">Confirm Payment</button>
+</div>
+</form>
+</div>
+</div>
+</body></html>

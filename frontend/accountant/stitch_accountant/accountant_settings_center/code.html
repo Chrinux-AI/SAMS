@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings Hub | LedgerAtelier SAMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#e7b4ff",
+                    "surface-container": "#e7eeff",
+                    "outline": "#727785",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#ffaa08",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#fcebff",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9ff",
+                    "on-secondary-fixed": "#291800",
+                    "tertiary": "#8120b5",
+                    "primary-container": "#1868db",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d6e3ff",
+                    "tertiary-fixed": "#f5d9ff",
+                    "on-secondary": "#ffffff",
+                    "primary": "#0050b2",
+                    "on-primary-container": "#ecefff",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#424753",
+                    "on-primary-fixed": "#001a43",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#ffb954",
+                    "on-tertiary-fixed-variant": "#7100a5",
+                    "inverse-surface": "#20314b",
+                    "surface-dim": "#cadbfc",
+                    "primary-fixed-dim": "#aec6ff",
+                    "on-primary-fixed-variant": "#004397",
+                    "surface-container-high": "#dfe8ff",
+                    "inverse-primary": "#aec6ff",
+                    "on-tertiary-fixed": "#30004a",
+                    "surface-container-highest": "#d6e3ff",
+                    "outline-variant": "#c2c6d6",
+                    "on-surface": "#091c35",
+                    "on-background": "#091c35",
+                    "surface-bright": "#f9f9ff",
+                    "primary-fixed": "#d8e2ff",
+                    "secondary": "#835500",
+                    "on-secondary-container": "#694300",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#9c40d0",
+                    "surface-tint": "#0059c5",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#ecf0ff",
+                    "on-secondary-fixed-variant": "#633f00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6e3ff; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- PHP Placeholder Configuration -->
+<!-- <?php require_once '../includes/config.php'; ?> -->
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low flex flex-col py-8 space-y-2 z-40 transition-all duration-300 ease-in-out">
+<div class="px-6 mb-8">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">account_balance</span>
+</div>
+<h2 class="font-manrope font-extrabold text-blue-700 text-lg">LedgerAtelier</h2>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 opacity-70">School Administration System</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-3 space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 bg-surface-container-highest text-blue-800 font-semibold rounded-r-full transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">payments</span>
+<span>Financial</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-blue-600 hover:bg-white/50 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+<span>Tax</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-blue-600 hover:bg-white/50 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">account_tree</span>
+<span>Workflow</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-blue-600 hover:bg-white/50 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span>Notifications</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-blue-600 hover:bg-white/50 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-blue-600 hover:bg-white/50 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">store</span>
+<span>Vendors</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-blue-600 hover:bg-white/50 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">account_balance</span>
+<span>Banking</span>
+</a>
+</nav>
+<div class="px-6 pt-4 mt-auto">
+<div class="p-4 bg-surface-container-highest rounded-xl">
+<p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Accountant View</p>
+<div class="flex items-center gap-2">
+<img alt="Accountant Profile" class="w-8 h-8 rounded-full border border-primary/20" data-alt="Professional headshot of a middle-aged female accountant in a business suit with a friendly and confident expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIe-L1_QVTrS4Nfgs4WHcmXtOZrzMQlL0Rm6_0ZaqIUJanhROCCKMd1fYjTR0FwObiwHCNuLTyNwP9QlKsRCyrVB_VAUMPGIResQE2IfV_75VC2Wj129WD-7uqCqkW9zTKtczrWd2-Z2GEDPqGf0VuLBCdv3PtX8MYmqQnBcRhfkiQ1JFiL9I97TVLBBT6j_lrkh0B-yEIjMIHwKTcOE7SGRLFJdpDJCX47CEA57PLZh_XdUGyxzxZ2OaJmGasTriooAMrKYXMF3tP"/>
+<span class="text-sm font-medium">Sarah Miller</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen pb-20">
+<!-- Top App Bar -->
+<header class="w-full h-16 sticky top-0 z-30 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-8 border-b border-outline-variant/15">
+<div class="flex items-center gap-4">
+<h1 class="text-2xl font-headline font-bold text-on-surface tracking-tight">Settings Hub</h1>
+<span class="h-6 w-[1px] bg-outline-variant/30"></span>
+<span class="text-sm text-on-surface-variant">Financial Workflows &amp; Compliance</span>
+</div>
+<div class="flex items-center space-x-4">
+<button class="p-2 text-slate-500 hover:bg-blue-50/50 rounded-full transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-blue-50/50 rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-blue-50/50 rounded-full transition-colors">
+<span class="material-symbols-outlined">apps</span>
+</button>
+</div>
+</header>
+<div class="max-w-6xl mx-auto p-8">
+<form action="save_settings.php" method="POST">
+<!-- CSRF Token Placeholder -->
+<input name="csrf_token" type="hidden" value="token_placeholder_12345"/>
+<!-- Bento Grid Layout for Sections -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- 1. Financial Settings Card (Medium span) -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<h3 class="text-xl font-headline font-bold">Financial Settings</h3>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Currency</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all outline-none" type="text" value="USD ($)"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Fiscal Start Month</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all outline-none">
+<option>January</option>
+<option selected="">July</option>
+<option>September</option>
+</select>
+</div>
+<div class="space-y-2 col-span-1">
+<label class="text-sm font-semibold text-on-surface-variant block mb-3">Accounting Method</label>
+<div class="flex space-x-6">
+<label class="flex items-center space-x-2 cursor-pointer group">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary/40" name="accounting_method" type="radio" value="accrual"/>
+<span class="text-sm group-hover:text-primary transition-colors">Accrual</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer group">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary/40" name="accounting_method" type="radio" value="cash"/>
+<span class="text-sm group-hover:text-primary transition-colors">Cash</span>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Rounding Policy</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all outline-none">
+<option>Standard (0.5 up)</option>
+<option>Floor (Always down)</option>
+<option>Ceiling (Always up)</option>
+</select>
+</div>
+</div>
+</section>
+<!-- 2. Tax Settings Card (Small span) -->
+<section class="col-span-12 lg:col-span-4 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">percent</span>
+<h3 class="text-xl font-headline font-bold">Tax Settings</h3>
+</div>
+<div class="space-y-5">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Base Tax Rate %</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-4 pr-10 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white outline-none" step="0.01" type="number" value="15.00"/>
+<span class="absolute right-4 top-3 text-on-surface-variant">%</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">VAT / GST %</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-4 pr-10 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white outline-none" step="0.1" type="number" value="7.5"/>
+<span class="absolute right-4 top-3 text-on-surface-variant">%</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Current Tax Year</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white outline-none">
+<option>2023-2024</option>
+<option selected="">2024-2025</option>
+<option>2025-2026</option>
+</select>
+</div>
+</div>
+</section>
+<!-- 3. Workflow & Compliance (Large Horizontal) -->
+<section class="col-span-12 bg-white/60 backdrop-blur-md p-8 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+<h3 class="text-xl font-headline font-bold">Workflow &amp; Approval Settings</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-semibold text-sm">Expense Approval</p>
+<p class="text-xs text-on-surface-variant">Required for all outflows</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-semibold text-sm">Budget Approval</p>
+<p class="text-xs text-on-surface-variant">Audit trail for new budgets</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Approval Threshold ($)</label>
+<div class="relative">
+<span class="absolute left-4 top-3 text-on-surface-variant">$</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-8 pr-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white outline-none" type="number" value="5000"/>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 italic">Amounts above this require Senior Accountant signature.</p>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Approval Chain (Email List)</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-white outline-none resize-none" rows="3">controller@sams.edu, principal@sams.edu, audit@sams.edu</textarea>
+</div>
+</div>
+</section>
+<!-- 4. Notifications & 5. Reports (Twin Small Cards) -->
+<section class="col-span-12 lg:col-span-6 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<h3 class="text-xl font-headline font-bold">Alert Preferences</h3>
+</div>
+<div class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<label class="flex items-center space-x-3 p-3 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary/40 rounded" type="checkbox"/>
+<span class="text-sm font-medium">Pending Approvals</span>
+</label>
+<label class="flex items-center space-x-3 p-3 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary/40 rounded" type="checkbox"/>
+<span class="text-sm font-medium">Overdue Fees</span>
+</label>
+<label class="flex items-center space-x-3 p-3 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary/40 rounded" type="checkbox"/>
+<span class="text-sm font-medium">Budget Alerts</span>
+</label>
+<label class="flex items-center space-x-3 p-3 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary/40 rounded" type="checkbox"/>
+<span class="text-sm font-medium">Audit Flags</span>
+</label>
+</div>
+<div class="space-y-2 mt-4">
+<label class="text-sm font-semibold text-on-surface-variant">Notification Frequency</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none">
+<option>Real-time Push</option>
+<option selected="">Daily Digest</option>
+<option>Weekly Summary</option>
+</select>
+</div>
+</div>
+</section>
+<section class="col-span-12 lg:col-span-6 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">assessment</span>
+<h3 class="text-xl font-headline font-bold">Report Defaults</h3>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Default Report Type</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none">
+<option selected="">Balance Sheet</option>
+<option>Profit &amp; Loss</option>
+<option>Cash Flow Projection</option>
+<option>Aged Payables</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Default Date Range</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none">
+<option>Last Month</option>
+<option selected="">Last Quarter</option>
+<option>Fiscal Year-to-Date</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant">Default Recipients</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/40 outline-none" placeholder="board-reports@sams.edu" type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. Vendors & Categories (Full Width Table) -->
+<section class="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant/10 overflow-hidden shadow-sm">
+<div class="p-8 flex justify-between items-center border-b border-outline-variant/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">store</span>
+<h3 class="text-xl font-headline font-bold">Active Vendors</h3>
+</div>
+<button class="bg-primary-container text-white px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md" type="button">
+<span class="material-symbols-outlined text-sm">add</span>
+                                Add New Vendor
+                            </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-on-surface-variant text-xs font-bold uppercase tracking-widest">
+<tr>
+<th class="px-8 py-4">Vendor Name</th>
+<th class="px-8 py-4">Category</th>
+<th class="px-8 py-4">Payment Terms</th>
+<th class="px-8 py-4">Status</th>
+<th class="px-8 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-8 py-4 font-semibold">EduSupply Co.</td>
+<td class="px-8 py-4">Academic Supplies</td>
+<td class="px-8 py-4">Net 30</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">ACTIVE</span>
+</td>
+<td class="px-8 py-4 text-right">
+<div class="flex justify-end space-x-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors" type="button"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-error transition-colors" type="button"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-8 py-4 font-semibold">Global Tech Solutions</td>
+<td class="px-8 py-4">IT Services</td>
+<td class="px-8 py-4">Immediate</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">ACTIVE</span>
+</td>
+<td class="px-8 py-4 text-right">
+<div class="flex justify-end space-x-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors" type="button"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-error transition-colors" type="button"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-8 py-4 font-semibold">Premier Maintenance</td>
+<td class="px-8 py-4">Facilities</td>
+<td class="px-8 py-4">Net 15</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-container-highest text-slate-500">INACTIVE</span>
+</td>
+<td class="px-8 py-4 text-right">
+<div class="flex justify-end space-x-2">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors" type="button"><span class="material-symbols-outlined text-xl">edit</span></button>
+<button class="p-1.5 text-slate-400 hover:text-error transition-colors" type="button"><span class="material-symbols-outlined text-xl">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- 7. Cost Centers & Bank Accounts (Two Column Grid) -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-bold text-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">hub</span>
+                                    Cost Centers
+                                </h4>
+<button class="text-primary text-xs font-bold flex items-center hover:underline" type="button">
+<span class="material-symbols-outlined text-sm mr-1">add_circle</span> ADD
+                                </button>
+</div>
+<ul class="space-y-2">
+<li class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
+<span class="text-sm font-medium">101 - Primary School</span>
+<span class="text-xs text-on-surface-variant font-mono">CC_PRI_101</span>
+</li>
+<li class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
+<span class="text-sm font-medium">202 - Secondary School</span>
+<span class="text-xs text-on-surface-variant font-mono">CC_SEC_202</span>
+</li>
+<li class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
+<span class="text-sm font-medium">505 - Administration</span>
+<span class="text-xs text-on-surface-variant font-mono">CC_ADM_505</span>
+</li>
+</ul>
+</section>
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-bold text-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">account_balance</span>
+                                    Linked Bank Accounts
+                                </h4>
+<button class="text-primary text-xs font-bold flex items-center hover:underline" type="button">
+<span class="material-symbols-outlined text-sm mr-1">add_circle</span> ADD
+                                </button>
+</div>
+<ul class="space-y-2">
+<li class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">shield</span>
+<span class="text-sm font-medium">Operational Checking</span>
+</div>
+<span class="text-xs text-on-surface-variant font-mono">**** 4492</span>
+</li>
+<li class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">savings</span>
+<span class="text-sm font-medium">Tuition Savings</span>
+</div>
+<span class="text-xs text-on-surface-variant font-mono">**** 1108</span>
+</li>
+<li class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">credit_card</span>
+<span class="text-sm font-medium">Corporate Visa</span>
+</div>
+<span class="text-xs text-on-surface-variant font-mono">**** 9091</span>
+</li>
+</ul>
+</section>
+</div>
+</div>
+<!-- Global Action Footer -->
+<div class="fixed bottom-0 left-64 right-0 p-6 bg-surface-container-lowest/80 backdrop-blur-lg border-t border-outline-variant/10 flex justify-end items-center z-20">
+<div class="mr-auto flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-2 text-green-600">verified</span>
+                        Settings automatically validated for 2024 compliance.
+                    </div>
+<div class="flex space-x-4">
+<button class="px-6 py-2.5 text-on-surface hover:bg-surface-container-high rounded-lg font-semibold transition-colors" type="button">
+                            Discard Changes
+                        </button>
+<button class="px-8 py-2.5 bg-gradient-to-r from-primary to-primary-container text-white rounded-lg font-bold shadow-lg hover:shadow-primary/30 transition-all active:scale-95" type="submit">
+                            Save Global Changes
+                        </button>
+</div>
+</div>
+</form>
+</div>
+</main>
+<!-- Contextual FAB Suppression: FAB not rendered on settings screens as per guidelines -->
+<!-- Material Symbols Injection Logic handled by header -->
+</body></html>

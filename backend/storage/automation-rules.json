@@ -1,0 +1,46 @@
+[
+    {
+        "name": "daily_absent_alert",
+        "type": "absent_alert",
+        "config": [],
+        "enabled": true,
+        "trigger_count": 0,
+        "last_triggered": null,
+        "created": "2026-03-12T10:30:18-04:00"
+    },
+    {
+        "name": "chronic_absenteeism_check",
+        "type": "chronic_absenteeism",
+        "config": {
+            "threshold": 10,
+            "days": 30
+        },
+        "enabled": true,
+        "trigger_count": 0,
+        "last_triggered": null,
+        "created": "2026-03-12T10:30:19-04:00"
+    },
+    {
+        "name": "late_pattern_alert",
+        "type": "late_pattern",
+        "config": {
+            "days": 14,
+            "min_late": 3
+        },
+        "enabled": true,
+        "trigger_count": 0,
+        "last_triggered": null,
+        "created": "2026-03-12T10:30:19-04:00"
+    },
+    {
+        "name": "system_health_monitor",
+        "type": "system_alert",
+        "config": {
+            "threshold": 50
+        },
+        "enabled": true,
+        "trigger_count": 0,
+        "last_triggered": null,
+        "created": "2026-03-12T10:30:19-04:00"
+    }
+]

@@ -1,0 +1,218 @@
+{
+  "appName": "School Attendance System",
+  "locale": "en",
+  "languageName": "English",
+
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset"
+  },
+
+  "navigation": {
+    "dashboard": "Dashboard",
+    "attendance": "Attendance",
+    "students": "Students",
+    "reports": "Reports",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "help": "Help"
+  },
+
+  "attendance": {
+    "mark": "Mark Attendance",
+    "view": "View Attendance",
+    "edit": "Edit Attendance",
+    "status": {
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "excused": "Excused"
+    },
+    "recordedBy": "Recorded by",
+    "recordedAt": "Recorded at",
+    "noRecords": "No attendance records found",
+    "markAll": "Mark All",
+    "markAllPresent": "Mark All Present",
+    "selectClass": "Select Class",
+    "selectDate": "Select Date",
+    "selectPeriod": "Select Period",
+    "attendanceRate": "Attendance Rate",
+    "totalPresent": "Total Present",
+    "totalAbsent": "Total Absent",
+    "totalLate": "Total Late",
+    "totalExcused": "Total Excused"
+  },
+
+  "students": {
+    "addStudent": "Add Student",
+    "editStudent": "Edit Student",
+    "deleteStudent": "Delete Student",
+    "viewStudent": "View Student",
+    "studentId": "Student ID",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "fullName": "Full Name",
+    "dateOfBirth": "Date of Birth",
+    "gradeLevel": "Grade Level",
+    "enrollmentDate": "Enrollment Date",
+    "guardians": "Guardians",
+    "contactInfo": "Contact Information",
+    "classes": "Classes",
+    "attendanceHistory": "Attendance History",
+    "noStudents": "No students found",
+    "totalStudents": "Total Students",
+    "activeStudents": "Active Students"
+  },
+
+  "reports": {
+    "generateReport": "Generate Report",
+    "reportType": "Report Type",
+    "dateRange": "Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "daily": "Daily Report",
+    "weekly": "Weekly Report",
+    "monthly": "Monthly Report",
+    "custom": "Custom Report",
+    "studentSpecific": "Student-Specific Report",
+    "classSummary": "Class Summary Report",
+    "exportAs": "Export as",
+    "pdf": "PDF",
+    "csv": "CSV",
+    "excel": "Excel",
+    "downloading": "Downloading report...",
+    "generating": "Generating report..."
+  },
+
+  "analytics": {
+    "overview": "Overview",
+    "trends": "Trends",
+    "predictions": "Predictions",
+    "insights": "AI Insights",
+    "behavior": "Behavior Tracking",
+    "anomalies": "Anomalies Detected",
+    "recommendations": "Recommendations",
+    "confidence": "Confidence",
+    "atRisk": "At-Risk Students",
+    "improving": "Improving Students"
+  },
+
+  "notifications": {
+    "notifications": "Notifications",
+    "markAsRead": "Mark as Read",
+    "markAllRead": "Mark All as Read",
+    "newNotification": "New Notification",
+    "noNotifications": "No notifications",
+    "settings": "Notification Settings",
+    "email": "Email Notifications",
+    "sms": "SMS Notifications",
+    "push": "Push Notifications",
+    "inApp": "In-App Notifications"
+  },
+
+  "authentication": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "changePassword": "Change Password",
+    "mfaCode": "MFA Code",
+    "enterMfaCode": "Enter your multi-factor authentication code",
+    "rememberMe": "Remember Me",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "invalidCredentials": "Invalid username or password",
+    "accountLocked": "Account locked due to multiple failed attempts"
+  },
+
+  "errors": {
+    "pageNotFound": "Page Not Found",
+    "unauthorized": "Unauthorized Access",
+    "forbidden": "Access Forbidden",
+    "serverError": "Internal Server Error",
+    "networkError": "Network Error",
+    "validationError": "Validation Error",
+    "requiredField": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidDate": "Invalid date",
+    "passwordTooShort": "Password must be at least 12 characters",
+    "passwordMismatch": "Passwords do not match",
+    "sessionExpired": "Your session has expired. Please login again."
+  },
+
+  "success": {
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "updated": "Updated successfully",
+    "created": "Created successfully",
+    "submitted": "Submitted successfully",
+    "attendanceMarked": "Attendance marked successfully",
+    "reportGenerated": "Report generated successfully",
+    "emailSent": "Email sent successfully",
+    "notificationSent": "Notification sent successfully"
+  },
+
+  "settings": {
+    "generalSettings": "General Settings",
+    "accountSettings": "Account Settings",
+    "privacySettings": "Privacy Settings",
+    "securitySettings": "Security Settings",
+    "notificationPreferences": "Notification Preferences",
+    "language": "Language",
+    "timezone": "Time Zone",
+    "dateFormat": "Date Format",
+    "timeFormat": "Time Format",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+
+  "excuses": {
+    "submitExcuse": "Submit Excuse",
+    "excuseReason": "Excuse Reason",
+    "attachDocument": "Attach Document",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "approveExcuse": "Approve Excuse",
+    "rejectExcuse": "Reject Excuse",
+    "excuseHistory": "Excuse History"
+  },
+
+  "help": {
+    "helpCenter": "Help Center",
+    "tutorials": "Tutorials",
+    "faq": "Frequently Asked Questions",
+    "contactSupport": "Contact Support",
+    "userGuide": "User Guide",
+    "reportIssue": "Report an Issue",
+    "sendFeedback": "Send Feedback"
+  }
+}

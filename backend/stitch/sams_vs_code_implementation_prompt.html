@@ -1,0 +1,40 @@
+# VS Code AI Implementation Prompt: SAMS (School Attendance Management System)
+
+## 1. Context & Objective
+Implement a high-fidelity, production-ready "Operating System for Schools" called **SAMS**. This project is a multi-tenant, AI-powered platform for academic management. You must strictly adhere to the visual and structural patterns defined in the provided blueprint and screenshots.
+
+## 2. Technical Stack Requirements
+- **Frontend:** React with Tailwind CSS.
+- **Icons:** Material Symbols (Rounded).
+- **Typography:** Space Grotesk (Main) and Inter (Secondary).
+- **Styling:** Modular utility classes, responsive grid/flexbox layouts.
+- **Architecture:** Zero Trust security model, role-based access control (RBAC), and a secure AI Copilot execution pipeline.
+
+## 3. Design System (NEURAL_NET_ACADEMY)
+- **Primary Color:** `#00F3FF` (Neon Cyan).
+- **Backgrounds:** Deep Slates (`#0e0e0e`, `#131313`) with glassmorphism effects.
+- **Accents:** Neon Lime for success, Neon Fuchsia for alerts/security.
+- **Visual Style:** Futuristic, "Mainframe" aesthetic with scanline overlays, high-contrast text, and 4px rounded corners.
+
+## 4. Key Implementation Rules
+- **Dashboard-First:** Every role (Admin, Teacher, Student, Parent, etc.) must have a unique, context-adaptive dashboard.
+- **Sidebar Navigation:** Collapsible sidebar with role-specific items and "Quick Actions".
+- **Component Consistency:** Use the standard `TopNavBar`, `SideNavBar`, and `Footer` components across all views.
+- **AI Copilot:** Implement a persistent, collapsible sidebar for the AI Sentinel. It must inherit user permissions and require confirmation for all "write" actions.
+- **Responsiveness:** Full support for Mobile (Adaptive Density) and Desktop (Multi-panel).
+
+## 5. Navigation & Routing
+- **Public:** `/login`, `/register`, `/forgot-password`.
+- **Admin:** `/admin/dashboard`, `/admin/users`, `/admin/classes`, `/admin/analytics`.
+- **Teacher:** `/teacher/dashboard`, `/teacher/attendance`, `/teacher/grading`.
+- **Student:** `/student/dashboard`, `/student/assignments`, `/student/grades`.
+- **Specialized:** `/bursar/finance`, `/librarian/hub`, `/transport/logistics`.
+
+## 6. Development Instructions
+1. **Rewrite for Alignment:** If existing code deviates from the SAMS Core aesthetic or blueprint logic, rewrite it to align perfectly with the provided design system.
+2. **Functional Logic:** Ensure all data tables are sortable/filterable and all modals for CRUD operations are fully functional.
+3. **Interactive States:** Add hover effects, active navigation states, and loading skeletons for all data-heavy views.
+4. **Security Enforcement:** Implement middleware to prevent role-bypass and ensure tenant isolation in all API requests.
+
+## 7. Reference Assets
+Refer to the provided DataStore screenshots ({{DATA:SCREEN:SCREEN_30}}, {{DATA:SCREEN:SCREEN_34}}, {{DATA:SCREEN:SCREEN_36}}, etc.) for exact visual mapping of layouts, card spacing, and component density.

@@ -1,0 +1,55 @@
+[
+    {
+        "id": "c1c3ba6c446a3c57",
+        "channel": "health",
+        "event": "heartbeat",
+        "payload": {
+            "source": "ServiceRestarter"
+        },
+        "timestamp": 1773324131,
+        "datetime": "2026-03-12 10:02:11"
+    },
+    {
+        "id": "c653b084c395d918",
+        "channel": "academic",
+        "event": "attendance_window_active",
+        "payload": {
+            "hour": 10,
+            "start": 7,
+            "end": 16
+        },
+        "timestamp": 1773325819,
+        "datetime": "2026-03-12 10:30:19"
+    },
+    {
+        "id": "5d154be28a76fadf",
+        "channel": "reports",
+        "event": "scheduled_generation",
+        "payload": {
+            "report_type": "daily_attendance"
+        },
+        "timestamp": 1773325819,
+        "datetime": "2026-03-12 10:30:19"
+    },
+    {
+        "id": "8c48eb1177ae2989",
+        "channel": "health",
+        "event": "heartbeat",
+        "payload": {
+            "source": "ServiceRestarter"
+        },
+        "timestamp": 1773325819,
+        "datetime": "2026-03-12 10:30:19"
+    },
+    {
+        "id": "8d14b4d7377b2773",
+        "channel": "os",
+        "event": "cycle_complete",
+        "payload": {
+            "health": 100,
+            "duration": 0.6391
+        },
+        "timestamp": 1773325819,
+        "datetime": "2026-03-12 10:30:19"
+    }
+]

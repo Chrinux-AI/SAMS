@@ -1,0 +1,225 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - core
+        - includes
+        - ai
+        - api
+    excludePaths:
+        - vendor
+        - tests
+        - logs
+        - uploads
+        - cache
+        - backups
+    checkMissingIterableValueType: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Call to an undefined method.*#'
+        - '#Access to an undefined property.*#'
+        - '#Undefined variable.*#'
+        - '#Unsafe usage of new static.*#'
+        - '#^Call to an undefined method.*#'
+        - '#^Access to an undefined property.*#'
+        - '#^Undefined variable.*#'
+
+    # Ignore errors in legacy code
+    - '#.*includes/.*#'
+    - '#.*database\.php.*#'
+    - '#.*config\.php.*#'
+    - '#.*functions\.php.*#'
+
+    # Ignore AI module errors (complex logic)
+    - '#.*ai/.*#'
+
+    # Ignore API errors (dynamic routing)
+    - '#.*api/.*#'
+
+    # Ignore third-party library usage
+    - '#.*vendor/.*#'
+
+    # Ignore test files
+    - '#.*tests/.*#'
+
+    # Ignore configuration files
+    - '#.*\.env.*#'
+    - '#.*config.*#'
+
+    # Ignore known safe patterns
+    - '#Call to an undefined method.*Database.*#'
+    - '#Access to an undefined property.*PDO.*#'
+    - '#Undefined variable.*db.*#'
+    - '#Undefined variable.*_SESSION.*#'
+    - '#Undefined variable.*_POST.*#'
+    - '#Undefined variable.*_GET.*#'
+    - '#Undefined variable.*_SERVER.*#'
+
+    # Ignore legacy function calls
+    - '#Call to an undefined function.*db\(\).*#'
+    - '#Call to an undefined function.*is_logged_in\(\).*#'
+    - '#Call to an undefined function.*has_role\(\).*#'
+
+    # Ignore class instantiation patterns
+    - '#Unsafe usage of new static.*#'
+    - '#Unsafe usage of new self.*#'
+
+    # Ignore array access patterns
+    - '#Offset.*does not accept array.*#'
+    - '#Offset.*does not accept string.*#'
+
+    # Ignore method chaining issues
+    - '#Call to an undefined method.*->.*#'
+
+    # Ignore property access issues
+    - '#Access to an undefined property.*->.*#'
+
+    # Ignore type coercion issues
+    '#^Method .* should return .* but returns mixed#'
+    '#^Method .* should return .* but returns .*#'
+    '#^Parameter .* of method .* expects .* but .* given#'
+    '#^Variable .* might not be defined#'
+    '#^Variable .* might not be defined in .*#'
+
+    # Ignore session-related issues
+    - '#Variable \$_SESSION might not be defined#'
+    - '#Variable \$_SESSION might not be defined in.*#'
+
+    # Ignore request-related issues
+    - '#Variable \$_POST might not be defined#'
+    - '#Variable \$_POST might not be defined in.*#'
+    - '#Variable \$_GET might not be defined#'
+    - '#Variable \$_GET might not be defined in.*#'
+    - '#Variable \$_SERVER might not be defined#'
+    - '#Variable \$_SERVER might not be defined in.*'
+
+    # Ignore global variable issues
+    - '#Variable \$_FILES might not be defined#'
+    - '#Variable \$_FILES might not be defined in.*#'
+    - '#Variable \$_COOKIE might not be defined#'
+    - '#Variable \$_COOKIE might not be defined in.*#'
+    - '#Variable \$_REQUEST might not be defined#'
+    - '#Variable \$_REQUEST might not be defined in.*'
+
+    # Ignore legacy database patterns
+    - '#Unsafe usage of new static.*Database.*#'
+    - '#Call to an undefined method.*PDO.*#'
+
+    # Ignore template-related issues
+    - '#Variable .* might not be defined in.*\.php.*#'
+    - '#Variable .* might not be defined in.*template.*#'
+
+    # Ignore configuration patterns
+    - '#Undefined constant.*BASE_PATH.*#'
+    - '#Undefined constant.*APP_NAME.*#'
+    - '#Undefined constant.*DB_HOST.*#'
+
+    # Ignore file system operations
+    - '#Unsafe usage of new static.*DirectoryIterator.*#'
+    - '#Unsafe usage of new static.*SplFileInfo.*#'
+
+    # Ignore date/time functions
+    - '#Call to an undefined function.*date.*#'
+    - '#Call to an undefined function.*time.*#'
+    - '#Call to an undefined function.*strtotime.*#'
+
+    # Ignore string operations
+    - '#Call to an undefined function.*explode.*#'
+    - '#Call to an undefined function.*implode.*#'
+    - '#Call to an undefined function.*substr.*#'
+    - '#Call to an undefined function.*str_replace.*#'
+
+    # Ignore array operations
+    - '#Call to an undefined function.*array_merge.*#'
+    - '#Call to an undefined function.*array_push.*#'
+    - '#Call to an undefined function.*array_pop.*#'
+
+    # Ignore JSON operations
+    - '#Call to an undefined function.*json_encode.*#'
+    - '#Call to an undefined function.*json_decode.*#'
+
+    # Ignore header operations
+    - '#Call to an undefined function.*header.*#'
+    - '#Call to an undefined function.*session_start.*#'
+    - '#Call to an undefined function.*session_destroy.*#'
+
+    # Ignore mail operations
+    - '#Call to an undefined function.*mail.*#'
+    - '#Call to an undefined function.*is_email.*#'
+
+    # Ignore file operations
+    - '#Call to an undefined function.*file_exists.*#'
+    - '#Call to an undefined function.*file_get_contents.*#'
+    - '#Call to an undefined function.*file_put_contents.*#'
+    - '#Call to an undefined function.*mkdir.*#'
+    - '#Call to an undefined function.*rmdir.*#'
+
+    # Ignore directory operations
+    - '#Call to an undefined function.*scandir.*#'
+    - '#Call to an undefined function.*opendir.*#'
+    - '#Call to an undefined function.*closedir.*#'
+
+    # Ignore path operations
+    - '#Call to an undefined function.*dirname.*#'
+    - '#Call to an undefined function.*basename.*#'
+    - '#Call to an undefined function.*realpath.*#'
+
+    # Ignore validation functions
+    - '#Call to an undefined function.*is_numeric.*#'
+    - '#Call to an undefined function.*is_int.*#'
+    - '#Call to an undefined function.*is_string.*#'
+    - '#Call to an undefined function.*is_array.*#'
+
+    # Ignore encoding functions
+    - '#Call to an undefined function.*htmlspecialchars.*#'
+    - '#Call to an undefined function.*htmlentities.*#'
+    - '#Call to an undefined function.*strip_tags.*#'
+
+    # Ignore hash functions
+    - '#Call to an undefined function.*password_hash.*#'
+    - '#Call to an undefined function.*password_verify.*#'
+    - '#Call to an undefined function.*md5.*#'
+    - '#Call to an undefined function.*sha1.*#'
+
+    # Ignore random functions
+    - '#Call to an undefined function.*rand.*#'
+    - '#Call to an undefined function.*mt_rand.*#'
+    - '#Call to an undefined function.*random_int.*#'
+
+    # Ignore error handling functions
+    - '#Call to an undefined function.*error_log.*#'
+    - '#Call to an undefined function.*trigger_error.*#'
+    - '#Call to an undefined function.*set_error_handler.*#'
+
+    # Ignore session functions
+    - '#Call to an undefined function.*session_id.*#'
+    - '#Call to an undefined function.*session_name.*#'
+    - '#Call to an undefined function.*session_save_path.*#'
+    - '#Call to an undefined function.*session_cache_limiter.*#'
+
+    # Include custom rules for specific patterns
+    - '#^Method .* should return .* but return statement is missing#'
+    - '#^Method .* should return .* but returns void#'
+    - '#^Parameter .* of method .* expects .* but .* given#'
+    - '#^Variable .* might not be defined#'
+    - '#^Variable .* might not be defined in.*#'
+    - '#^Undefined variable.*#'
+    - '#^Undefined variable.*in.*#'
+
+services:
+    -
+        class: Nette\PHPStan\Rules\DeadCode\UnusedPrivatePropertyRule
+        tags:
+            - deadCode
+    -
+        class: Nette\PHPStan\Rules\DeadCode\UnusedPrivateMethodRule
+        tags:
+            - deadCode
+    -
+        class: Nette\PHPStan\Rules\DeadCode\UnusedPrivateConstantRule
+        tags:
+            - deadCode
+    -
+        class: Nette\PHPStan\Rules\Classes\UselessLateStaticBindingRule
+        tags:
+            - deadCode

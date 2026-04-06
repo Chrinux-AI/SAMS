@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New User | SAMS Academic Sentinel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#071e27",
+              "surface-container-high": "#e7e8e9",
+              "secondary": "#4c616c",
+              "primary-container": "#1a237e",
+              "on-tertiary-fixed": "#390c00",
+              "surface-tint": "#4c56af",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "error": "#ba1a1a",
+              "primary-fixed-dim": "#bdc2ff",
+              "surface": "#f8f9fa",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-container": "#edeeef",
+              "on-secondary-container": "#526772",
+              "background": "#f8f9fa",
+              "on-secondary-fixed-variant": "#354a53",
+              "outline-variant": "#c6c5d4",
+              "secondary-fixed": "#cfe6f2",
+              "on-error-container": "#93000a",
+              "on-primary-container": "#8690ee",
+              "on-surface": "#191c1d",
+              "inverse-primary": "#bdc2ff",
+              "primary": "#000666",
+              "on-surface-variant": "#454652",
+              "on-secondary": "#ffffff",
+              "tertiary": "#380b00",
+              "on-tertiary-container": "#e17c5a",
+              "inverse-on-surface": "#f0f1f2",
+              "secondary-fixed-dim": "#b4cad6",
+              "on-background": "#191c1d",
+              "surface-container-highest": "#e1e3e4",
+              "inverse-surface": "#2e3132",
+              "secondary-container": "#cfe6f2",
+              "error-container": "#ffdad6",
+              "surface-bright": "#f8f9fa",
+              "on-error": "#ffffff",
+              "outline": "#767683",
+              "primary-fixed": "#e0e0ff",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-dim": "#d9dadb",
+              "on-primary-fixed": "#000767",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "tertiary-container": "#5c1800",
+              "surface-variant": "#e1e3e4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<header class="flex justify-between items-center w-full px-6 py-3 sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm dark:shadow-none font-manrope text-sm">
+<div class="flex items-center gap-8">
+<span class="text-xl font-extrabold text-blue-950 dark:text-white">SAMS</span>
+<div class="hidden md:flex items-center bg-surface-container px-3 py-1.5 rounded-xl">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-64" placeholder="Global Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:text-blue-700 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-600 dark:text-slate-400 hover:text-blue-700 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a professional academic administrator in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3LO5CZfSOt7d53zLODOsu_ozSIv6Ad3P-lP_qtn8IKkOw-utVbMuqq5rI2-K7HLCrD-7llSRyitYHDwOFtmZhfY3BL9nHMYo45B0aw9QLLCQhYTocRqMHdniuuF7teCaNJE1-y9t4-UvaOQjxsvghslh5XNH_sQbeffoshBxaEXVHCSKNiaHPeC5enc3txd2_fKvnpCFqrXs5pTP3Ibtzqi_FlZgvd0dTp947HKU_E8Xpr-3AsVcoKIk8VTnUztNrFI2O4GXsFns"/>
+</div>
+</div>
+</header>
+<main class="flex min-h-[calc(100vh-64px)]">
+<!-- SideNavBar (Shared Component) - Suppressed for focus journey per mandate, but keeping structural space for high-end feel -->
+<aside class="hidden lg:flex flex-col w-64 border-r-0 bg-slate-50 dark:bg-slate-900 h-[calc(100vh-64px)] sticky top-16 p-6">
+<div class="space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-manrope text-sm font-medium">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-blue-900 font-bold text-blue-950 dark:text-white dark:border-blue-400 bg-slate-100">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span class="font-manrope text-sm font-medium">Add User</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-colors">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-manrope text-sm font-medium">Management</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-colors">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-manrope text-sm font-medium">Communication</span>
+</div>
+</div>
+<div class="mt-auto border-t border-outline-variant/20 pt-4">
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 transition-colors">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+<span class="font-manrope text-sm font-medium">Bulk Import</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area: The Canvas -->
+<section class="flex-1 p-8 md:p-12 lg:p-16 bg-background">
+<div class="max-w-4xl mx-auto">
+<!-- Editorial Header -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-semibold mb-2 block">Institutional Registration</span>
+<h1 class="font-headline text-5xl font-extrabold tracking-tight text-primary leading-tight">Create Identity</h1>
+<p class="font-body text-on-surface-variant mt-2 max-w-md">Register new members into the Academic Sentinel ecosystem with hierarchical permissions and institutional credentials.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 rounded-md border border-outline-variant text-primary font-semibold hover:bg-surface-container-low transition-colors">Save Draft</button>
+<button class="px-8 py-2.5 rounded-md btn-primary-gradient text-white font-semibold shadow-lg shadow-primary/20">Finalize</button>
+</div>
+</div>
+<!-- Step Indicator -->
+<nav class="mb-10 flex items-center gap-8 border-b border-outline-variant/30 pb-4">
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-[10px]">01</span>
+<span class="text-sm font-headline uppercase tracking-wider">Personal Profile</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant/40">
+<span class="flex items-center justify-center w-6 h-6 rounded-full border border-outline-variant text-[10px]">02</span>
+<span class="text-sm font-headline uppercase tracking-wider">Role &amp; Tenure</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant/40">
+<span class="flex items-center justify-center w-6 h-6 rounded-full border border-outline-variant text-[10px]">03</span>
+<span class="text-sm font-headline uppercase tracking-wider">Credentials</span>
+</div>
+</nav>
+<!-- Form Canvas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Form Content -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Section: Personal Details -->
+<div class="space-y-6">
+<h2 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+                                Primary Identification
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">First Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline" placeholder="e.g. Julian" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">Last Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline" placeholder="e.g. Thorne" type="text"/>
+</div>
+<div class="md:col-span-2 space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">Email Address</label>
+<input class="w-full bg-surface-container-low border-none rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline" placeholder="j.thorne@sams-academy.edu" type="email"/>
+</div>
+<div class="space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">Date of Birth</label>
+<input class="w-full bg-surface-container-low border-none rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" type="date"/>
+</div>
+<div class="space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">Gender Identity</label>
+<select class="w-full bg-surface-container-low border-none rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 appearance-none">
+<option>Select Option</option>
+<option>Male</option>
+<option>Female</option>
+<option>Non-Binary</option>
+<option>Prefer not to say</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Section: Institutional Role -->
+<div class="space-y-6">
+<h2 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="work_history">work_history</span>
+                                Institutional Designation
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Card Select: Student -->
+<label class="cursor-pointer group">
+<input class="hidden peer" name="role" type="radio"/>
+<div class="h-full p-6 bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary-fixed/10 rounded-xl transition-all flex flex-col items-center text-center gap-4 hover:border-outline-variant shadow-sm">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</div>
+<div>
+<span class="block font-bold text-sm">Student</span>
+<span class="text-[10px] text-on-surface-variant">LMS Access Only</span>
+</div>
+</div>
+</label>
+<!-- Card Select: Teacher -->
+<label class="cursor-pointer group">
+<input checked="" class="hidden peer" name="role" type="radio"/>
+<div class="h-full p-6 bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary-fixed/10 rounded-xl transition-all flex flex-col items-center text-center gap-4 hover:border-outline-variant shadow-sm">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+</div>
+<div>
+<span class="block font-bold text-sm">Educator</span>
+<span class="text-[10px] text-on-surface-variant">Classroom Control</span>
+</div>
+</div>
+</label>
+<!-- Card Select: Staff -->
+<label class="cursor-pointer group">
+<input class="hidden peer" name="role" type="radio"/>
+<div class="h-full p-6 bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary-fixed/10 rounded-xl transition-all flex flex-col items-center text-center gap-4 hover:border-outline-variant shadow-sm">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+</div>
+<div>
+<span class="block font-bold text-sm">Administrator</span>
+<span class="text-[10px] text-on-surface-variant">Full System Access</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Section: Security & Credentials -->
+<div class="space-y-6">
+<h2 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+                                Access Configuration
+                            </h2>
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10 space-y-6">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div>
+<span class="block font-bold text-sm">SSO Integration</span>
+<span class="text-xs text-on-surface-variant">Enable Microsoft/Google authentication</span>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">Staff ID Number</label>
+<input class="w-full bg-surface-container-high border-none rounded-md px-4 py-3 text-sm font-mono text-primary" readonly="" type="text" value="SAMS-2024-8902"/>
+</div>
+<div class="space-y-1.5">
+<label class="font-label text-xs text-on-surface-variant font-bold uppercase">Initial Password</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" type="password" value="••••••••"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant text-sm" data-icon="visibility">visibility</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-8 flex items-center justify-between">
+<button class="flex items-center gap-2 text-primary font-bold hover:translate-x-[-4px] transition-transform">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+                                Previous Step
+                            </button>
+<button class="btn-primary-gradient text-white px-10 py-4 rounded-xl font-bold shadow-xl shadow-primary/30 flex items-center gap-2">
+                                Next: Academic History
+                                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Side Profile Preview (Asymmetric Design Element) -->
+<div class="lg:col-span-4">
+<div class="sticky top-32 space-y-8">
+<div class="bg-surface-container-highest p-8 rounded-full aspect-square flex flex-col items-center justify-center text-center gap-6 border-4 border-white shadow-2xl shadow-primary/5">
+<div class="w-40 h-40 rounded-full bg-surface-container-lowest border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 text-on-surface-variant group hover:border-primary transition-colors cursor-pointer overflow-hidden">
+<span class="material-symbols-outlined text-4xl" data-icon="add_a_photo">add_a_photo</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Upload Avatar</span>
+<img alt="Profile Preview" class="hidden" data-alt="minimalist user avatar placeholder with clean white background and grey silhouette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFDgpyQG53sAYF4pItoNMtuVITg-RSyWGInwOCetRyQqV-eYvLO47FdkYu9zgU-pzJjlIox7pUXYTn1bkRJpSdyA08UO00XJGzeb8KOD5HtNqYFyvX6KfMyiGmupyvwG4C3hiLo-breNMz6e7Pq-gjw25_y8kJYlq5CXPY0jgaW3Qv9_QJFwvOztvJ6a3L3eFhjZStexvjIY7uo_4DYmF5-IqtA26Dwkwbk9KIyLBOGeq3XRYKYVhIITE8au4Ykk5heUygxXAdSLI"/>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-extrabold text-primary">New Member</h3>
+<p class="font-label text-xs uppercase text-on-tertiary-container bg-tertiary-fixed px-3 py-1 rounded-full mt-2 inline-block">Pending Registration</p>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 space-y-4">
+<h4 class="font-bold text-sm text-primary uppercase tracking-tighter">Registration Summary</h4>
+<ul class="space-y-3">
+<li class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Tier</span>
+<span class="font-bold">Standard Professional</span>
+</li>
+<li class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">System Role</span>
+<span class="font-bold">Educator</span>
+</li>
+<li class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Region</span>
+<span class="font-bold">North Campus</span>
+</li>
+</ul>
+<div class="bg-primary-container/10 p-4 rounded-lg border border-primary/10">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+<span class="text-[10px] font-medium leading-tight">New educator accounts trigger an automated welcome sequence and hardware allocation request.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="flex justify-between items-center px-8 py-4 w-full mt-auto bg-slate-50 dark:bg-slate-950 font-manrope text-xs tracking-wide uppercase">
+<div class="text-slate-500 dark:text-slate-400">
+            v2.0.4 © SAMS Academic Sentinel
+        </div>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Help</a>
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Support</a>
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Privacy</a>
+</div>
+</footer>
+</body></html>

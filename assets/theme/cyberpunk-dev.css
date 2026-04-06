@@ -1,0 +1,280 @@
+/**
+ * Cyberpunk Developer Theme — Developer Only
+ * Neon accents, animated gradients, glass panels,
+ * low-latency transitions, GPU-safe animations.
+ */
+
+/* === Base Variables === */
+:root {
+  --cyber-bg: #0a0e1a;
+  --cyber-card: rgba(12, 20, 40, 0.92);
+  --cyber-border: rgba(0, 229, 255, 0.12);
+  --cyber-text: #c0d0e0;
+  --cyber-muted: #4a6080;
+  --cyber-neon-cyan: #00e5ff;
+  --cyber-neon-magenta: #e040fb;
+  --cyber-neon-green: #00ff41;
+  --cyber-neon-orange: #ff6b35;
+  --cyber-neon-yellow: #ffab00;
+  --cyber-glass: rgba(255, 255, 255, 0.04);
+}
+
+/* === GPU-Accelerated Overrides === */
+body {
+  background: var(--cyber-bg) !important;
+  color: var(--cyber-text) !important;
+}
+
+.app-layout {
+  background: var(--cyber-bg) !important;
+}
+
+.main-content {
+  background: var(--cyber-bg) !important;
+}
+
+/* === Glass Panels === */
+.card,
+.eco-card,
+.dev-card,
+.settings-panel,
+.log-section,
+.health-item,
+.mod-section,
+.theme-card,
+.sc {
+  background: var(--cyber-card) !important;
+  border: 1px solid var(--cyber-border) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* === Neon Accent Headers === */
+.top-header,
+.sams-topbar {
+  background: rgba(10, 14, 26, 0.95) !important;
+  border-bottom: 1px solid var(--cyber-border) !important;
+}
+
+/* === Sidebar Neon === */
+.sidebar {
+  background: linear-gradient(180deg, #080c18, #0c1428) !important;
+  border-right: 1px solid var(--cyber-border) !important;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-item.active > a {
+  background: rgba(0, 229, 255, 0.12) !important;
+  border-left: 3px solid var(--cyber-neon-cyan) !important;
+}
+
+/* === Animated Gradient Accents === */
+.score-hero,
+.eco-score-hero,
+.health-hero {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 229, 255, 0.08),
+    rgba(224, 64, 251, 0.06),
+    rgba(0, 255, 65, 0.05)
+  ) !important;
+  border: 1px solid rgba(0, 229, 255, 0.15) !important;
+  animation: cyber-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes cyber-glow {
+  0% {
+    border-color: rgba(0, 229, 255, 0.15);
+  }
+  50% {
+    border-color: rgba(224, 64, 251, 0.2);
+  }
+  100% {
+    border-color: rgba(0, 255, 65, 0.15);
+  }
+}
+
+/* === Neon Buttons === */
+.btn-run,
+.btn-save,
+.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--cyber-neon-cyan),
+    #00b8d4
+  ) !important;
+  color: #000 !important;
+  border: none !important;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  will-change: transform;
+}
+
+.btn-run:hover,
+.btn-save:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 229, 255, 0.3);
+}
+
+/* === Low-Latency Transitions === */
+.dev-card,
+.health-item,
+.mod-chip,
+.settings-tabs a,
+.layer-item {
+  transition: all 0.15s ease !important;
+  will-change: transform, border-color;
+}
+
+.dev-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 25px rgba(0, 229, 255, 0.12) !important;
+}
+
+/* === Status Badges — Neon === */
+.status-badge.status-ok,
+.badge-ok {
+  background: rgba(0, 255, 65, 0.12) !important;
+  color: var(--cyber-neon-green) !important;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
+}
+
+.status-badge.status-warn,
+.badge-warn {
+  background: rgba(255, 170, 0, 0.12) !important;
+  color: var(--cyber-neon-yellow) !important;
+}
+
+.status-badge.status-err {
+  background: rgba(255, 68, 68, 0.12) !important;
+  color: #ff4444 !important;
+}
+
+/* === Settings Tabs Neon === */
+.settings-tabs a.active {
+  color: var(--cyber-neon-cyan) !important;
+  background: rgba(0, 229, 255, 0.08) !important;
+  border-color: rgba(0, 229, 255, 0.2) !important;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+/* === Module Chips === */
+.mod-chip.loaded {
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.25);
+}
+
+/* === Form Inputs — Dark Glass === */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(0, 229, 255, 0.12) !important;
+  color: var(--cyber-text) !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--cyber-neon-cyan) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
+}
+
+/* === Tables — Neon Grid === */
+table th {
+  border-bottom-color: var(--cyber-border) !important;
+}
+
+table td {
+  border-bottom-color: rgba(0, 229, 255, 0.04) !important;
+}
+
+table tr:hover td {
+  background: rgba(0, 229, 255, 0.03);
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cyber-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.35);
+}
+
+/* === Footer === */
+.sams-footer,
+footer {
+  background: rgba(10, 14, 26, 0.95) !important;
+  border-top: 1px solid var(--cyber-border) !important;
+  color: var(--cyber-muted) !important;
+}
+
+/* === GPU-Safe Animation Keyframes === */
+@keyframes cyber-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes cyber-slide-in {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === Card Load Animation === */
+.dev-card,
+.eco-card,
+.health-item {
+  animation: cyber-slide-in 0.3s ease forwards;
+}
+
+.dev-card:nth-child(2) {
+  animation-delay: 0.05s;
+}
+.dev-card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.dev-card:nth-child(4) {
+  animation-delay: 0.15s;
+}
+.dev-card:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.dev-card:nth-child(6) {
+  animation-delay: 0.25s;
+}
+
+/* === Page Title Neon Glow === */
+.page-title-area h1 {
+  background: linear-gradient(
+    135deg,
+    var(--cyber-neon-cyan),
+    var(--cyber-neon-magenta)
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}

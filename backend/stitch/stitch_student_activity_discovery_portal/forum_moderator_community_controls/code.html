@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Forum Moderator Dashboard | SAMS Core</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#e0e0ff",
+              "on-tertiary-container": "#e17c5a",
+              "secondary": "#4c616c",
+              "on-surface-variant": "#454652",
+              "on-primary-fixed": "#000767",
+              "error": "#ba1a1a",
+              "secondary-fixed": "#cfe6f2",
+              "on-secondary": "#ffffff",
+              "secondary-fixed-dim": "#b4cad6",
+              "outline-variant": "#c6c5d4",
+              "tertiary-container": "#5c1800",
+              "tertiary-fixed-dim": "#ffb59d",
+              "on-secondary-fixed": "#071e27",
+              "background": "#f8f9fa",
+              "inverse-primary": "#bdc2ff",
+              "primary": "#000666",
+              "inverse-on-surface": "#f0f1f2",
+              "on-secondary-container": "#526772",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-container-highest": "#e1e3e4",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed-variant": "#354a53",
+              "outline": "#767683",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-container": "#edeeef",
+              "on-error-container": "#93000a",
+              "secondary-container": "#cfe6f2",
+              "surface-bright": "#f8f9fa",
+              "on-tertiary-fixed": "#390c00",
+              "inverse-surface": "#2e3132",
+              "surface-dim": "#d9dadb",
+              "surface-container-low": "#f3f4f5",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-tint": "#4c56af",
+              "on-primary-container": "#8690ee",
+              "surface-variant": "#e1e3e4",
+              "on-error": "#ffffff",
+              "primary-container": "#1a237e",
+              "tertiary-fixed": "#ffdbd0",
+              "tertiary": "#380b00",
+              "on-background": "#191c1d",
+              "surface": "#f8f9fa",
+              "on-surface": "#191c1d",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e7e8e9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .tonal-stacking {
+            background: linear-gradient(180deg, #f3f4f5 0%, #f8f9fa 100%);
+        }
+        .frosted-archive {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased">
+<!-- SideNavBar (Shared Component Execution) -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-slate-50 border-r border-slate-200/50 flex flex-col py-6 z-40">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl primary-gradient flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-blue-950 uppercase tracking-widest leading-none">SAMS Core</h1>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Academic Sentinel</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 pl-4 py-3 my-1 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 my-1 border-l-4 border-blue-900 text-blue-900 font-bold bg-white rounded-r-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forum</span>
+<span>Moderation</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 my-1 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">rule</span>
+<span>Attendance</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 my-1 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Students</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 my-1 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Finance</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 my-1 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span>Library</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 my-1 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto pt-6 border-t border-slate-100">
+<a class="flex items-center gap-3 pl-4 py-3 text-slate-500 hover:bg-blue-50/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 pl-4 py-3 text-error hover:bg-error-container/20 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar (Shared Component Execution) -->
+<header class="fixed top-0 right-0 left-64 z-30 frosted-archive px-8 py-4 flex justify-between items-center">
+<div class="flex items-center gap-6">
+<h2 class="font-headline text-2xl font-extrabold tracking-tight text-blue-950">Forum Dashboard</h2>
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-outline mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search threads, users, or reports..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface leading-none">Admin Sarah</p>
+<p class="text-[10px] text-on-surface-variant font-medium">Head Moderator</p>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" data-alt="Professional portrait of a woman in a business setting with soft natural window lighting and a blurred office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvqFIkmXLn0rFGzM6sv30-QS38rJRs2mrt-jxMsLVyP2RUvXQ4O1pqxXdsJCy5At07AY4mRZmK2lhFSnkH4cuUMGRGD22-J9hyP4ndCnmwJR8gasJ9eVCjWfm8294xXZByujCTvSuIoi4RVViG8nU2eki4bGH32V0iEL9lJZW127P2L48ATMfZoOMWAiruIt0TPiS9YMSq_dTXPV2JI9wLZK1WH9ztcRZA_OEbngvWNuLPPubhd6djZzJFtA54-3lG2n96PFdsc3A"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="mt-20 p-8 space-y-8">
+<!-- Hero Stats Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="col-span-1 md:col-span-2 p-8 rounded-xl bg-primary-container text-white flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<p class="font-label text-xs uppercase tracking-[0.2em] text-on-primary-container/80 mb-2">Community Vitality</p>
+<h3 class="font-headline text-5xl font-extrabold mb-4 tracking-tighter">94.2%</h3>
+<p class="text-sm text-on-primary-container leading-relaxed max-w-xs">Engagement is up by 12% this week. Most discussion is centered around the "Annual Sports Gala" threads.</p>
+</div>
+<div class="mt-6 flex gap-4 relative z-10">
+<button class="px-4 py-2 bg-white/10 hover:bg-white/20 transition-all rounded-lg text-xs font-bold flex items-center gap-2 backdrop-blur-sm">
+<span class="material-symbols-outlined text-sm">trending_up</span> View Analytics
+                        </button>
+</div>
+<!-- Abstract Background Shape -->
+<div class="absolute -bottom-12 -right-12 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-error-container text-on-error-container">
+<span class="material-symbols-outlined">report</span>
+</div>
+<span class="text-xs font-bold text-error">+4 new</span>
+</div>
+<p class="text-3xl font-headline font-extrabold text-on-surface">28</p>
+<p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Pending Reports</p>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1">timer</span> Avg. response: 14m
+                    </div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-secondary-container text-on-secondary-container">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<span class="text-xs font-bold text-blue-600">+112</span>
+</div>
+<p class="text-3xl font-headline font-extrabold text-on-surface">1.4k</p>
+<p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">New Users (MTD)</p>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1">group</span> Total: 12.8k users
+                    </div>
+</div>
+</section>
+<!-- Moderation Queue & Activity Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Moderation Queue Table -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-headline text-lg font-bold text-on-surface">Active Moderation Queue</h3>
+<div class="flex gap-2">
+<button class="text-xs font-bold px-3 py-1.5 rounded-lg border border-outline-variant/30 hover:bg-slate-50 transition-all">Filter</button>
+<button class="text-xs font-bold px-3 py-1.5 rounded-lg border border-outline-variant/30 hover:bg-slate-50 transition-all">Export</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">User / Reported Content</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Reason</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Risk</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50/50 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0">
+<img class="w-full h-full rounded-full object-cover" data-alt="Headshot of a young man with a friendly smile, clean cut, wearing a casual polo shirt against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyvabAzmoQ_75SX6pCIXG9r3D6QoMWPm_x9l1cYJFk_jx5H2JAiyjz6C2V494ndLogPckpDsLs6RqZmPLgPwNnb3nMbb8AFXr0fCNzPcjDKMPI-lOd9JZOzVWwimzLGkd0rDTPRKp_utXICBwGVvqkIrjuOawidIU5hQC1zU-QBMKi-tD8FLlkp5mYcJ8ftQ2CS0ApSio6PLkdNPSznZiLCSA940DHH15IAQQW_a7p7hS71PKLVvntvlO50jBTdFbdGXOEf37tftA"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Alex Jenkins</p>
+<p class="text-xs text-on-surface-variant truncate w-48">"This exam was a total disaster and the teacher is..."</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-600">Disrespectful</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-bold text-on-tertiary-container">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span> Medium
+                                        </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2">
+<button class="p-1.5 text-blue-600 hover:bg-blue-50 rounded"><span class="material-symbols-outlined text-sm">visibility</span></button>
+<button class="p-1.5 text-error hover:bg-error-container/20 rounded"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-slate-50/50 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0">
+<img class="w-full h-full rounded-full object-cover" data-alt="Close up portrait of a young woman with curly hair and glasses, looking thoughtful, studio lighting on soft grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTelTBoSE55dBvaV3-M7l_NsGdExkRAgFbTSp8m0ARgKLllBU-RBe5Cl8Ou7qQCkQxkrMs0QRQHuuz0STDppbYMng4F_w_A5Q_gOTn1mvO_G-v-EO53Yo6FVJfq7xlh_YVNM9GPwt75VcZeeV9jX1EyZI7vqClaDKjvkUq2on3SvgHFMN5CxGIzz_d5f7YwO8mUAusHYrDDk4KqPamg9NR7U1DX80xLjYhic63zImLJFw3ulkgEL3l7xzbIyOk5Ky7INwvJBjmuL8"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Mila Kunis</p>
+<p class="text-xs text-on-surface-variant truncate w-48">Re: Scholarship results leaking? [Link Attached]</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-600">Privacy Violation</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-bold text-error">
+<span class="w-2 h-2 rounded-full bg-error"></span> High
+                                        </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2">
+<button class="p-1.5 text-blue-600 hover:bg-blue-50 rounded"><span class="material-symbols-outlined text-sm">visibility</span></button>
+<button class="p-1.5 text-error hover:bg-error-container/20 rounded"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0">
+<img class="w-full h-full rounded-full object-cover" data-alt="Modern professional portrait of a man in his 30s with a short beard and confident expression, urban setting background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqRiP976joMDihXXmVk9BcYkSx1-NVZt8KNeGAzu-Wf0v7250XpI4pL7bTjU8Okt0_Jnj5x_M5oiT7EDQUMn05U7jOtnwpuV6LdLRtZw0WJT2l8daHy1jgc-RJaZ1-WiyERvNFaz0-ALy_CISHe2K_cUAuXiLlq2C6dzp6sQdNGXDMQgXYyYkmnXcBIwsMx1rfcXmUK_ZC5pojn2tBzRfkYoI3e55V1YZuUNDbWcMhtK3ONNilrazVnwUDsLIK0ZTmoWxitSX8A4Q"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Jordan Peterson</p>
+<p class="text-xs text-on-surface-variant truncate w-48">"Selling exam dumps for 2024 finals, DM me..."</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-600">Spam / Scam</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-bold text-error">
+<span class="w-2 h-2 rounded-full bg-error"></span> High
+                                        </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2">
+<button class="p-1.5 text-blue-600 hover:bg-blue-50 rounded"><span class="material-symbols-outlined text-sm">visibility</span></button>
+<button class="p-1.5 text-error hover:bg-error-container/20 rounded"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-center">
+<button class="text-xs font-extrabold text-blue-900 uppercase tracking-widest hover:underline transition-all">View All Pending Reports</button>
+</div>
+</div>
+<!-- Community Notice Board (Asymmetric Card) -->
+<div class="flex flex-col gap-6">
+<div class="bg-primary text-white p-8 rounded-xl shadow-lg relative overflow-hidden">
+<span class="material-symbols-outlined absolute -top-4 -right-4 text-white/10 text-9xl">push_pin</span>
+<div class="relative z-10">
+<h4 class="font-headline text-xl font-bold mb-4">Community Notice Board</h4>
+<div class="space-y-4">
+<div class="bg-white/10 p-4 rounded-lg border-l-4 border-tertiary-fixed-dim">
+<p class="text-xs font-bold text-tertiary-fixed-dim mb-1 uppercase tracking-wider">Rule #04 Updated</p>
+<p class="text-sm font-medium">No external commercial links in signatures. Effective immediately.</p>
+</div>
+<div class="bg-white/10 p-4 rounded-lg">
+<p class="text-xs font-bold text-blue-200 mb-1 uppercase tracking-wider">System Maintenance</p>
+<p class="text-sm font-medium">Forum will be offline Sunday 02:00 AM for database indexing.</p>
+</div>
+</div>
+<button class="mt-6 w-full py-3 bg-white text-blue-900 rounded-lg text-sm font-bold shadow-md hover:shadow-xl active:scale-95 transition-all">
+                                Post Global Announcement
+                            </button>
+</div>
+</div>
+<!-- User Growth Chart Placeholder -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-4">Report Volume Trend</h4>
+<div class="h-32 flex items-end gap-2 px-2">
+<div class="w-full bg-slate-100 rounded-t h-[40%]"></div>
+<div class="w-full bg-slate-100 rounded-t h-[65%]"></div>
+<div class="w-full bg-slate-100 rounded-t h-[45%]"></div>
+<div class="w-full bg-primary h-[90%] rounded-t"></div>
+<div class="w-full bg-slate-100 rounded-t h-[30%]"></div>
+<div class="w-full bg-slate-100 rounded-t h-[55%]"></div>
+<div class="w-full bg-slate-100 rounded-t h-[20%]"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-bold">
+<span>MON</span>
+<span>THU</span>
+<span>SUN</span>
+</div>
+</div>
+</div>
+</section>
+<!-- User Bans & Restricted Accounts Section -->
+<section class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+<div>
+<h3 class="font-headline text-lg font-bold text-on-surface">Restricted Accounts</h3>
+<p class="text-xs text-on-surface-variant">Manage active bans, shadowbans, and temporary suspensions.</p>
+</div>
+<button class="px-5 py-2 primary-gradient text-white text-sm font-bold rounded-lg shadow-md flex items-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">block</span> Restrict User
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant bg-surface-container-low border-b border-slate-100">
+<th class="px-6 py-4">Account Holder</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Violation History</th>
+<th class="px-6 py-4">Expires</th>
+<th class="px-6 py-4 text-right">Management</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50/50 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young creative professional man in a casual t-shirt, standing outdoors in soft afternoon sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANnFAh9QIq3xXStBQ7RAvqYLYlvOtePJpHGoS5DHSSKmmGXj64qQCqdIhQ8AnQaAq9zDmfa-eEpM1AoFTkebd6HoNzZf6vCpofnl_5gEqhWTkisZw6jBuiGsLuk0sWEXD0GwgPGz9Yudp7Hl8ITQaU-ZUKc-ihrQhQt9nZ0irhBcSOT8zS63cKt52JsvWC-E0nZjPbC3qdrpM1u5t05FwVJr1Xv3KWEvXN6MIPgLghxLOkicmgn45OvwHZIb0q0MEd74_UBBM522M"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">troll_slayer99</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Student ID: 29941</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-error-container text-on-error-container">
+                                        Permanent Ban
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</div>
+</td>
+<td class="px-6 py-4 text-xs font-medium text-on-surface-variant">Never</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-blue-900 hover:underline">Review Appeal</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-slate-50/50 transition-all">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up of a smiling young woman with natural makeup, looking directly at the camera in a modern minimalist home environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5gGze7tt78brpHKzwnQK94S6fCXvFQZb4JJTmNSCXss8Ji7H_ThR-Yqkm8qX8gAF2PkehBAp_13C8tenaz5YFQ05kNHJOPgYXhqN5WfVFgNXaTVb8FIg5yPKdgqjN3zKValM4E6KDnVcZ9DL3jD3mpPM5hS26SFE16s9rQl9UJmN0KptGH9Fs9P4KEVgdFYYxsphinjXCsK89EB2GCG4bVoelafljnaDCOwI5ZRwyImDVfhPAoV-7C3d0QgUVxIcEvmp-mcNURuA"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">study_queen_22</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Student ID: 44102</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-tertiary-fixed text-on-tertiary-fixed">
+                                        Suspended
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-1">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="w-2 h-2 rounded-full bg-slate-200"></span>
+<span class="w-2 h-2 rounded-full bg-slate-200"></span>
+</div>
+</td>
+<td class="px-6 py-4 text-xs font-medium text-on-surface-variant">24h 12m remaining</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-blue-900 hover:underline">Lift Early</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Footer (Shared Component Execution) -->
+<footer class="w-full py-6 px-8 mt-auto flex flex-row justify-between items-center border-t border-slate-200 bg-slate-50">
+<p class="font-['Inter'] text-xs uppercase tracking-tighter text-slate-400">
+                © 2024 Academic Sentinel SAMS. Version 2.4.0-archive
+            </p>
+<div class="flex gap-6">
+<a class="font-['Inter'] text-xs uppercase tracking-tighter text-slate-400 hover:text-blue-700 transition-colors hover:underline" href="#">Support Center</a>
+<a class="font-['Inter'] text-xs uppercase tracking-tighter text-slate-400 hover:text-blue-700 transition-colors hover:underline" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-xs uppercase tracking-tighter text-slate-400 hover:text-blue-700 transition-colors hover:underline" href="#">Terms of Service</a>
+<a class="font-['Inter'] text-xs uppercase tracking-tighter text-slate-400 hover:text-blue-700 transition-colors hover:underline" href="#">Security</a>
+</div>
+</footer>
+</main>
+<!-- FAB Suppression Logic: Not rendering FAB on a Dashboard/Management screen unless specific "New Post" was requested -->
+</body></html>

@@ -1,0 +1,24 @@
+# SAMS Accountant Module: UI/UX & Code Audit Report
+
+## 1. Compliance Score: 88/100
+The implementation is strong, effectively capturing the "Enterprise Professional" aesthetic. The transition to Atlassian-inspired tokens (Atlas Blue #0052CC, rounded-sm) is largely successful. However, there are minor inconsistencies in data density and secondary action placement that prevent a perfect score.
+
+## 2. Critical Issues (Must-Fix)
+*   **Accessibility (Contrast):** Secondary text labels (e.g., "vs last month" and "Account Code") in certain screens use a gray that falls slightly below the WCAG AA 4.5:1 ratio on white backgrounds.
+*   **Consistency (Shadows):** The `SCREEN_4` dashboard uses a heavier elevation shadow than the flatter, more Atlassian-like `SCREEN_24`. We must unify on the 'flat-with-border' style.
+
+## 3. Major Issues (Should-Fix)
+*   **Data Density:** The "Recent Transactions" table in `SCREEN_24` is slightly too loose for an enterprise app. Reducing vertical cell padding will improve scanability.
+*   **Empty States:** While current tables show data, the fallback "No records found" state needs a standardized Atlassian-style illustration and CTA.
+
+## 4. Minor Polish Items
+*   **Icon Consistency:** Ensure all icons use the same stroke weight (2px) from the `material-symbols` set.
+*   **Focus States:** Explicitly define the `:focus-visible` ring color using the brand primary blue.
+
+## 5. Exact Patch Plan
+**File:** `frontend/accountant/dashboard.php`
+**Section:** KPI Cards & Recent Transactions Table
+**Change:** Standardize card shadows, update secondary text color for accessibility, and tighten table padding.
+
+## 6. Final Verdict: **READY (with minor patches)**
+The current state is highly professional and safe for the multi-tenant PHP architecture. The proposed patches will elevate it to true enterprise-grade quality.

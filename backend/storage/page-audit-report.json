@@ -1,0 +1,28 @@
+{
+    "timestamp": "2026-03-12T09:49:42-04:00",
+    "total_files": 320,
+    "passed": 302,
+    "warnings": 18,
+    "failed": 0,
+    "score": 94,
+    "issues": [
+        "[WARN] C:/xampp/htdocs/attendance/example-usage.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/list_users.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/logout.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/admin/ai-user-creator.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/admin/dashboard-enhanced.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/admin/settings.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/admin/switch-tenant.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/admin/ai/documentation.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/admin/ajax/get_enrollments.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/developer/tabs/ai.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/developer/tabs/general.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/developer/tabs/integrations.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/developer/tabs/security.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/developer/tabs/themes.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/teacher/dashboard-enhanced.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/ecosystem/register-school.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/ecosystem/sync-patterns.php \u2014 No layout/HTML structure detected",
+        "[WARN] C:/xampp/htdocs/attendance/auth/SessionGuard.php \u2014 No layout/HTML structure detected"
+    ]
+}

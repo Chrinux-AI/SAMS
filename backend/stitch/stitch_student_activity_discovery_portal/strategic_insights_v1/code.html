@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategic Financial Hub | ARR &amp; Profitability</title>
+<!-- Google Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#edeeef",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-error": "#ffffff",
+              "surface": "#f8f9fa",
+              "surface-container-low": "#f3f4f5",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-variant": "#e1e3e4",
+              "on-secondary": "#ffffff",
+              "primary": "#000666",
+              "on-surface-variant": "#454652",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-container-high": "#e7e8e9",
+              "inverse-on-surface": "#f0f1f2",
+              "on-secondary-fixed": "#071e27",
+              "on-surface": "#191c1d",
+              "tertiary": "#380b00",
+              "outline": "#767683",
+              "primary-fixed": "#e0e0ff",
+              "on-primary-fixed": "#000767",
+              "secondary-container": "#cfe6f2",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary-fixed": "#390c00",
+              "secondary": "#4c616c",
+              "surface-dim": "#d9dadb",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#b4cad6",
+              "on-secondary-fixed-variant": "#354a53",
+              "on-primary": "#ffffff",
+              "surface-bright": "#f8f9fa",
+              "on-tertiary": "#ffffff",
+              "error-container": "#ffdad6",
+              "outline-variant": "#c6c5d4",
+              "on-background": "#191c1d",
+              "on-primary-fixed-variant": "#343d96",
+              "on-secondary-container": "#526772",
+              "secondary-fixed": "#cfe6f2",
+              "inverse-surface": "#2e3132",
+              "primary-container": "#1a237e",
+              "error": "#ba1a1a",
+              "background": "#f8f9fa",
+              "tertiary-container": "#5c1800",
+              "surface-tint": "#4c56af",
+              "on-primary-container": "#8690ee",
+              "on-error-container": "#93000a",
+              "inverse-primary": "#bdc2ff",
+              "on-tertiary-container": "#e17c5a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .bg-primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-blue-900 dark:text-white">SAMS AI Copilot</span>
+<div class="hidden md:flex items-center gap-6 font-manrope text-sm tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Architecture</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Logs</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Permissions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Gateway</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="User profile avatar" data-alt="Professional headshot of a financial executive in a crisp blue suit against a soft gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT-KWF4w4OimjONu5i6SFttXccqirYh537LsNb5nsEkh6vRFK-21d_CjEPeVHDmhRncV4iN0An-Shl_nxBwstmt6tkCtRNchLBhnSUtAaI7cMdDMVpfgg_iNSa-VW28SdyisAEnEnVF1b9xE2KBRmzKKrPbXT9GjlIvsWWeaCFXO7O-eRWkFqw_bQFy9h8fUAMpqooxURxvm9RgnEiGuGYanbVXpsnR8MS51YmMSu4nreArrqERMSoxWohnJuJQevSv4RnDhOgsOE"/>
+</div>
+</div>
+</nav>
+<!-- Sidebar & Content Wrapper -->
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 dark:bg-slate-950 h-screen w-64 border-r-0 fixed left-0 top-16 h-[calc(100vh-64px)] flex flex-col justify-between py-6">
+<div>
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<div>
+<p class="text-xs font-bold text-blue-900 dark:text-blue-400 uppercase tracking-widest">Backend Core</p>
+<p class="text-[10px] text-slate-500 font-medium">v2.4.0-stable</p>
+</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined">psychology</span>
+                        Intent Interpreter
+                    </a>
+<a class="flex items-center gap-3 py-3 border-l-4 border-blue-900 dark:border-blue-500 bg-transparent font-bold text-blue-900 dark:text-white pl-4 transition-all duration-300 ease-in-out font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined">security</span>
+                        Permission Engine
+                    </a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined">hub</span>
+                        API Gateway
+                    </a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+                        Audit Logger
+                    </a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+                        System Health
+                    </a>
+</nav>
+</div>
+<div class="px-5 space-y-1">
+<a class="flex items-center gap-3 py-2 text-slate-500 text-xs font-medium hover:text-blue-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">description</span>
+                    Documentation
+                </a>
+<a class="flex items-center gap-3 py-2 text-slate-500 text-xs font-medium hover:text-blue-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">contact_support</span>
+                    Support
+                </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 w-full p-12 bg-surface">
+<!-- Page Header: Editorial Flair -->
+<header class="flex justify-between items-end mb-16">
+<div class="max-w-2xl">
+<p class="font-label text-on-surface-variant uppercase tracking-[0.2em] text-[10px] font-bold mb-3">Institutional Overview</p>
+<h1 class="font-headline text-5xl font-extrabold text-primary tracking-tight leading-none mb-6">Strategic Financial Hub</h1>
+<p class="font-body text-on-surface-variant text-lg leading-relaxed">High-fidelity analysis of recurring revenue streams and institutional profitability benchmarks across the global network.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-surface-container-lowest text-primary px-6 py-3 rounded-xl border border-outline-variant/20 font-semibold text-sm hover:bg-surface-container transition-all">Export Annual Audit</button>
+<button class="bg-primary-gradient text-white px-8 py-3 rounded-xl font-bold text-sm shadow-[0_10px_20px_rgba(0,6,102,0.15)] hover:scale-[1.02] transition-all">Initiate Expansion Plan</button>
+</div>
+</header>
+<!-- Bento Grid Dashboard -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Primary Metric Card: ARR -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-10 flex flex-col justify-between relative overflow-hidden group">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-label text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-1">Annual Recurring Revenue</h3>
+<div class="flex items-baseline gap-4">
+<span class="font-headline text-6xl font-extrabold text-primary tracking-tighter">$42.8M</span>
+<span class="flex items-center text-green-600 font-bold text-sm">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                                        +14.2%
+                                    </span>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="bg-surface-container px-3 py-1 rounded-full text-[10px] font-bold text-on-surface-variant">FY 2024</span>
+<span class="bg-primary-fixed px-3 py-1 rounded-full text-[10px] font-bold text-on-primary-fixed">ESTIMATED</span>
+</div>
+</div>
+<!-- Mini Chart Visualization (CSS based) -->
+<div class="h-48 flex items-end gap-3 w-full border-b border-outline-variant/10 pb-2">
+<div class="w-full bg-slate-100 h-1/4 rounded-t-lg group-hover:bg-blue-100 transition-colors"></div>
+<div class="w-full bg-slate-100 h-2/4 rounded-t-lg group-hover:bg-blue-200 transition-colors"></div>
+<div class="w-full bg-slate-100 h-1/3 rounded-t-lg group-hover:bg-blue-300 transition-colors"></div>
+<div class="w-full bg-slate-100 h-3/4 rounded-t-lg group-hover:bg-blue-400 transition-colors"></div>
+<div class="w-full bg-slate-100 h-2/3 rounded-t-lg group-hover:bg-blue-500 transition-colors"></div>
+<div class="w-full bg-primary h-full rounded-t-lg"></div>
+</div>
+</div>
+<!-- Ambient Shadow Decoration -->
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 blur-3xl rounded-full"></div>
+</div>
+<!-- Expansion Widget -->
+<div class="col-span-12 lg:col-span-4 bg-primary-gradient rounded-xl p-8 text-white flex flex-col justify-between shadow-2xl">
+<div>
+<span class="material-symbols-outlined text-4xl mb-6 opacity-60">explore</span>
+<h3 class="font-headline text-2xl font-bold mb-2">Expansion Planning</h3>
+<p class="font-body text-on-primary-container text-sm leading-relaxed mb-6">Model new institutional branches based on regional demand and projected EBITDA.</p>
+<div class="space-y-4">
+<div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/10">
+<p class="text-[10px] uppercase font-bold tracking-widest opacity-60 mb-2">Target Region</p>
+<div class="flex justify-between items-center">
+<span class="font-bold">Western District Hub</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</div>
+</div>
+<div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/10">
+<p class="text-[10px] uppercase font-bold tracking-widest opacity-60 mb-2">Investment Cap</p>
+<div class="flex justify-between items-center">
+<span class="font-bold">$12,500,000</span>
+<span class="material-symbols-outlined text-sm">edit</span>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-8 w-full bg-white text-primary font-bold py-4 rounded-xl text-sm transition-transform active:scale-95">Run Monte Carlo Model</button>
+</div>
+<!-- Profitability Section -->
+<section class="col-span-12 mt-4">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="font-headline text-2xl font-bold text-primary">School Profitability Matrix</h2>
+<p class="text-on-surface-variant font-body text-sm italic mt-1">Net margins across top-performing secondary institutions</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low p-1 rounded-full px-4">
+<span class="text-xs font-bold text-on-surface-variant">Display:</span>
+<button class="text-xs font-bold text-primary px-3 py-1 bg-white rounded-full shadow-sm">Grid View</button>
+<button class="text-xs font-bold text-slate-400 px-3 py-1 hover:text-primary transition-colors">List View</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- School Card 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/5 hover:shadow-[0_20px_40px_rgba(0,7,103,0.06)] transition-all">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">school</span>
+</div>
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">Top Quartile</span>
+</div>
+<h4 class="font-headline text-lg font-bold mb-2">Oakwood Academy</h4>
+<p class="text-on-surface-variant text-xs mb-6">Secondary Education • Region North</p>
+<div class="space-y-3 mb-8">
+<div class="flex justify-between items-center">
+<span class="text-xs font-medium text-slate-500">Margin</span>
+<span class="text-xs font-bold text-primary">32.4%</span>
+</div>
+<div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[32.4%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Total ARR</p>
+<p class="font-bold text-sm">$8.2M</p>
+</div>
+<span class="material-symbols-outlined text-slate-300">more_horiz</span>
+</div>
+</div>
+<!-- School Card 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/5 hover:shadow-[0_20px_40px_rgba(0,7,103,0.06)] transition-all">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">architecture</span>
+</div>
+<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-[10px] font-bold">Mid Tier</span>
+</div>
+<h4 class="font-headline text-lg font-bold mb-2">St. Jude’s International</h4>
+<p class="text-on-surface-variant text-xs mb-6">Technical Vocational • Region South</p>
+<div class="space-y-3 mb-8">
+<div class="flex justify-between items-center">
+<span class="text-xs font-medium text-slate-500">Margin</span>
+<span class="text-xs font-bold text-primary">18.1%</span>
+</div>
+<div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[18.1%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Total ARR</p>
+<p class="font-bold text-sm">$4.9M</p>
+</div>
+<span class="material-symbols-outlined text-slate-300">more_horiz</span>
+</div>
+</div>
+<!-- School Card 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/5 hover:shadow-[0_20px_40px_rgba(0,7,103,0.06)] transition-all">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-tertiary-container/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary-container">warning</span>
+</div>
+<span class="bg-tertiary-container text-white px-3 py-1 rounded-full text-[10px] font-bold">Action Required</span>
+</div>
+<h4 class="font-headline text-lg font-bold mb-2">Lakeside Preparatory</h4>
+<p class="text-on-surface-variant text-xs mb-6">Early Learning • Region East</p>
+<div class="space-y-3 mb-8">
+<div class="flex justify-between items-center">
+<span class="text-xs font-medium text-slate-500">Margin</span>
+<span class="text-xs font-bold text-tertiary-container">4.2%</span>
+</div>
+<div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full w-[4.2%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Total ARR</p>
+<p class="font-bold text-sm">$2.1M</p>
+</div>
+<span class="material-symbols-outlined text-slate-300">more_horiz</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Financial Health Ledger -->
+<div class="col-span-12 bg-surface-container-low rounded-2xl p-10 mt-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+<div>
+<h3 class="font-headline text-xl font-bold text-primary">Consolidated Ledger</h3>
+<p class="text-sm text-on-surface-variant font-body">Transaction flow for the current fiscal quarter</p>
+</div>
+<div class="mt-4 md:mt-0 flex gap-4">
+<div class="bg-white rounded-lg p-3 shadow-sm flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-500">account_balance_wallet</span>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight leading-none">Net Inflow</p>
+<p class="font-bold text-sm">$3.42M</p>
+</div>
+</div>
+<div class="bg-white rounded-lg p-3 shadow-sm flex items-center gap-3">
+<span class="material-symbols-outlined text-orange-500">receipt_long</span>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight leading-none">OPEX</p>
+<p class="font-bold text-sm">$1.18M</p>
+</div>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">
+<th class="pb-6 pl-4">Transaction Hub</th>
+<th class="pb-6">Reference ID</th>
+<th class="pb-6">Institutional Link</th>
+<th class="pb-6">Amount</th>
+<th class="pb-6 text-right pr-4">Validation</th>
+</tr>
+</thead>
+<tbody class="text-sm font-body">
+<tr class="bg-white/40 hover:bg-white transition-colors border-b border-outline-variant/5">
+<td class="py-5 pl-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-slate-500">upload_file</span>
+</div>
+<span class="font-semibold">Tuition Batch Q3</span>
+</td>
+<td class="py-5 font-mono text-xs text-slate-400">#TXN-8849-B</td>
+<td class="py-5 text-on-surface-variant">Oakwood Academy</td>
+<td class="py-5 font-bold text-primary">+$1,450,000</td>
+<td class="py-5 text-right pr-4">
+<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold">VERIFIED</span>
+</td>
+</tr>
+<tr class="hover:bg-white transition-colors border-b border-outline-variant/5">
+<td class="py-5 pl-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-slate-500">file_download</span>
+</div>
+<span class="font-semibold">Facility Maintenance</span>
+</td>
+<td class="py-5 font-mono text-xs text-slate-400">#TXN-1120-X</td>
+<td class="py-5 text-on-surface-variant">St. Jude’s International</td>
+<td class="py-5 font-bold text-tertiary-container">-$120,400</td>
+<td class="py-5 text-right pr-4">
+<span class="bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold">PENDING</span>
+</td>
+</tr>
+<tr class="bg-white/40 hover:bg-white transition-colors">
+<td class="py-5 pl-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-slate-500">sync_alt</span>
+</div>
+<span class="font-semibold">Government Grant 2024</span>
+</td>
+<td class="py-5 font-mono text-xs text-slate-400">#TXN-9092-W</td>
+<td class="py-5 text-on-surface-variant">Global Network Hub</td>
+<td class="py-5 font-bold text-primary">+$450,000</td>
+<td class="py-5 text-right pr-4">
+<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold">VERIFIED</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Strategic Insights Sidebar (Asymmetric layout) -->
+<aside class="mt-20 grid grid-cols-12 gap-8">
+<div class="col-span-12 md:col-span-7">
+<div class="relative rounded-2xl overflow-hidden h-96 group">
+<img alt="Modern minimalist corporate architecture" class="absolute inset-0 w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105" data-alt="Modern architectural structure of glass and steel reflecting a clear blue sky at midday with sharp shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZKvb81g8RlA2N5zkgMeer1aXCWneox_r5-y0_PueKeyLe_C8LH4M9AXRBQnx4mn8KOSYc35nZUmAbvXEIpaLxB4J-n6ts_xvEzeS6h6j-CjBXayeDFceH1s6o3SsFbpRAtLaV6lU1DBvw_JMeIl4s7e_sqUBsmzlIPmHnkVUkmU5a8UIgcY_8yKAc7aL9IzYfHBbJbSzB7bYtrydRxaiTsgf53ebg1fkwdzyWVVa47DFdnNY2jaAd-DA3zqODtv8ft7gjtHzjdAc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent p-10 flex flex-col justify-end">
+<h3 class="font-headline text-3xl font-bold text-white mb-4">Fiscal Sustainability Report</h3>
+<p class="text-white/80 font-body max-w-md mb-6 leading-relaxed">Our 2025 projection indicates a 22% growth in secondary education ARR across the Southeast region.</p>
+<a class="inline-flex items-center gap-2 text-white font-bold text-sm" href="#">Read Full Strategic Analysis <span class="material-symbols-outlined">arrow_right_alt</span></a>
+</div>
+</div>
+</div>
+<div class="col-span-12 md:col-span-5 flex flex-col gap-8">
+<div class="bg-surface-container-highest/30 p-8 rounded-2xl border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary mb-4" data-weight="fill">lightbulb</span>
+<h4 class="font-headline text-lg font-bold text-primary mb-2">Expansion Opportunity</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">The Metro West hub shows a student waitlist of 400+. Potential to capture an additional $3.2M ARR with a Level 2 facility expansion.</p>
+</div>
+<div class="bg-white p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-outline-variant/5">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+</div>
+<h4 class="font-headline font-bold text-primary">SAMS Financial Predictor</h4>
+</div>
+<p class="text-xs text-slate-500 mb-6 font-body leading-relaxed">AI modeling suggests adjusting St. Jude’s International pricing by +4.5% to align with market benchmarks without affecting retention.</p>
+<button class="w-full py-3 bg-slate-50 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-100 transition-colors">Apply Recommended Pricing</button>
+</div>
+</div>
+</aside>
+</main>
+</div>
+<!-- Background Pattern Decoration -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[-1]">
+<svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="grid" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="#000666" stroke-width="1"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+</body></html>

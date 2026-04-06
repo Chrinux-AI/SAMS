@@ -1,0 +1,81 @@
+{
+    "departments": [
+        {
+            "name": "LINUX ADMINISTRATION AND SECURITY",
+            "class_count": 1
+        }
+    ],
+    "academic_levels": [
+        {
+            "name": "LINUX ADMINISTRATION AND SECURITY",
+            "student_count": 0
+        }
+    ],
+    "classes": [
+        {
+            "id": 6,
+            "name": "LINUX ADMINISTRATION AND SECURITY",
+            "enrolled": 0,
+            "attendance_rate": 100,
+            "period": "30d"
+        }
+    ],
+    "staff": {
+        "total_teachers": 3,
+        "avg_active_days": 0.3,
+        "teachers": [
+            {
+                "id": 3,
+                "name": "Test Teacher",
+                "active_days": 1,
+                "records_marked": 1,
+                "efficiency": "low"
+            },
+            {
+                "id": 9,
+                "name": "",
+                "active_days": 0,
+                "records_marked": 0,
+                "efficiency": "low"
+            },
+            {
+                "id": 20,
+                "name": "Dev Teacher",
+                "active_days": 0,
+                "records_marked": 0,
+                "efficiency": "low"
+            }
+        ]
+    },
+    "students": {
+        "total_students": 1,
+        "overall_rate": 100,
+        "at_risk_count": 0,
+        "total_absences_30d": 0
+    },
+    "operations": {
+        "memory_pct": 1,
+        "db_size_mb": 11.9,
+        "errors_1h": 0,
+        "active_users_15m": 0,
+        "level": "low"
+    },
+    "frictions": [
+        {
+            "type": "teacher_inactivity",
+            "detail": "Test Teacher: only 1 active days in 30d",
+            "severity": "medium"
+        },
+        {
+            "type": "teacher_inactivity",
+            "detail": ": only 0 active days in 30d",
+            "severity": "medium"
+        },
+        {
+            "type": "teacher_inactivity",
+            "detail": "Dev Teacher: only 0 active days in 30d",
+            "severity": "medium"
+        }
+    ],
+    "built_at": "2026-03-12 09:48:56"
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="assets/js/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - SAMS</title>
+    <link href="assets/css/cyberpunk-ui.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0A0A0A 0%, #1a1a2e 100%);
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .offline-container {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+        }
+
+        .offline-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: rgba(0, 191, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #00BFFF;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.3);
+        }
+
+        .offline-icon i {
+            font-size: 60px;
+            color: #00BFFF;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00BFFF;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .retry-btn {
+            background: linear-gradient(135deg, #00BFFF, #0080FF);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.4);
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.6);
+        }
+
+        .cached-message {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 191, 255, 0.05);
+            border-left: 3px solid #00BFFF;
+            border-radius: 8px;
+        }
+
+        .cached-message h3 {
+            color: #00BFFF;
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .cached-message ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cached-message li {
+            padding: 8px 0;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .cached-message li:before {
+            content: "→";
+            color: #00BFFF;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <i class="fas fa-wifi-slash"></i>
+        </div>
+
+        <h1>You're Offline</h1>
+
+        <p>
+            No internet connection detected. Some features may be limited,
+            but you can still access cached content and data will sync automatically
+            when you're back online.
+        </p>
+
+        <button class="retry-btn" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt"></i> Try Again
+        </button>
+
+        <div class="cached-message">
+            <h3>Available Offline:</h3>
+            <ul>
+                <li>View your dashboard</li>
+                <li>Check your schedule</li>
+                <li>Review assignments</li>
+                <li>Browse cached messages</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Auto-retry when online
+        window.addEventListener('online', () => {
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+
+        // Show online status
+        if (navigator.onLine) {
+            document.querySelector('.retry-btn').click();
+        }
+    </script>
+</body>
+</html>

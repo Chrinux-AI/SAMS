@@ -1,0 +1,73 @@
+{
+    "phases": {
+        "detection": {
+            "faults_found": 0,
+            "faults": []
+        },
+        "schema": {
+            "indexes": [],
+            "columns": [],
+            "orphans": []
+        },
+        "routes": {
+            "total_routes": 260
+        },
+        "repair": {
+            "attempted": 0,
+            "repaired": 0,
+            "note": "No faults to repair"
+        },
+        "verification": {
+            "health_check": "passed"
+        },
+        "ui_integrity": {
+            "tab_issues": 0,
+            "dashboard_issues": 5,
+            "layout_issues": 0,
+            "total_issues": 5,
+            "status": "degraded"
+        },
+        "services": {
+            "total_services": 5,
+            "healthy": 5,
+            "status": "all_healthy",
+            "details": {
+                "session": {
+                    "service": "session",
+                    "status": "skipped",
+                    "note": "CLI mode"
+                },
+                "cache": {
+                    "service": "cache",
+                    "status": "healthy"
+                },
+                "storage": {
+                    "service": "storage",
+                    "status": "healthy"
+                },
+                "ai": {
+                    "service": "ai",
+                    "status": "healthy"
+                },
+                "eventbus": {
+                    "service": "eventbus",
+                    "status": "healthy"
+                }
+            }
+        },
+        "cache": {
+            "cache_files": 6,
+            "cache_writable": true
+        },
+        "memory": {
+            "total_repairs": 0,
+            "successes": 0,
+            "success_rate": 0,
+            "today": 0,
+            "top_faults": []
+        }
+    },
+    "timestamp": "2026-03-12T10:30:19-04:00",
+    "stability_score": 85,
+    "duration": 0.478
+}

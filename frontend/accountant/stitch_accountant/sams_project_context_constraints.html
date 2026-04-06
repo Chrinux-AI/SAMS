@@ -1,0 +1,40 @@
+I’m working on an existing PHP/MySQL project called **SAMS** (School Management System).
+You are helping me build and refine the **Accountant module UI and flows** without breaking existing architecture.
+
+### Project context
+- Root has been split into:
+- frontend (role pages, UI, shared includes)
+- backend (APIs, core logic, data layer)
+- Current target module: accountant
+- Existing accountant pages include:
+- dashboard.php, expenses.php, income.php, ledger.php, budget.php, payroll.php, reports.php, balance-sheet.php, profit-loss.php, tax-reports.php, audit-trail.php, team-selection.php, settings.php
+- Existing helpers to respect:
+- `base_url()`, `api_url()`, `asset_url()`
+- Existing auth/role rules:
+- user must be logged in
+- role must be `accountant` or `admin`
+- Existing shared includes/layout:
+- `INCLUDES_PATH . '/sidebar-nav.php'`
+- theme and layout css/js already in project
+
+### Functional source-of-truth
+Treat the attached `STITCH_SPEC.md` as requirements baseline (pages, features, UI components, APIs, validations, database needs, implementation phases).
+
+### Constraints
+- Do NOT redesign the whole app.
+- Do NOT move files unless explicitly asked.
+- Reuse current page names and paths.
+- Keep code compatible with existing PHP structure and includes.
+- Keep multi-tenant handling (`tenant_id`) in mind.
+- Keep CSRF and role checks in forms/actions.
+
+### Your output format (strict)
+For each response:
+1. **Understanding summary** (short)
+2. **Exact files to edit/create**
+3. **UI component plan** (cards, tables, forms, modals)
+4. **Backend/API dependencies**
+5. **Step-by-step implementation in small safe increments**
+6. **Code snippets only for the requested step**
+
+Start with: **Phase 1 / accountant dashboard + expenses UI improvements** only.

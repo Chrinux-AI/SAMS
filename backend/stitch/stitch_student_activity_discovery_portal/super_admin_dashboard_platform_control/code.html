@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academic Sentinel | Super Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#4c616c",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed": "#390c00",
+                        "secondary-container": "#cfe6f2",
+                        "on-primary-fixed": "#000767",
+                        "primary-fixed": "#e0e0ff",
+                        "tertiary": "#380b00",
+                        "outline": "#767683",
+                        "on-surface": "#191c1d",
+                        "on-secondary-fixed": "#071e27",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-high": "#e7e8e9",
+                        "primary": "#000666",
+                        "on-surface-variant": "#454652",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "surface-container-low": "#f3f4f5",
+                        "surface": "#f8f9fa",
+                        "on-error": "#ffffff",
+                        "surface-container": "#edeeef",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "on-tertiary-container": "#e17c5a",
+                        "inverse-primary": "#bdc2ff",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#4c56af",
+                        "on-primary-container": "#8690ee",
+                        "tertiary-container": "#5c1800",
+                        "background": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1a237e",
+                        "secondary-fixed": "#cfe6f2",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-container": "#526772",
+                        "on-primary-fixed-variant": "#343d96",
+                        "on-background": "#191c1d",
+                        "outline-variant": "#c6c5d4",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "on-secondary-fixed-variant": "#354a53",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d9dadb"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .brand-gradient-bg {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-sm bg-white/80 flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-900 font-headline">Academic Sentinel</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-blue-900 font-bold border-b-2 border-blue-900 font-manrope text-sm font-medium h-16 flex items-center" href="#">Overview</a>
+<a class="text-slate-500 font-manrope text-sm font-medium hover:bg-slate-50 transition-colors h-16 flex items-center px-2" href="#">Tenants</a>
+<a class="text-slate-500 font-manrope text-sm font-medium hover:bg-slate-50 transition-colors h-16 flex items-center px-2" href="#">Infrastructure</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-blue-900 hover:bg-slate-50 transition-colors rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-blue-900 hover:bg-slate-50 transition-colors rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-white overflow-hidden ml-2">
+<img alt="Administrator Profile" data-alt="professional portrait of a high-level male system administrator in business casual attire with a clean blurred office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgj8HlU_InYldgv2j5_S6kwTELmskOgNb4CjB15bCrUbuoQvBvpSTJFPzLHdVGLAlqkmt1X-2OqOFw9SoDKcIyLz14i1X3SmY5cVOpW0Kl1wZJWAQ9UH5I1wUFlHwvp3DhcMLtRvmHsWfhu8Qoo0PbpaI3JdlptnStJRn86xFa_AWeZ0jyWvZItHeceWwV8d8g7MN4szpEpXWxqPPEaQtia69SLChdBx8YzcS39a6JgqVEow_79dTECwM-WGooFZS-X-ulBLZENLM"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<nav class="h-screen w-64 fixed left-0 top-0 pt-20 bg-slate-50 flex flex-col space-y-2">
+<div class="px-6 mb-8">
+<h2 class="font-manrope font-extrabold text-blue-900 text-lg uppercase tracking-wider">SAMS Admin</h2>
+<p class="text-xs text-on-surface-variant font-medium">Academic Year 2024</p>
+</div>
+<a class="border-l-4 border-blue-900 text-blue-900 font-bold bg-white flex items-center gap-3 px-6 py-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter text-sm font-medium">Dashboard</span>
+</a>
+<a class="text-slate-600 px-6 py-3 hover:text-blue-800 hover:bg-slate-100/50 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-inter text-sm font-medium">Attendance</span>
+</a>
+<a class="text-slate-600 px-6 py-3 hover:text-blue-800 hover:bg-slate-100/50 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-inter text-sm font-medium">Students</span>
+</a>
+<a class="text-slate-600 px-6 py-3 hover:text-blue-800 hover:bg-slate-100/50 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-inter text-sm font-medium">Staff</span>
+</a>
+<a class="text-slate-600 px-6 py-3 hover:text-blue-800 hover:bg-slate-100/50 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-inter text-sm font-medium">Reports</span>
+</a>
+<a class="text-slate-600 px-6 py-3 hover:text-blue-800 hover:bg-slate-100/50 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-inter text-sm font-medium">Settings</span>
+</a>
+<div class="mt-auto px-6 py-8">
+<button class="w-full brand-gradient-bg text-white py-3 rounded-xl font-medium text-sm shadow-md hover:opacity-90 transition-all active:scale-[0.98]">
+                Quick Action
+            </button>
+<a class="mt-4 text-slate-600 py-3 hover:text-blue-800 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-inter text-sm font-medium">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-20 pb-12 px-10 min-h-screen flex flex-col">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-12">
+<div>
+<h3 class="text-on-surface-variant font-medium label-md uppercase tracking-widest text-xs mb-2">Global Management Console</h3>
+<h1 class="text-4xl font-extrabold font-headline text-primary tracking-tight">Super Admin Dashboard</h1>
+</div>
+<div class="flex gap-4">
+<button class="px-5 py-2.5 rounded-xl border border-outline/20 font-medium text-primary hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+                    System Health Check
+                </button>
+<button class="px-5 py-2.5 rounded-xl brand-gradient-bg text-white font-medium shadow-lg hover:opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add_business</span>
+                    Add New School
+                </button>
+</div>
+</div>
+<!-- Bento Grid Stats -->
+<div class="grid grid-cols-12 gap-6 mb-10">
+<!-- Total Schools -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-primary relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-label text-sm font-semibold uppercase tracking-wider mb-2">Total Schools</p>
+<h2 class="text-5xl font-extrabold font-headline text-primary">124</h2>
+<p class="mt-4 text-sm text-green-600 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                        +12% from last quarter
+                    </p>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl text-slate-50 opacity-10">school</span>
+</div>
+<!-- Platform Uptime -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-blue-400 relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-label text-sm font-semibold uppercase tracking-wider mb-2">System Uptime</p>
+<h2 class="text-5xl font-extrabold font-headline text-blue-900">99.98%</h2>
+<p class="mt-4 text-sm text-on-surface-variant font-medium">All systems operational</p>
+</div>
+<div class="absolute top-8 right-8 flex gap-1">
+<div class="h-1.5 w-4 bg-green-500 rounded-full animate-pulse"></div>
+<div class="h-1.5 w-1.5 bg-green-500 rounded-full"></div>
+<div class="h-1.5 w-1.5 bg-green-500 rounded-full"></div>
+</div>
+</div>
+<!-- Active Subscriptions -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-secondary relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-label text-sm font-semibold uppercase tracking-wider mb-2">Active Subscriptions</p>
+<h2 class="text-5xl font-extrabold font-headline text-secondary">$1.2M</h2>
+<p class="mt-4 text-sm text-on-surface-variant font-medium tracking-wide uppercase text-[10px]">Annual Recurring Revenue</p>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl text-slate-50 opacity-10">payments</span>
+</div>
+</div>
+<!-- Secondary Section: Activity & Infrastructure -->
+<div class="grid grid-cols-12 gap-8 flex-grow">
+<!-- Global Activity Table -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-0 shadow-sm overflow-hidden flex flex-col">
+<div class="px-8 py-6 border-b border-outline-variant/20 flex justify-between items-center">
+<h3 class="font-headline font-bold text-lg text-primary">Global Activity Log</h3>
+<button class="text-primary text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="text-left px-8 py-4 text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">School / Tenant</th>
+<th class="text-left px-8 py-4 text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">Action</th>
+<th class="text-left px-8 py-4 text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">Admin</th>
+<th class="text-right px-8 py-4 text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">Timestamp</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-xs">SV</div>
+<div>
+<p class="text-sm font-bold text-on-surface">St. Victors Academy</p>
+<p class="text-[11px] text-on-surface-variant">ID: T-40029</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wide">License Renewed</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium text-on-surface-variant">System (Auto)</td>
+<td class="px-8 py-5 text-right text-sm text-on-surface-variant font-mono">12:04 PM</td>
+</tr>
+<tr class="bg-slate-50/50 hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-900 font-bold text-xs">OL</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Oakwood Learning</p>
+<p class="text-[11px] text-on-surface-variant">ID: T-40182</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wide">New Student Batch</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium text-on-surface-variant">A. Morrison</td>
+<td class="px-8 py-5 text-right text-sm text-on-surface-variant font-mono">11:45 AM</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center text-orange-900 font-bold text-xs">BH</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Beacon Heights</p>
+<p class="text-[11px] text-on-surface-variant">ID: T-39921</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 rounded-full bg-orange-50 text-orange-700 text-[10px] font-bold uppercase tracking-wide">Storage Alert</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium text-on-surface-variant">Infrastructure</td>
+<td class="px-8 py-5 text-right text-sm text-on-surface-variant font-mono">10:30 AM</td>
+</tr>
+<tr class="bg-slate-50/50 hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-xs">SV</div>
+<div>
+<p class="text-sm font-bold text-on-surface">St. Victors Academy</p>
+<p class="text-[11px] text-on-surface-variant">ID: T-40029</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-wide">Config Updated</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium text-on-surface-variant">J. Doe</td>
+<td class="px-8 py-5 text-right text-sm text-on-surface-variant font-mono">09:12 AM</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Infrastructure Health Widget -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- Health Pulse Card -->
+<div class="bg-primary-container text-white rounded-xl p-8 relative overflow-hidden shadow-xl">
+<h3 class="font-headline font-bold text-lg mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined">analytics</span>
+                        Infrastructure Health
+                    </h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs mb-2 opacity-80 font-medium">
+<span>DATABASE LOAD</span>
+<span>24%</span>
+</div>
+<div class="h-1.5 w-full bg-white/20 rounded-full">
+<div class="h-1.5 w-[24%] bg-white rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-2 opacity-80 font-medium">
+<span>API LATENCY</span>
+<span>42ms</span>
+</div>
+<div class="h-1.5 w-full bg-white/20 rounded-full">
+<div class="h-1.5 w-[85%] bg-green-400 rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-2 opacity-80 font-medium">
+<span>STORAGE USAGE</span>
+<span>6.4TB / 10TB</span>
+</div>
+<div class="h-1.5 w-full bg-white/20 rounded-full">
+<div class="h-1.5 w-[64%] bg-orange-400 rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+<span class="text-[10px] font-bold tracking-widest uppercase opacity-60">Status: Optimal</span>
+<span class="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80]"></span>
+</div>
+</div>
+<!-- Critical Absences Callout (System Integrity Example) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 border-t-4 border-tertiary-container">
+<div class="flex items-center gap-4 mb-4">
+<div class="h-10 w-10 rounded-full bg-tertiary-fixed-dim/20 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Critical Sync Error</h4>
+<p class="text-xs text-on-surface-variant">2 Schools failing to sync attendance</p>
+</div>
+</div>
+<button class="w-full py-2 bg-tertiary-container text-white text-xs font-bold rounded-lg hover:opacity-90 transition-all uppercase tracking-widest">
+                        Investigate Now
+                    </button>
+</div>
+</div>
+</div>
+<!-- Footer Shell -->
+<footer class="w-full py-4 mt-auto flex justify-between items-center px-10 border-t border-slate-200">
+<span class="text-slate-400 font-inter text-xs tracking-wide uppercase">© 2024 The Academic Sentinel. All rights reserved.</span>
+<div class="flex gap-6">
+<a class="text-slate-500 font-inter text-xs tracking-wide uppercase hover:text-blue-700 underline transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 font-inter text-xs tracking-wide uppercase hover:text-blue-700 underline transition-colors" href="#">Terms of Service</a>
+<span class="text-slate-500 font-inter text-xs tracking-wide uppercase">v2.4.1</span>
+</div>
+</footer>
+</main>
+</body></html>

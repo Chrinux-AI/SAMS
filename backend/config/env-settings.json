@@ -1,0 +1,239 @@
+{
+  "_comment": "School Attendance System - Environment Settings",
+  "_version": "1.0.0",
+  "_lastUpdated": "2025-11-18",
+
+  "environment": {
+    "type": "development",
+    "_options": ["development", "staging", "production"],
+    "debug": true
+  },
+
+  "server": {
+    "port": 8080,
+    "host": "localhost",
+    "protocol": "http",
+    "_production_protocol": "https",
+    "baseUrl": "http://localhost:8080",
+    "apiVersion": "v1"
+  },
+
+  "database": {
+    "type": "postgresql",
+    "_options": ["postgresql", "mysql", "mongodb", "sqlserver"],
+    "host": "localhost",
+    "port": 5432,
+    "name": "attendance_db",
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
+    "poolSize": 20,
+    "connectionTimeout": 30000,
+    "ssl": false,
+    "_production_ssl": true
+  },
+
+  "cache": {
+    "enabled": true,
+    "type": "redis",
+    "host": "localhost",
+    "port": 6379,
+    "ttl": 3600,
+    "password": "${REDIS_PASSWORD}"
+  },
+
+  "authentication": {
+    "jwtSecret": "${JWT_SECRET}",
+    "jwtExpiresIn": "1h",
+    "refreshTokenExpiresIn": "7d",
+    "mfaEnabled": true,
+    "passwordPolicy": {
+      "minLength": 12,
+      "requireUppercase": true,
+      "requireLowercase": true,
+      "requireNumbers": true,
+      "requireSpecialChars": true,
+      "expiryDays": 90
+    },
+    "sessionTimeout": 1800,
+    "maxLoginAttempts": 5,
+    "lockoutDuration": 900
+  },
+
+  "email": {
+    "provider": "smtp",
+    "host": "${EMAIL_HOST}",
+    "port": 587,
+    "secure": false,
+    "username": "${EMAIL_USERNAME}",
+    "password": "${EMAIL_PASSWORD}",
+    "fromAddress": "noreply@attendance-system.edu",
+    "fromName": "School Attendance System",
+    "replyTo": "support@attendance-system.edu"
+  },
+
+  "sms": {
+    "provider": "twilio",
+    "_options": ["twilio", "nexmo", "aws-sns"],
+    "accountSid": "${TWILIO_ACCOUNT_SID}",
+    "authToken": "${TWILIO_AUTH_TOKEN}",
+    "fromNumber": "${TWILIO_PHONE_NUMBER}",
+    "enabled": true
+  },
+
+  "notifications": {
+    "channels": {
+      "email": true,
+      "sms": true,
+      "push": true,
+      "inApp": true
+    },
+    "batchProcessing": true,
+    "batchSize": 100,
+    "retryAttempts": 3,
+    "quietHours": {
+      "enabled": true,
+      "start": "22:00",
+      "end": "07:00"
+    }
+  },
+
+  "fileStorage": {
+    "provider": "local",
+    "_options": ["local", "s3", "azure-blob", "google-cloud"],
+    "localPath": "./uploads",
+    "maxFileSize": 10485760,
+    "_maxFileSizeNote": "10MB in bytes",
+    "allowedExtensions": [".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx"],
+    "s3": {
+      "bucket": "${S3_BUCKET_NAME}",
+      "region": "us-east-1",
+      "accessKeyId": "${AWS_ACCESS_KEY_ID}",
+      "secretAccessKey": "${AWS_SECRET_ACCESS_KEY}"
+    }
+  },
+
+  "ai": {
+    "enabled": true,
+    "provider": "internal",
+    "_options": ["internal", "openai", "azure-ml", "custom"],
+    "modelRefreshInterval": 86400,
+    "_modelRefreshNote": "24 hours in seconds",
+    "predictionConfidenceThreshold": 0.75,
+    "anomalyDetectionSensitivity": "medium",
+    "_sensitivityOptions": ["low", "medium", "high"],
+    "behaviorTracking": {
+      "enabled": true,
+      "consentRequired": true,
+      "dataRetentionDays": 1825,
+      "_retentionNote": "5 years"
+    }
+  },
+
+  "security": {
+    "encryption": {
+      "algorithm": "AES-256-GCM",
+      "keyRotationDays": 90
+    },
+    "cors": {
+      "enabled": true,
+      "allowedOrigins": [
+        "http://localhost:3000",
+        "https://attendance-system.edu"
+      ],
+      "allowedMethods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      "allowCredentials": true
+    },
+    "rateLimit": {
+      "enabled": true,
+      "windowMs": 60000,
+      "_windowNote": "1 minute in milliseconds",
+      "maxRequests": 100,
+      "message": "Too many requests, please try again later"
+    },
+    "audit": {
+      "enabled": true,
+      "logAllRequests": false,
+      "logSensitiveActions": true,
+      "retentionDays": 2555,
+      "_retentionNote": "7 years"
+    }
+  },
+
+  "backup": {
+    "enabled": true,
+    "schedule": "0 2 * * *",
+    "_scheduleNote": "Cron expression: 2 AM daily",
+    "retention": {
+      "daily": 7,
+      "weekly": 4,
+      "monthly": 12,
+      "yearly": 5
+    },
+    "location": "/var/backups/attendance",
+    "compression": true,
+    "encryption": true
+  },
+
+  "performance": {
+    "responseTimeTarget": 2000,
+    "_responseTimeNote": "milliseconds",
+    "uptimeTarget": 0.999,
+    "caching": {
+      "enabled": true,
+      "staticAssets": 86400,
+      "apiResponses": 300,
+      "reports": 3600
+    }
+  },
+
+  "integrations": {
+    "sms": {
+      "enabled": true,
+      "provider": "external"
+    },
+    "biometric": {
+      "enabled": false,
+      "apiEndpoint": "${BIOMETRIC_API_URL}",
+      "apiKey": "${BIOMETRIC_API_KEY}"
+    },
+    "rfid": {
+      "enabled": false,
+      "readerType": "usb",
+      "port": "/dev/ttyUSB0"
+    },
+    "calendar": {
+      "enabled": true,
+      "providers": ["google", "outlook"],
+      "syncInterval": 3600
+    }
+  },
+
+  "localization": {
+    "defaultLanguage": "en",
+    "supportedLanguages": ["en", "es", "fr", "zh", "ar"],
+    "timezone": "America/New_York",
+    "dateFormat": "YYYY-MM-DD",
+    "timeFormat": "HH:mm:ss"
+  },
+
+  "logging": {
+    "level": "info",
+    "_levelOptions": ["error", "warn", "info", "debug", "trace"],
+    "directory": "./logs",
+    "maxFileSize": 10485760,
+    "maxFiles": 30,
+    "format": "json",
+    "_formatOptions": ["json", "text"]
+  },
+
+  "features": {
+    "offlineMode": true,
+    "voiceActivation": false,
+    "geolocation": true,
+    "gamification": true,
+    "behaviorTracking": true,
+    "aiPredictions": true,
+    "multiLanguage": true,
+    "mobileApp": true
+  }
+}

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SAMS AI Copilot - Super Admin Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#edeeef",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "surface-variant": "#e1e3e4",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000666",
+                        "on-surface-variant": "#454652",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-high": "#e7e8e9",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-secondary-fixed": "#071e27",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#380b00",
+                        "outline": "#767683",
+                        "primary-fixed": "#e0e0ff",
+                        "on-primary-fixed": "#000767",
+                        "secondary-container": "#cfe6f2",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed": "#390c00",
+                        "secondary": "#4c616c",
+                        "surface-dim": "#d9dadb",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "on-secondary-fixed-variant": "#354a53",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c6c5d4",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#343d96",
+                        "on-secondary-container": "#526772",
+                        "secondary-fixed": "#cfe6f2",
+                        "inverse-surface": "#2e3132",
+                        "primary-container": "#1a237e",
+                        "error": "#ba1a1a",
+                        "background": "#f8f9fa",
+                        "tertiary-container": "#5c1800",
+                        "surface-tint": "#4c56af",
+                        "on-primary-container": "#8690ee",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#bdc2ff",
+                        "on-tertiary-container": "#e17c5a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .frosted-archive {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .primary-gradient-cta {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopNavBar -->
+<nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-blue-900 dark:text-white">SAMS AI Copilot</span>
+<div class="hidden md:flex items-center gap-6 font-manrope text-sm tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Architecture</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Logs</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Permissions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Gateway</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 rounded-full transition-all active:scale-95 duration-200">settings</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 rounded-full transition-all active:scale-95 duration-200">help</button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-outline-variant/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiIaXGkL5WnEAN78sR_pXFfxIur9U6vr3HsoEIAFrj7TRnyvKMPpauv6bJhAHgLW-GGgSwRidk0wmshUMVwe9Vv4CtZxtvFjNaj1unHeEL-NJX_QDoVdnL6F3P09WK8oNkZx2VaPNdqP0wPd3g61J99DMqjXn7sW-lg9j4hY_zZJTN30xSQ6n0l0nl6T9AAza8aZhZXFSmhD30fOZAi2PGpII1aTJ6xPrnnH0zJaYvoGPBhsKpwq2keqT_HzE9ybCkSKyB-blMz9I"/>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 h-[1px] w-full"></div>
+</nav>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 dark:bg-slate-950 h-screen w-64 border-r-0 fixed left-0 top-16 h-[calc(100vh-64px)] flex flex-col justify-between py-6">
+<div class="space-y-1">
+<div class="px-6 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<div>
+<p class="text-xs font-bold text-primary dark:text-blue-400 uppercase tracking-widest">Backend Core</p>
+<p class="text-[10px] text-on-surface-variant">v2.4.0-stable</p>
+</div>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="flex items-center gap-3 py-2 border-l-4 border-blue-900 dark:border-blue-500 bg-transparent font-bold text-blue-900 dark:text-white pl-4 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-inter text-sm font-medium">Intent Interpreter</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="font-inter text-sm font-medium">Permission Engine</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-inter text-sm font-medium">API Gateway</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-inter text-sm font-medium">Audit Logger</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-inter text-sm font-medium">System Health</span>
+</a>
+</nav>
+</div>
+<div class="space-y-2 pt-6 border-t border-slate-200/50 dark:border-slate-800/50 mx-4">
+<a class="flex items-center gap-3 py-2 text-slate-600 dark:text-slate-400 pl-2 hover:text-blue-900 dark:hover:text-blue-300 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">description</span>
+<span class="font-inter text-sm font-medium">Documentation</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-slate-600 dark:text-slate-400 pl-2 hover:text-blue-900 dark:hover:text-blue-300 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">contact_support</span>
+<span class="font-inter text-sm font-medium">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-10 w-full min-h-screen bg-surface">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-12">
+<div>
+<span class="text-label-md font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-2 block">Executive Terminal</span>
+<h1 class="text-5xl font-extrabold tracking-tight text-primary">System Command</h1>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 border border-outline-variant/30 text-primary font-bold rounded-md hover:bg-surface-container-low transition-all">
+                        Export Report
+                    </button>
+<button class="px-8 py-2 primary-gradient-cta text-white font-bold rounded-md shadow-lg shadow-primary/10 active:scale-95 transition-all">
+                        Deploy Update
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Dashboard -->
+<div class="grid grid-cols-12 gap-6">
+<!-- System Alerts (High Priority) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-tint">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-error">warning</span>
+                            Critical Infrastructure Alerts
+                        </h3>
+<span class="px-3 py-1 bg-error-container text-on-error-container text-xs font-bold rounded-full">4 Active</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-error-container/10 rounded-lg border-l-4 border-error">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error">database</span>
+<div>
+<p class="font-bold text-on-surface">Database Cluster Delta-9 Latency</p>
+<p class="text-sm text-on-surface-variant">Response times exceeding 450ms in us-east-1 region.</p>
+</div>
+</div>
+<span class="text-xs font-mono text-error font-bold">12m ago</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg border-l-4 border-outline">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-outline">key</span>
+<div>
+<p class="font-bold text-on-surface">SSL Certificate Expiry Warning</p>
+<p class="text-sm text-on-surface-variant">api.sams-copilot.io expires in 72 hours.</p>
+</div>
+</div>
+<span class="text-xs font-mono text-on-surface-variant">44m ago</span>
+</div>
+</div>
+</div>
+<!-- Subscription Health -->
+<div class="col-span-12 lg:col-span-4 bg-primary text-white p-8 rounded-xl flex flex-col justify-between overflow-hidden relative">
+<div class="z-10">
+<h3 class="text-xl font-bold mb-2">Renewal Pipeline</h3>
+<p class="text-blue-200 text-sm mb-8">Quarterly subscription outlook</p>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs mb-2">
+<span>Premium Enterprise</span>
+<span>88% Retention</span>
+</div>
+<div class="h-1 w-full bg-white/20 rounded-full">
+<div class="h-1 bg-on-primary-container w-[88%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-2">
+<span>Tier 2 Educational</span>
+<span>64% Retention</span>
+</div>
+<div class="h-1 w-full bg-white/20 rounded-full">
+<div class="h-1 bg-tertiary-fixed-dim w-[64%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 z-10">
+<p class="text-3xl font-extrabold">$1.24M</p>
+<p class="text-xs text-blue-300 uppercase tracking-widest">Projected ARR Change</p>
+</div>
+<!-- Decorative background texture -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"></div>
+</div>
+<!-- Cloud Infrastructure Monitoring Panel -->
+<div class="col-span-12 bg-surface-container-lowest p-8 rounded-xl shadow-tint">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-2xl font-bold tracking-tight">Cloud Infrastructure Monitoring</h3>
+<p class="text-on-surface-variant text-sm">Real-time resource allocation across global nodes</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded hover:bg-surface-container text-primary material-symbols-outlined">refresh</button>
+<button class="p-2 rounded hover:bg-surface-container text-primary material-symbols-outlined">fullscreen</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- CPU Usage -->
+<div class="p-6 bg-surface-container-low rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">memory</span>
+<span class="font-bold uppercase text-xs tracking-widest text-on-surface-variant">Global CPU Load</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-4xl font-extrabold font-headline">42.8%</span>
+<span class="text-emerald-600 text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">arrow_downward</span> 4%
+                                </span>
+</div>
+<div class="h-12 flex items-end gap-1">
+<div class="w-full bg-primary/20 h-1/2 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-2/3 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-1/3 rounded-t-sm"></div>
+<div class="w-full bg-primary h-4/5 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-1/2 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-3/4 rounded-t-sm"></div>
+</div>
+</div>
+<!-- Network Throughput -->
+<div class="p-6 bg-surface-container-low rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">lan</span>
+<span class="font-bold uppercase text-xs tracking-widest text-on-surface-variant">Net Throughput</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-4xl font-extrabold font-headline">1.4 GB/s</span>
+<span class="text-error text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> 12%
+                                </span>
+</div>
+<div class="h-12 flex items-end gap-1">
+<div class="w-full bg-primary/20 h-3/4 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-1/2 rounded-t-sm"></div>
+<div class="w-full bg-primary h-full rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-1/3 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-2/3 rounded-t-sm"></div>
+<div class="w-full bg-primary/20 h-1/2 rounded-t-sm"></div>
+</div>
+</div>
+<!-- Node Health -->
+<div class="p-6 bg-surface-container-low rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">cloud_done</span>
+<span class="font-bold uppercase text-xs tracking-widest text-on-surface-variant">Node Integrity</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-4xl font-extrabold font-headline">99.98%</span>
+<span class="text-on-surface-variant text-sm font-bold">Stable</span>
+</div>
+<div class="grid grid-cols-8 gap-1 mt-4">
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+<div class="h-2 bg-tertiary-fixed-dim rounded-full"></div>
+<div class="h-2 bg-emerald-500 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Multi-tenant Activity Table -->
+<div class="col-span-12 bg-surface-container-lowest rounded-xl shadow-tint overflow-hidden">
+<div class="p-8 pb-4">
+<h3 class="text-xl font-bold">Recent Tenant Logins</h3>
+</div>
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Institution</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Admin Entity</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Region</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Status</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant text-right">Last Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-6 font-bold text-primary">St. Edwards Academy</td>
+<td class="px-8 py-6 text-sm">admin_ledwards_01</td>
+<td class="px-8 py-6 text-sm">us-east-1</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                    </span>
+</td>
+<td class="px-8 py-6 text-right text-xs font-mono text-on-surface-variant">2024-05-20 14:22:01</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-6 font-bold text-primary">North Hills University</td>
+<td class="px-8 py-6 text-sm">sys_root_nhu</td>
+<td class="px-8 py-6 text-sm">eu-central-1</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Maintenance
+                                    </span>
+</td>
+<td class="px-8 py-6 text-right text-xs font-mono text-on-surface-variant">2024-05-20 14:18:55</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-6 font-bold text-primary">Global Montessori Trust</td>
+<td class="px-8 py-6 text-sm">sec_officer_mt</td>
+<td class="px-8 py-6 text-sm">ap-south-1</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                    </span>
+</td>
+<td class="px-8 py-6 text-right text-xs font-mono text-on-surface-variant">2024-05-20 14:05:12</td>
+</tr>
+</tbody>
+</table>
+<div class="p-4 bg-surface-container-low/50 flex justify-center">
+<button class="text-primary font-bold text-sm hover:underline">View Comprehensive Audit Trail</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating UI elements for context -->
+<div class="fixed bottom-8 right-8">
+<button class="w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</button>
+</div>
+</body></html>

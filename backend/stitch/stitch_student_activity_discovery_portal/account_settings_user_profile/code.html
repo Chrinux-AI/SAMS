@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SAMS - User Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-lowest": "#ffffff",
+              "primary": "#000666",
+              "surface-tint": "#4c56af",
+              "primary-container": "#1a237e",
+              "tertiary-container": "#5c1800",
+              "error": "#ba1a1a",
+              "on-primary-container": "#8690ee",
+              "on-secondary-container": "#526772",
+              "secondary": "#4c616c",
+              "on-surface-variant": "#454652",
+              "secondary-fixed-dim": "#b4cad6",
+              "inverse-on-surface": "#f0f1f2",
+              "surface": "#f8f9fa",
+              "on-secondary": "#ffffff",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#e0e0ff",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-primary-fixed": "#000767",
+              "on-tertiary-fixed": "#390c00",
+              "outline": "#767683",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-variant": "#e1e3e4",
+              "tertiary-fixed-dim": "#ffb59d",
+              "secondary-container": "#cfe6f2",
+              "background": "#f8f9fa",
+              "surface-dim": "#d9dadb",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#e17c5a",
+              "on-error-container": "#93000a",
+              "tertiary": "#380b00",
+              "surface-container-high": "#e7e8e9",
+              "surface-container-low": "#f3f4f5",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "secondary-fixed": "#cfe6f2",
+              "on-background": "#191c1d",
+              "inverse-surface": "#2e3132",
+              "inverse-primary": "#bdc2ff",
+              "on-primary-fixed-variant": "#343d96",
+              "on-primary": "#ffffff",
+              "outline-variant": "#c6c5d4",
+              "surface-bright": "#f8f9fa",
+              "surface-container": "#edeeef",
+              "on-surface": "#191c1d",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed": "#071e27",
+              "on-secondary-fixed-variant": "#354a53"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+        .sidebar-active-indicator {
+            border-left: 4px solid #000666;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- SideNavBar Component -->
+<aside class="flex flex-col fixed left-0 top-0 h-full h-screen w-64 border-r-0 bg-slate-50 z-50">
+<div class="px-6 py-8">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-blue-950">SAMS</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Academic Sentinel</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 hover:text-blue-900 transition-colors duration-200 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 hover:text-blue-900 transition-colors duration-200 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+                    Management
+                </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 hover:text-blue-900 transition-colors duration-200 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+                    Communication
+                </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-slate-500 hover:text-blue-900 transition-colors duration-200 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                    Reports
+                </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg border-l-4 border-blue-900 font-bold text-blue-950 bg-slate-100 font-manrope text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</nav>
+</div>
+<div class="mt-auto px-6 py-6 space-y-4">
+<button class="w-full btn-gradient text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-primary/10">
+                Check In
+            </button>
+<a class="flex items-center gap-4 px-4 py-3 text-slate-500 hover:text-blue-900 transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+                Bulk Import
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<header class="flex justify-between items-center w-full px-8 py-4 glass-header sticky top-0 z-40 shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400" placeholder="Search administrative records..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 border-r border-outline-variant/30 pr-6">
+<button class="text-slate-600 hover:text-blue-700 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-slate-600 hover:text-blue-700 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="text-slate-600 hover:text-blue-700 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-bold text-blue-950">Dr. Alistair Vance</p>
+<p class="text-[10px] text-on-surface-variant font-medium">Head Registrar</p>
+</div>
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/10" data-alt="Close-up portrait of a professional man with glasses and a friendly expression in a bright academic office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9tgw6hZ5SvzTAjQ1eGXpM-jb5WdnMkvUVmfWcCBoKGet4L7RVE1V4CzEI28yFkibTBxKImucKgJnP_5yV0Ipypi5SW4a70m8mgjUrjbtFjrg7LJPvR7UkZO3a82ek_eoViGp3aUxxTwa6Y0BbHlPD_i5PXtAGLmiWzWjjfEEQFWLUlYL0wBniufKYgByGnxzMIiq7tIegnUKwbITV-MHLY_H3cyanj0doyE-6ogORIV9bNTVI5VN7wo7kLQ1VAONuMp01_f-WJ0U"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-12 max-w-6xl mx-auto w-full">
+<div class="mb-12 flex justify-between items-end">
+<div>
+<h2 class="text-4xl font-extrabold font-headline tracking-tight text-primary mb-2">Account Settings</h2>
+<p class="text-on-surface-variant text-lg max-w-md">Manage your administrative identity and security preferences within the Academic Sentinel.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 rounded-lg border border-outline-variant text-sm font-bold text-primary hover:bg-surface-container-low transition-colors">Discard Changes</button>
+<button class="px-6 py-2.5 rounded-lg btn-gradient text-white text-sm font-bold shadow-md">Save Preferences</button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Profile Information Card -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary" data-icon="badge">badge</span>
+<h3 class="text-xl font-bold font-headline">Profile Information</h3>
+</div>
+<div class="flex flex-col md:flex-row gap-10">
+<div class="flex flex-col items-center gap-4">
+<div class="relative group">
+<img alt="Profile photo" class="w-32 h-32 rounded-full object-cover ring-4 ring-surface-container" data-alt="Professional headshot of a mature academic administrator in a suit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALViBZgG876CWOYOuSXOUUHnbRfYvrj4pUwHrI_lTUlL1WviLjKbQwMLWz4u5tPUE98sOURW0opiG18JgN2p4BLNkcrYn5OfUV71qwdtb5dhQwZHvMQpnbuYD624KHVoOUJOGxcZN0n201FAnKMN0NfRT8rdNDeLFONoi4Dd9PVhy7ZFb0GfX4Wj4fwouoDb3Tmo_FptRDSA7fIhzc_XTRuxapzW7Uqn35dpZ-_sUTZmkIFDvUG5ujUljlU262cBAhhs7U2VKzuRg"/>
+<button class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full shadow-lg border-2 border-white hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+<p class="text-xs font-bold text-primary uppercase tracking-wider">Change Avatar</p>
+</div>
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Full Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20" type="text" value="Dr. Alistair Vance"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Administrative ID</label>
+<input class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-sm text-on-surface-variant cursor-not-allowed" readonly="" type="text" value="REG-992-X"/>
+</div>
+<div class="space-y-2 md:col-span-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Institutional Email</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20" type="email" value="a.vance@sams-academy.edu"/>
+</div>
+<div class="space-y-2 md:col-span-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Department Biography</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20" rows="3">Senior Registrar overseeing academic compliance and student records for the College of Engineering and Applied Sciences.</textarea>
+</div>
+</div>
+</div>
+</section>
+<!-- Theme Switcher Bento Card -->
+<section class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="palette">palette</span>
+<h3 class="text-xl font-bold font-headline">Interface Theme</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="p-4 rounded-xl border-2 border-primary bg-surface-container-low text-left transition-all">
+<div class="w-full h-12 bg-white rounded-md mb-3 border border-outline-variant shadow-inner"></div>
+<span class="text-sm font-bold block">Registrar Light</span>
+<span class="text-[10px] text-on-surface-variant">Default academic view</span>
+</button>
+<button class="p-4 rounded-xl border-2 border-transparent bg-slate-900 text-left hover:border-outline-variant transition-all">
+<div class="w-full h-12 bg-slate-800 rounded-md mb-3 border border-slate-700 shadow-inner"></div>
+<span class="text-sm font-bold text-white block">Night Study</span>
+<span class="text-[10px] text-slate-400">High contrast dark mode</span>
+</button>
+</div>
+<div class="mt-8 p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold">Auto-Sync</p>
+<p class="text-[10px] text-on-surface-variant">Match system preferences</p>
+</div>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full relative">
+<div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Security Section -->
+<section class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary" data-icon="lock">lock</span>
+<h3 class="text-xl font-bold font-headline">Security &amp; Access</h3>
+</div>
+<div class="space-y-6">
+<div class="p-6 bg-surface-container rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-bold text-sm">Two-Factor Authentication</p>
+<p class="text-xs text-on-surface-variant">Recommended for administrative accounts</p>
+</div>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded uppercase">Active</span>
+</div>
+<button class="text-xs font-bold text-primary underline">Manage MFA Devices</button>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Current Password</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20" placeholder="••••••••••••" type="password"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">New Password</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20" type="password"/>
+<div class="flex gap-1 pt-1">
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-surface-container-highest rounded-full"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant">Strength: High. Use symbols and letters.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Notification Preferences -->
+<section class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary" data-icon="notifications_active">notifications_active</span>
+<h3 class="text-xl font-bold font-headline">Notification Feed</h3>
+</div>
+<div class="space-y-1">
+<div class="flex items-center justify-between py-4 border-b border-surface-container">
+<div>
+<p class="text-sm font-bold">Attendance Alerts</p>
+<p class="text-xs text-on-surface-variant">Notify when critical student absence levels reached</p>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between py-4 border-b border-surface-container">
+<div>
+<p class="text-sm font-bold">Staff Communications</p>
+<p class="text-xs text-on-surface-variant">Internal faculty messages and memo updates</p>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between py-4 border-b border-surface-container">
+<div>
+<p class="text-sm font-bold">Weekly Performance Digest</p>
+<p class="text-xs text-on-surface-variant">Summary of institutional reporting metrics</p>
+</div>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full relative cursor-pointer">
+<div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+</div>
+</div>
+<div class="flex items-center justify-between py-4">
+<div>
+<p class="text-sm font-bold">Browser Push Notifications</p>
+<p class="text-xs text-on-surface-variant">Desktop alerts for real-time check-ins</p>
+</div>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full relative cursor-pointer">
+<div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-tertiary-container/5 rounded-xl border border-tertiary-container/10">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="warning">warning</span>
+<p class="text-[10px] leading-relaxed text-on-tertiary-fixed-variant">
+<strong>Compliance Note:</strong> Disabling critical alerts may result in delayed intervention for mandatory state reporting requirements.
+                            </p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Footer Component -->
+<footer class="flex justify-between items-center px-8 py-6 w-full mt-auto bg-slate-50 border-t border-surface-container">
+<span class="font-manrope text-xs tracking-wide uppercase text-slate-500">v2.0.4 © SAMS Academic Sentinel</span>
+<div class="flex gap-8">
+<a class="font-manrope text-xs tracking-wide uppercase text-slate-500 hover:text-blue-600 transition-opacity opacity-80 hover:opacity-100" href="#">Help</a>
+<a class="font-manrope text-xs tracking-wide uppercase text-slate-500 hover:text-blue-600 transition-opacity opacity-80 hover:opacity-100" href="#">Support</a>
+<a class="font-manrope text-xs tracking-wide uppercase text-slate-500 hover:text-blue-600 transition-opacity opacity-80 hover:opacity-100" href="#">Privacy</a>
+</div>
+</footer>
+</main>
+</body></html>

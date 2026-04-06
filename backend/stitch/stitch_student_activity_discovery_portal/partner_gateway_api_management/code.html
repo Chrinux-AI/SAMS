@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Partner Gateway | Academic Sentinel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary": "#4c616c",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary-fixed": "#390c00",
+              "secondary-container": "#cfe6f2",
+              "on-primary-fixed": "#000767",
+              "primary-fixed": "#e0e0ff",
+              "tertiary": "#380b00",
+              "outline": "#767683",
+              "on-surface": "#191c1d",
+              "on-secondary-fixed": "#071e27",
+              "inverse-on-surface": "#f0f1f2",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-container-high": "#e7e8e9",
+              "primary": "#000666",
+              "on-surface-variant": "#454652",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#e1e3e4",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-container-low": "#f3f4f5",
+              "surface": "#f8f9fa",
+              "on-error": "#ffffff",
+              "surface-container": "#edeeef",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-tertiary-container": "#e17c5a",
+              "inverse-primary": "#bdc2ff",
+              "on-error-container": "#93000a",
+              "surface-tint": "#4c56af",
+              "on-primary-container": "#8690ee",
+              "tertiary-container": "#5c1800",
+              "background": "#f8f9fa",
+              "error": "#ba1a1a",
+              "primary-container": "#1a237e",
+              "secondary-fixed": "#cfe6f2",
+              "inverse-surface": "#2e3132",
+              "on-secondary-container": "#526772",
+              "on-primary-fixed-variant": "#343d96",
+              "on-background": "#191c1d",
+              "outline-variant": "#c6c5d4",
+              "error-container": "#ffdad6",
+              "surface-bright": "#f8f9fa",
+              "on-tertiary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#b4cad6",
+              "on-secondary-fixed-variant": "#354a53",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dadb"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .premium-gradient {
+        background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+      }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.8);
+      }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-100 font-headline">Academic Sentinel</span>
+<div class="hidden md:flex gap-6">
+<a class="font-manrope text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors px-3 py-2 rounded-lg" href="#">Overview</a>
+<a class="font-manrope text-sm font-bold text-blue-900 border-b-2 border-blue-900 px-3 py-2" href="#">Partner Gateway</a>
+<a class="font-manrope text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors px-3 py-2 rounded-lg" href="#">Integrations</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container overflow-hidden ml-2">
+<img alt="Administrator Profile" data-alt="professional headshot of a middle-aged male administrator with a confident smile in a bright office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDb0JMgBpJ7Kpn0xKRrG1q65hDeD7Q676jbcIQnto400zjOfCkvUqJL4aaE5Tq0xv-9N0Slzv9TnmJTNWuw-OiXNynT_d3x-NBpeW56HSYtveGRp1nlNVkoUXf8ElH7yRkoynGyG89uItPeSIZJC79ShjkjuTRjUriPphlz0Nngt5eEC57gx0bsupWQff8HSj-dkLmlYB2fCowtVuA9zGSJxXsrBAWUf8DLNH1ziENcNeWNRVOnE88OzXE-elkwmrGTP4TY8vbSboY"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 pt-20 bg-slate-50 dark:bg-slate-950 flex flex-col space-y-2">
+<div class="px-6 mb-8">
+<h2 class="font-manrope font-extrabold text-blue-900 text-lg uppercase tracking-wider">SAMS Admin</h2>
+<p class="text-xs text-on-surface-variant font-medium">Academic Year 2024</p>
+</div>
+<nav class="flex-1">
+<a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-800 hover:bg-slate-100/50 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-800 hover:bg-slate-100/50 transition-all" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-inter text-sm font-medium">Attendance</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-800 hover:bg-slate-100/50 transition-all" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-inter text-sm font-medium">Students</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-800 hover:bg-slate-100/50 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-inter text-sm font-medium">Staff</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-800 hover:bg-slate-100/50 transition-all" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-inter text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 border-l-4 border-blue-900 text-blue-900 font-bold bg-white transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-inter text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full premium-gradient text-white py-3 px-4 rounded-xl font-headline font-bold text-sm shadow-lg shadow-blue-900/10 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">bolt</span>
+                Quick Action
+            </button>
+</div>
+<div class="mt-auto border-t border-slate-200 p-4">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-error transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-inter text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 pb-12 px-10 min-h-screen">
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-12">
+<div>
+<span class="text-on-surface-variant font-label text-sm uppercase tracking-[0.2em] font-semibold">Technical Infrastructure</span>
+<h1 class="text-5xl font-headline font-extrabold text-primary mt-2 tracking-tight">Partner Gateway</h1>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-xl border border-outline-variant text-primary font-headline font-bold text-sm hover:bg-surface-container-low transition-colors">
+                    View Logs
+                </button>
+<button class="px-6 py-3 rounded-xl premium-gradient text-white font-headline font-bold text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Register Partner
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Integration Health Monitor (Large Card) -->
+<section class="col-span-8 bg-surface-container-lowest rounded-xl p-8 border-none shadow-tint transition-all hover:shadow-lg">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-xl font-headline font-bold text-primary">System Health Monitor</h3>
+<p class="text-on-surface-variant text-sm mt-1">Real-time throughput for active API integrations</p>
+</div>
+<div class="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        ALL SYSTEMS OPERATIONAL
+                    </div>
+</div>
+<div class="grid grid-cols-3 gap-8 mb-8">
+<div class="bg-surface-container-low rounded-xl p-6">
+<span class="text-on-surface-variant font-label text-xs uppercase tracking-wider">Avg Latency</span>
+<div class="text-3xl font-headline font-extrabold text-primary mt-1">42ms</div>
+<div class="text-xs text-green-600 font-bold mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_down</span>
+                            12% from last week
+                        </div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6">
+<span class="text-on-surface-variant font-label text-xs uppercase tracking-wider">Error Rate</span>
+<div class="text-3xl font-headline font-extrabold text-primary mt-1">0.04%</div>
+<div class="text-xs text-on-surface-variant font-medium mt-2">Stable performance</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6">
+<span class="text-on-surface-variant font-label text-xs uppercase tracking-wider">Active Hooks</span>
+<div class="text-3xl font-headline font-extrabold text-primary mt-1">1,204</div>
+<div class="text-xs text-primary font-bold mt-2">Scale: Medium</div>
+</div>
+</div>
+<div class="relative h-32 w-full bg-surface-container-low rounded-xl overflow-hidden flex items-end">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-xs text-on-surface-variant font-label opacity-40 uppercase tracking-widest">Live Stream Analytics</span>
+</div>
+<!-- Visual representation of health spikes -->
+<div class="w-full flex items-end gap-1 px-4 h-24">
+<div class="flex-1 bg-primary/10 h-1/2 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-3/4 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-1/2 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/15 h-2/3 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 h-5/6 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-2/3 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-1/2 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/40 h-full rounded-t-sm"></div>
+<div class="flex-1 bg-primary/15 h-2/3 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-1/2 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/25 h-3/4 rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-1/2 rounded-t-sm"></div>
+</div>
+</div>
+</section>
+<!-- Documentation Link (Small Card) -->
+<section class="col-span-4 bg-primary-container rounded-xl p-8 relative overflow-hidden group">
+<div class="relative z-10 h-full flex flex-col">
+<h3 class="text-white font-headline font-bold text-xl mb-2">Developer Docs</h3>
+<p class="text-on-primary-container text-sm mb-8 leading-relaxed">Access SDKs, OAuth2 workflows, and API reference guides for SAMS Core integration.</p>
+<ul class="space-y-4 mb-auto">
+<li class="flex items-center gap-3 text-white text-sm font-medium cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-lg">description</span>
+                            REST API Reference
+                        </li>
+<li class="flex items-center gap-3 text-white text-sm font-medium cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-lg">webhook</span>
+                            Webhook Events List
+                        </li>
+</ul>
+<a class="mt-8 bg-white text-primary px-4 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 group-hover:scale-[1.02] transition-transform" href="#">
+                        Explore Portal
+                        <span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</div>
+<!-- Decorative element -->
+<div class="absolute -bottom-12 -right-12 w-48 h-48 bg-white/5 rounded-full blur-3xl transition-all group-hover:scale-150"></div>
+</section>
+<!-- API Key Management (Medium Card) -->
+<section class="col-span-5 bg-surface-container-lowest rounded-xl p-8 shadow-tint">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-xl font-headline font-bold text-primary">Active API Keys</h3>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+                        Generate New
+                    </button>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-surface-container-low rounded-lg flex justify-between items-center">
+<div>
+<p class="font-bold text-sm">Prod_Env_Main</p>
+<p class="text-xs font-mono text-on-surface-variant mt-1">ak_live_72x...889c</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">content_copy</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg flex justify-between items-center">
+<div>
+<p class="font-bold text-sm">Staging_Sandbox</p>
+<p class="text-xs font-mono text-on-surface-variant mt-1">ak_test_41v...221f</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">content_copy</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg flex justify-between items-center border-l-4 border-error/40">
+<div>
+<p class="font-bold text-sm opacity-60">Legacy_Migration</p>
+<p class="text-xs text-error font-bold mt-1 uppercase tracking-tighter">Expiring in 2 days</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">refresh</span>
+</div>
+</div>
+</section>
+<!-- Registered Partner List (Widest Card) -->
+<section class="col-span-7 bg-surface-container-lowest rounded-xl shadow-tint overflow-hidden">
+<div class="p-8 pb-4">
+<h3 class="text-xl font-headline font-bold text-primary">Strategic Partners</h3>
+<p class="text-on-surface-variant text-sm mt-1">Managed enterprise-level authentication and sync partners</p>
+</div>
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Partner Identity</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Integration Type</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Status</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Traffic</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">cloud</span>
+</div>
+<div>
+<p class="text-sm font-bold">Microsoft Azure AD</p>
+<p class="text-xs text-on-surface-variant">SSO Integration</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-xs font-medium px-2 py-1 bg-surface-container rounded">OAuth 2.0</span>
+</td>
+<td class="px-8 py-5">
+<span class="flex items-center gap-2 text-xs font-bold text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                                </span>
+</td>
+<td class="px-8 py-5 text-sm font-mono text-on-surface-variant">1.2M/mo</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-slate-50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-red-500">school</span>
+</div>
+<div>
+<p class="text-sm font-bold">Google Classroom</p>
+<p class="text-xs text-on-surface-variant">Data Sync</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-xs font-medium px-2 py-1 bg-surface-container rounded">LTI 1.3</span>
+</td>
+<td class="px-8 py-5">
+<span class="flex items-center gap-2 text-xs font-bold text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                                </span>
+</td>
+<td class="px-8 py-5 text-sm font-mono text-on-surface-variant">450K/mo</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">diversity_3</span>
+</div>
+<div>
+<p class="text-sm font-bold">Clever Inc.</p>
+<p class="text-xs text-on-surface-variant">Rostering</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-xs font-medium px-2 py-1 bg-surface-container rounded">Webhooks</span>
+</td>
+<td class="px-8 py-5">
+<span class="flex items-center gap-2 text-xs font-bold text-tertiary-container">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span> Paused
+                                </span>
+</td>
+<td class="px-8 py-5 text-sm font-mono text-on-surface-variant">--</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-4 mt-auto flex justify-between items-center px-10 ml-64 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+<p class="text-slate-400 dark:text-slate-600 font-inter text-xs tracking-wide uppercase">© 2024 The Academic Sentinel. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-slate-500 dark:text-slate-500 font-inter text-xs tracking-wide uppercase hover:text-blue-700 dark:hover:text-blue-300 underline" href="#">Privacy Policy</a>
+<a class="text-slate-500 dark:text-slate-500 font-inter text-xs tracking-wide uppercase hover:text-blue-700 dark:hover:text-blue-300 underline" href="#">Terms of Service</a>
+<span class="text-slate-400 dark:text-slate-600 font-inter text-xs tracking-wide uppercase">v2.4.1</span>
+</div>
+</footer>
+</body></html>

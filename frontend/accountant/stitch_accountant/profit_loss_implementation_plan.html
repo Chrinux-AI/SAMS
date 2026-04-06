@@ -1,0 +1,40 @@
+# Profit & Loss Statement (`profit-loss.php`) Implementation Plan
+
+### 📁 1. Files & Architecture
+- **File**: `frontend/accountant/profit-loss.php`
+- **Includes**:
+  - `require_once '../includes/config.php'`
+  - `require_once INCLUDES_PATH . '/functions.php'`
+  - `require_once INCLUDES_PATH . '/database.php'`
+  - `include INCLUDES_PATH . '/sidebar-nav.php'`
+- **Security**: CSRF token verification on all export/action hooks. Role guard for `accountant` or `admin`.
+
+### 📊 2. Helper Calculation Map
+To support this page, the following backend aggregations are required:
+- `get_revenue_by_period($tenant_id, $start, $end)`: Sum of all revenue-type ledger entries.
+- `get_expenses_by_period($tenant_id, $start, $end)`: Sum of all expense-type ledger entries.
+- `calculate_net_income($revenue, $expenses)`: Simple subtraction for the bottom line.
+- `calculate_operating_margin($net_income, $revenue)`: (Net Income / Total Revenue) * 100.
+- `get_prior_period_comparison($tenant_id, $current_start, $current_end)`: Fetches data for the immediately preceding equivalent period.
+
+### 💾 3. SQL Logic (Conceptual)
+```sql
+-- Aggregating totals for the P&L table
+SELECT 
+    coa.account_name, 
+    coa.account_type,
+    SUM(le.credit - le.debit) as balance
+FROM ledger_entries le
+JOIN chart_of_accounts coa ON le.account_id = coa.id
+WHERE le.tenant_id = ? 
+  AND le.entry_date BETWEEN ? AND ?
+  AND coa.account_type IN ('revenue', 'expense')
+GROUP BY coa.id;
+```
+
+### ✅ 4. Acceptance Checklist
+- [x] **Equation Correctness**: Gross Profit - Opex = Operating Income.
+- [x] **Margin Analysis**: '% of Revenue' column accurately reflects weights.
+- [x] **Tenant Context**: Data is strictly filtered by active `tenant_id`.
+- [x] **Comparison Mode**: Variance calculation logic is visible when comparison is toggled.
+- [x] **Export Hooks**: Buttons for CSV, Print, and PDF are active in the UI.

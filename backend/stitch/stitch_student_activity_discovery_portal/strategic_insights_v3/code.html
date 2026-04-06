@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategic Financial Hub | Executive Summary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#edeeef",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "surface-variant": "#e1e3e4",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000666",
+                        "on-surface-variant": "#454652",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-high": "#e7e8e9",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-secondary-fixed": "#071e27",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#380b00",
+                        "outline": "#767683",
+                        "primary-fixed": "#e0e0ff",
+                        "on-primary-fixed": "#000767",
+                        "secondary-container": "#cfe6f2",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed": "#390c00",
+                        "secondary": "#4c616c",
+                        "surface-dim": "#d9dadb",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "on-secondary-fixed-variant": "#354a53",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c6c5d4",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#343d96",
+                        "on-secondary-container": "#526772",
+                        "secondary-fixed": "#cfe6f2",
+                        "inverse-surface": "#2e3132",
+                        "primary-container": "#1a237e",
+                        "error": "#ba1a1a",
+                        "background": "#f8f9fa",
+                        "tertiary-container": "#5c1800",
+                        "surface-tint": "#4c56af",
+                        "on-primary-container": "#8690ee",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#bdc2ff",
+                        "on-tertiary-container": "#e17c5a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-blue-900 dark:text-white">SAMS AI Copilot</span>
+<nav class="hidden md:flex items-center gap-6 font-manrope text-sm tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Architecture</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Logs</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Permissions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Gateway</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-xs focus:ring-2 focus:ring-primary/20 w-64" placeholder="Search parameters..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-slate-200">
+<img alt="User profile avatar" data-alt="professional headshot of a financial executive in a dark suit with a neutral background and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOL9-Mk396bG9xsThmHlQW76jAYbVztwY7_GKgc1XudCM_Tl0biAjQU5fzuCptUEJLgV3dVPGmuJM3AXdQ7nQ5hQtiRq8DgmW6au5Ko1xAEgA1gEEietriqgbdLcduF3AgwNMTU-vy6WoLlDbO1hvFiMZmjt_yLfkembbJDa5EzsQB2C_OcfwFMANzTdeBdr2UKhukI-jeDa3PsW0TfvJ5m12kjni58YSQqond-Y5y-ChEJO6-jhRDodR5B7F7NTisHsUMzMGJQ7I"/>
+</div>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 h-[1px] w-full"></div>
+</header>
+<!-- Sidebar & Canvas Wrapper -->
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] flex flex-col justify-between py-6 bg-slate-50 dark:bg-slate-950 h-screen w-64 border-r-0 font-inter text-sm font-medium z-40">
+<div class="space-y-1">
+<div class="px-6 mb-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">monitoring</span>
+</div>
+<div>
+<p class="text-on-surface font-bold text-xs">Backend Core</p>
+<p class="text-on-surface-variant text-[10px]">v2.4.0-stable</p>
+</div>
+</div>
+</div>
+<nav>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">psychology</span>
+                        Intent Interpreter
+                    </a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">security</span>
+                        Permission Engine
+                    </a>
+<a class="flex items-center gap-4 py-3 border-l-4 border-blue-900 dark:border-blue-500 bg-transparent font-bold text-blue-900 dark:text-white pl-4 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hub</span>
+                        API Gateway
+                    </a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+                        Audit Logger
+                    </a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+                        System Health
+                    </a>
+</nav>
+</div>
+<div class="space-y-1">
+<div class="mx-5 my-4 bg-slate-100 dark:bg-slate-900 h-[1px]"></div>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">description</span>
+                    Documentation
+                </a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                    Support
+                </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 flex-1 min-h-screen p-8 lg:p-12">
+<!-- Executive Summary Header -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+<div class="max-w-2xl">
+<p class="font-label text-sm uppercase tracking-[0.2em] text-on-surface-variant mb-4">Strategic Financial Hub</p>
+<h1 class="font-headline text-5xl lg:text-7xl font-extrabold tracking-tighter text-primary">Executive Summary</h1>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 border border-outline-variant/20 rounded-xl font-medium text-sm hover:bg-surface-container-low transition-all">
+                        Export Report
+                    </button>
+<button class="px-6 py-3 primary-gradient text-white rounded-xl font-semibold text-sm shadow-xl shadow-primary/10 hover:scale-[1.02] active:scale-95 transition-all">
+                        Configure Dashboard
+                    </button>
+</div>
+</div>
+<!-- Bento Grid: Key Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+<!-- Main KPI Card -->
+<div class="md:col-span-2 row-span-2 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/5">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline text-2xl font-bold mb-1">Revenue Performance</h3>
+<p class="text-on-surface-variant text-sm">Quarterly projected vs. actual performance</p>
+</div>
+<div class="flex gap-2">
+<span class="h-2 w-2 rounded-full bg-primary mt-1.5"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Live Data</span>
+</div>
+</div>
+<div class="flex items-baseline gap-4 mb-8">
+<span class="font-headline text-6xl font-extrabold text-primary">$42.8M</span>
+<span class="text-green-600 font-bold flex items-center text-lg">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                            12.4%
+                        </span>
+</div>
+<!-- Mock Visual: Gradient Bar Chart -->
+<div class="flex items-end gap-3 h-48 w-full">
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-1/2"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-2/3"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-3/4"></div>
+<div class="flex-1 primary-gradient rounded-t-lg h-full relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded">Current</div>
+</div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-4/5"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-3/5"></div>
+</div>
+</div>
+<!-- Secondary Metric -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/5 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-primary mb-4">group</span>
+<h4 class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Shareholders</h4>
+<p class="font-headline text-3xl font-bold">1,248</p>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Active governance participants across 4 continents.</p>
+</div>
+<!-- Alert Metric -->
+<div class="bg-tertiary-container/10 p-6 rounded-xl border border-tertiary-container/20 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-tertiary mb-4">gavel</span>
+<h4 class="text-tertiary text-xs font-bold uppercase tracking-widest">Compliance</h4>
+<p class="font-headline text-3xl font-bold text-tertiary">98.2%</p>
+</div>
+<div class="h-1.5 w-full bg-tertiary-fixed rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[98%]"></div>
+</div>
+</div>
+<!-- Small Grid Items -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/5">
+<h4 class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">EBITDA Margin</h4>
+<p class="font-headline text-2xl font-bold">34.1%</p>
+<div class="mt-4 flex gap-1">
+<div class="h-1 w-4 bg-primary rounded-full"></div>
+<div class="h-1 w-4 bg-primary rounded-full"></div>
+<div class="h-1 w-4 bg-surface-container rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/5">
+<h4 class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Burn Rate</h4>
+<p class="font-headline text-2xl font-bold">$1.2M</p>
+<p class="text-[10px] text-green-600 font-bold mt-2">-4% from prev. mo</p>
+</div>
+</div>
+<!-- Revenue Heatmap & Global Reach -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+<!-- Heatmap Canvas -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/5">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline text-xl font-bold">Global Revenue Heatmap</h3>
+<div class="flex items-center gap-4 text-xs font-bold">
+<span class="flex items-center gap-1"><span class="h-3 w-3 rounded-sm bg-primary"></span> High</span>
+<span class="flex items-center gap-1"><span class="h-3 w-3 rounded-sm bg-primary/40"></span> Low</span>
+</div>
+</div>
+<div class="aspect-video w-full rounded-lg bg-surface-container-low relative overflow-hidden">
+<img alt="World Map" class="w-full h-full object-cover opacity-20 grayscale" data-alt="minimalist topographical map of the world with clean lines and subtle shadow detail on a light grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTYjDNm8VW65UNDXp_BJsBhHUouGTfzMTsigp5CTg42hzVHowb5qUcqfLQMVOP9sPrzL22tYnUHJYoianYxqTXZH1G7JtDdwHxvHFZxsHGM3CHwT0AsoJwEcPg9Ocz_UD1yrn2A9ubdFInOs4jt6edpgdPHK3ue5bqi_2Arw4Ql6dM6iuEEUbCGIk2Yw6tf_rEq9YUHimbxLyEj9HLflaeaGe9W2m4hTEbhArt9zPrA735O7MWVBMAVgCiPMxlUH7kt431luXtZy0"/>
+<!-- Simulated Data Points -->
+<div class="absolute top-1/4 left-1/4 h-12 w-12 bg-primary/20 rounded-full blur-xl"></div>
+<div class="absolute top-1/3 left-1/3 h-8 w-8 bg-primary/40 rounded-full blur-lg"></div>
+<div class="absolute top-1/2 left-2/3 h-16 w-16 bg-primary/30 rounded-full blur-2xl"></div>
+<div class="absolute bottom-1/4 left-1/2 h-10 w-10 bg-primary/10 rounded-full blur-lg"></div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<p class="font-headline text-sm font-medium text-on-surface-variant">Interactive Heatmap Layer Loading...</p>
+</div>
+</div>
+</div>
+<!-- Shareholder Reporting Tools -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/5">
+<h3 class="font-headline text-xl font-bold mb-6">Reporting Center</h3>
+<div class="space-y-4">
+<div class="group p-4 rounded-lg bg-surface-container-low hover:bg-primary transition-all cursor-pointer">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">description</span>
+<div>
+<p class="text-sm font-bold group-hover:text-white transition-colors">Q3 Fiscal Audit</p>
+<p class="text-[10px] text-on-surface-variant group-hover:text-white/70 transition-colors">Verified by KPMG · 2 days ago</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-white transition-colors">download</span>
+</div>
+</div>
+<div class="group p-4 rounded-lg bg-surface-container-low hover:bg-primary transition-all cursor-pointer">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">table_chart</span>
+<div>
+<p class="text-sm font-bold group-hover:text-white transition-colors">Cap Table v4.2</p>
+<p class="text-[10px] text-on-surface-variant group-hover:text-white/70 transition-colors">Updated 1 hour ago</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-white transition-colors">download</span>
+</div>
+</div>
+<div class="group p-4 rounded-lg bg-surface-container-low hover:bg-primary transition-all cursor-pointer">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">pie_chart</span>
+<div>
+<p class="text-sm font-bold group-hover:text-white transition-colors">Shareholder Letter</p>
+<p class="text-[10px] text-on-surface-variant group-hover:text-white/70 transition-colors">Draft for Review</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-white transition-colors">visibility</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 py-3 border-2 border-dashed border-outline-variant/30 rounded-xl text-on-surface-variant text-xs font-bold uppercase tracking-widest hover:border-primary/40 hover:text-primary transition-all">
+                        Request New Report
+                    </button>
+</div>
+</div>
+<!-- Transactional Ledger Table (Clean Modern Layout) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/5 overflow-hidden">
+<div class="p-8 border-b border-surface-container">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h3 class="font-headline text-xl font-bold">Recent Capital Movements</h3>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-low rounded-lg text-xs font-bold">All Movements</button>
+<button class="px-4 py-2 hover:bg-surface-container-low rounded-lg text-xs text-on-surface-variant transition-colors">Inbound Only</button>
+<button class="px-4 py-2 hover:bg-surface-container-low rounded-lg text-xs text-on-surface-variant transition-colors">Outbound Only</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Entity / Source</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Category</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-right">Amount</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-center">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-xs">V</div>
+<div>
+<p class="text-sm font-bold">Vanguard Strategic Fund</p>
+<p class="text-[10px] text-on-surface-variant">ID: #TRX-99821</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-xs font-medium px-2 py-1 bg-secondary-container text-on-secondary-container rounded">Equity Injection</span>
+</td>
+<td class="px-8 py-5 text-right font-headline font-bold text-sm">+$2,450,000.00</td>
+<td class="px-8 py-5 text-center">
+<span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-green-700">
+<span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                                        SETTLED
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors bg-surface-container-low/20">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary font-bold text-xs">A</div>
+<div>
+<p class="text-sm font-bold">Amazon Web Services</p>
+<p class="text-[10px] text-on-surface-variant">ID: #TRX-99815</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-xs font-medium px-2 py-1 bg-surface-container text-on-surface-variant rounded">OpEx</span>
+</td>
+<td class="px-8 py-5 text-right font-headline font-bold text-sm">-$142,330.12</td>
+<td class="px-8 py-5 text-center">
+<span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary/60">
+<span class="h-1.5 w-1.5 rounded-full bg-primary/40"></span>
+                                        PENDING
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-xs">S</div>
+<div>
+<p class="text-sm font-bold">Stripe Merchant Payout</p>
+<p class="text-[10px] text-on-surface-variant">ID: #TRX-99804</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-xs font-medium px-2 py-1 bg-secondary-container text-on-secondary-container rounded">Revenue</span>
+</td>
+<td class="px-8 py-5 text-right font-headline font-bold text-sm">+$842,001.50</td>
+<td class="px-8 py-5 text-center">
+<span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-green-700">
+<span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                                        SETTLED
+                                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container-low/50 flex justify-center">
+<button class="text-xs font-bold text-primary hover:underline">View Full Ledger</button>
+</div>
+</div>
+</main>
+</div>
+<!-- Contextual FAB (Suppressed on details pages, showing here as it's a Dashboard) -->
+<button class="fixed bottom-8 right-8 h-14 w-14 primary-gradient text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</body></html>

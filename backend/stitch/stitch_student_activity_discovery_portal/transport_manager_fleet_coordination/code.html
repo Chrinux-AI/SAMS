@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Transport Manager Dashboard | SAMS Core</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#e0e0ff",
+              "on-tertiary-container": "#e17c5a",
+              "secondary": "#4c616c",
+              "on-surface-variant": "#454652",
+              "on-primary-fixed": "#000767",
+              "error": "#ba1a1a",
+              "secondary-fixed": "#cfe6f2",
+              "on-secondary": "#ffffff",
+              "secondary-fixed-dim": "#b4cad6",
+              "outline-variant": "#c6c5d4",
+              "tertiary-container": "#5c1800",
+              "tertiary-fixed-dim": "#ffb59d",
+              "on-secondary-fixed": "#071e27",
+              "background": "#f8f9fa",
+              "inverse-primary": "#bdc2ff",
+              "primary": "#000666",
+              "inverse-on-surface": "#f0f1f2",
+              "on-secondary-container": "#526772",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-container-highest": "#e1e3e4",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed-variant": "#354a53",
+              "outline": "#767683",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-container": "#edeeef",
+              "on-error-container": "#93000a",
+              "secondary-container": "#cfe6f2",
+              "surface-bright": "#f8f9fa",
+              "on-tertiary-fixed": "#390c00",
+              "inverse-surface": "#2e3132",
+              "surface-dim": "#d9dadb",
+              "surface-container-low": "#f3f4f5",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-tint": "#4c56af",
+              "on-primary-container": "#8690ee",
+              "surface-variant": "#e1e3e4",
+              "on-error": "#ffffff",
+              "primary-container": "#1a237e",
+              "tertiary-fixed": "#ffdbd0",
+              "tertiary": "#380b00",
+              "on-background": "#191c1d",
+              "surface": "#f8f9fa",
+              "on-surface": "#191c1d",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e7e8e9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-stacking {
+            background: linear-gradient(180deg, #f3f4f5 0%, #f8f9fa 100%);
+        }
+        .archive-blur {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface antialiased">
+<!-- Sidebar Navigation (SideNavBar) -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col py-6 z-40">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-blue-950 dark:text-white uppercase tracking-widest leading-none">The Academic Sentinel</h2>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">Administrative Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-2">
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 pl-4 py-3 my-1 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="rule">rule</span> Attendance
+            </a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 pl-4 py-3 my-1 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span> Students
+            </a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 pl-4 py-3 my-1 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span> Staff
+            </a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 pl-4 py-3 my-1 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span> Finance
+            </a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 pl-4 py-3 my-1 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span> Library
+            </a>
+<a class="border-l-4 border-blue-900 dark:border-blue-500 text-blue-900 dark:text-blue-400 font-bold bg-white dark:bg-slate-900 flex items-center gap-3 pl-3 py-3 my-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span> Transport
+            </a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 pl-4 py-3 my-1 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span> Settings
+            </a>
+</nav>
+<div class="px-4 mt-auto border-t border-outline-variant/20 pt-4">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">add</span> New Entry
+            </button>
+<div class="mt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 text-slate-400 text-xs uppercase tracking-tighter hover:text-blue-700 transition-colors py-2 px-2" href="#">
+<span class="material-symbols-outlined text-sm">contact_support</span> Support
+                </a>
+<a class="flex items-center gap-3 text-slate-400 text-xs uppercase tracking-tighter hover:text-blue-700 transition-colors py-2 px-2" href="#">
+<span class="material-symbols-outlined text-sm">logout</span> Sign Out
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 z-30 archive-blur bg-white/80 border-none shadow-sm flex justify-between items-center px-8 py-4">
+<div class="flex items-center gap-8">
+<h1 class="font-headline text-2xl font-extrabold tracking-tight text-blue-950">Transport Manager Dashboard</h1>
+<div class="hidden lg:flex items-center gap-6">
+<a class="text-blue-900 font-bold border-b-2 border-blue-900 pb-1 text-sm" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-blue-800 transition-colors text-sm" href="#">Reports</a>
+<a class="text-slate-500 hover:text-blue-800 transition-colors text-sm" href="#">Schedule</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search routes or vehicles..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-slate-50 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="flex items-center gap-3 ml-4 border-l border-outline-variant/30 pl-4">
+<div class="text-right">
+<p class="text-sm font-bold leading-none">Admin User</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">SAMS Core</p>
+</div>
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/10" data-alt="close-up portrait of a professional male fleet administrator in a clean office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFTT51Q5HdVOL-dGuDh64vNDId02ErdaCcqn6pye09RaO61q45p1xtDbBX6yPsHDtjBlAPFtTRrNgVYkA8a74H7cMKOgcGTasPtRbio50NCTVYPLb9EdHofuSbzwsxssA70_1udzl7Jb5iBgYAMuq2pV-cdv75H-DBnA0sQn-7mMWJvJDeo1B1gaUEIHThE0zJcL6ZLR9oW0BYwP6HqUHr6F_xL1AvNPXsLKpwH5Hfp8Cgj_vV1eRA9KfCcfzQuoLELwfbe21WJac"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="mt-20 p-8 flex-1">
+<!-- Bento Hero Section -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<!-- Fleet Status Large Widget -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-start mb-10">
+<div>
+<p class="text-on-surface-variant text-xs font-bold uppercase tracking-[0.15em] mb-1">Live Fleet Operations</p>
+<h2 class="font-headline text-4xl font-extrabold text-primary">Fleet Status</h2>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">add_road</span> Add New Route
+                            </button>
+<button class="outline outline-1 outline-outline-variant/30 text-primary px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-50 transition-all">
+<span class="material-symbols-outlined text-sm inline-block align-middle mr-1">file_download</span> Generate Fleet Report
+                            </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-blue-500 rounded-xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
+<div class="relative bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-bold mb-4">Active Routes</p>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-5xl font-black text-primary">24</span>
+<span class="text-success text-sm font-bold text-emerald-600 flex items-center">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> 100%
+                                    </span>
+</div>
+<p class="text-xs text-on-surface-variant/70 mt-4 italic">No disruptions reported</p>
+</div>
+</div>
+<div class="relative group">
+<div class="relative bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-bold mb-4">On-Time Performance</p>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-5xl font-black text-primary">98.2</span>
+<span class="text-primary-container text-2xl font-bold">%</span>
+</div>
+<p class="text-xs text-on-surface-variant/70 mt-4 italic">+1.4% from yesterday</p>
+</div>
+</div>
+<div class="relative group">
+<div class="relative bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-bold mb-4">Student Safety Check</p>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-4xl text-emerald-600" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-headline text-xl font-bold text-primary">ALL CLEAR</span>
+</div>
+<p class="text-xs text-on-surface-variant/70 mt-4 italic">Last scan: 2 mins ago</p>
+</div>
+</div>
+</div>
+</div>
+<!-- GPS Map Preview -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10 flex flex-col">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-headline font-extrabold text-blue-950 uppercase tracking-tighter">Real-Time GPS Preview</h3>
+<span class="flex items-center gap-1 text-[10px] text-emerald-600 font-bold uppercase animate-pulse">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span> Live
+                        </span>
+</div>
+<div class="flex-1 min-h-[300px] relative bg-slate-200">
+<div class="absolute inset-0 grayscale contrast-125 opacity-40 mix-blend-multiply" data-alt="abstract monochromatic satellite map view of urban city grid with complex street patterns" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuqLwBxn_kP7mUraJgEr5iiZW6nVx3cMoBNT7mWUR2XQ5iMeUxbicW30y4XXbWX7mznGoMYeUqQiXrjv7GacO-2yWa-ZbEqsp_igTowMJRVTnrHJ_8Vd8GSNfQs7ZGAR3MVkCkXrlhQ1HZJs3wdkYHBUW01t_FX3y0JDrMUD_hStlYeHYYEitfmghDTOAMR23xsjR7EmT37t8ZNZ2OS1Ijn7U8eC8cQkiVhySp1SOMYLhQjUcKheb6AL93zzaM6waTeV-Qu4OHXRY'); background-size: cover;"></div>
+<!-- Map Markers -->
+<div class="absolute top-1/4 left-1/3 group cursor-pointer">
+<div class="relative">
+<div class="absolute -inset-2 bg-primary/20 rounded-full animate-ping"></div>
+<span class="material-symbols-outlined text-primary bg-white rounded-full p-1 shadow-md border-2 border-primary" style="font-size: 20px;">directions_bus</span>
+</div>
+<div class="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">Route A-12: On Time</div>
+</div>
+<div class="absolute bottom-1/3 right-1/4 group cursor-pointer">
+<span class="material-symbols-outlined text-primary bg-white rounded-full p-1 shadow-md border-2 border-primary" style="font-size: 20px;">directions_bus</span>
+</div>
+<div class="absolute top-1/2 right-1/2 group cursor-pointer">
+<span class="material-symbols-outlined text-tertiary-container bg-white rounded-full p-1 shadow-md border-2 border-tertiary-container" style="font-size: 20px;">directions_bus</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low text-center">
+<button class="text-primary text-xs font-bold uppercase tracking-widest hover:underline transition-all">Expand Map View</button>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Drivers and Logs -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Driver Schedule -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10">
+<h3 class="font-headline font-extrabold text-blue-950 uppercase tracking-tighter">Current Driver Schedule</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">Driver</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">Route ID</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">ETA</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Driver Avatar" data-alt="professional portrait of a middle-aged male driver with a friendly expression wearing a uniform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5s1b7pdk1umvOP8YxJRgdlFc2uBqAj7TeIiCCJwQeuOTKPNjKBCd59y9qSvS26sLpCcJGttQQoqKXbXsVhoKTh9u4s1vG5Jjl-B9SATx9G-B-59X2syOSEcg2DySk97hN2LbCcODc_AHbaeiUJ3oZochzQHcIxDJd_K_EwfOEde1ph2JxhofGRyLyZhPms0yhIU2NTY2a3lACZQXkO8hb49yvDBF-PWck5i-olbgzoW9QDlP-KUHoiPom_SrvdbaSqS20y7lwibU"/>
+</div>
+<span class="text-sm font-bold text-primary">Marcus Thompson</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-on-surface">North-12</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full uppercase tracking-tighter">Active</span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">08:15 AM</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:text-primary-container transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Driver Avatar" data-alt="professional portrait of a female transport worker with a calm focused demeanor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqCvMHCKnq0O_wZ71Ane1KRAET2AyaLKuPkYUKnAS6ERq92IzXd5NBU_wSq0V0CjwOplwIkImxPV8rHrQt82SxDwOYrV0AOdiWjxb3DLTJw35dKJ-jiZHgy8r1HkNaEcuQmwIgRy75iQGdoRLB9xLZGGM8Bhwwhmtr-Q5qwk01AljF4FHb42mrGV0XwSifSNcFFXC_v_bn9pFzK1U_-6LK153XfRgHGZQNSrSVaYLVqPLF3V24PcXtKCFAyD-fJ8Urbly_eZfMp8w"/>
+</div>
+<span class="text-sm font-bold text-primary">Elena Rodriguez</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-on-surface">West-04</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full uppercase tracking-tighter">On Break</span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">--:--</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:text-primary-container transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Driver Avatar" data-alt="portrait of a young adult male driver with a clean-cut appearance" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB98TsoQVzoqUGUHR0y_dTYtFm19duOvCisHNPqLy74nMRP4r0q770u8CBEW5l-iYRasuESCOELlrd_CtIj0dhrk4mwqJftWzJcOqw3ia3b6bnooSnJ5kvbeoKakLP5RWsalTErimGGMepDTkTfpZxHpBSaYbyOC3WoyxXOHbbAmZv8cHVb0Zc-LdllJej0R15DNRIocMSBz9Cs6prqbD_nGh_QsNaXCotnBPfLhdWpvDM1mN-D7rXkgA_J0FWFBtRwlXS7G8lY6W8"/>
+</div>
+<span class="text-sm font-bold text-primary">Samuel Lee</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-on-surface">Central-09</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full uppercase tracking-tighter">Active</span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">08:22 AM</td>
+<td class="px-6 py-4">
+<button class="text-primary hover:text-primary-container transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Recent Vehicle Logs -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 flex flex-col">
+<div class="p-6 border-b border-outline-variant/10">
+<h3 class="font-headline font-extrabold text-blue-950 uppercase tracking-tighter">Recent Vehicle Logs</h3>
+</div>
+<div class="p-0 flex-1 overflow-y-auto max-h-[400px]">
+<div class="divide-y divide-outline-variant/10">
+<!-- Log Item -->
+<div class="p-5 hover:bg-surface-container-low transition-all">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">local_gas_station</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">Bus-442 Refuel</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wide">Station 04 • Downtown Precinct</p>
+</div>
+</div>
+<p class="text-[10px] font-medium text-outline">12m ago</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="p-5 hover:bg-surface-container-low transition-all">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-container">warning</span>
+</div>
+<div>
+<p class="text-sm font-bold text-tertiary-container">Traffic Delay Reported</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wide">Route South-21 • Oakwood Ave</p>
+</div>
+</div>
+<p class="text-[10px] font-medium text-outline">28m ago</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="p-5 hover:bg-surface-container-low transition-all">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary">build</span>
+</div>
+<div>
+<p class="text-sm font-bold text-secondary">Maintenance Completed</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wide">Van-88 • Primary Garage</p>
+</div>
+</div>
+<p class="text-[10px] font-medium text-outline">1h ago</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="p-5 hover:bg-surface-container-low transition-all">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">gps_fixed</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">Geo-fence Entry</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wide">Campus Gates • Main Entrance</p>
+</div>
+</div>
+<p class="text-[10px] font-medium text-outline">2h ago</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low border-t border-outline-variant/10 text-center">
+<button class="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline transition-all">View All Activity Logs</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-4 px-8 mt-auto flex flex-row justify-between items-center border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+<p class="text-slate-400 dark:text-slate-500 font-['Inter'] text-xs uppercase tracking-tighter opacity-80">© 2024 Academic Sentinel SAMS. Version 2.4.0-archive</p>
+<div class="flex gap-6">
+<a class="text-slate-400 dark:text-slate-500 font-['Inter'] text-xs uppercase tracking-tighter hover:text-blue-700 hover:underline transition-colors opacity-80 hover:opacity-100" href="#">Support Center</a>
+<a class="text-slate-400 dark:text-slate-500 font-['Inter'] text-xs uppercase tracking-tighter hover:text-blue-700 hover:underline transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="text-slate-400 dark:text-slate-500 font-['Inter'] text-xs uppercase tracking-tighter hover:text-blue-700 hover:underline transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="text-slate-400 dark:text-slate-500 font-['Inter'] text-xs uppercase tracking-tighter hover:text-blue-700 hover:underline transition-colors opacity-80 hover:opacity-100" href="#">Security</a>
+</div>
+</footer>
+</main>
+</body></html>

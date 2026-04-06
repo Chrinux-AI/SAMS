@@ -1,0 +1,748 @@
+/*  ═══════════════════════════════════════════════════════
+    SAMS CORE — "The Academic Sentinel" Design System
+    Design Tokens  +  Component Library  +  Layout Utilities
+    ═══════════════════════════════════════════════════════ */
+
+/* ───── 1. Color Tokens  ───── */
+:root {
+  /* Primary Palette */
+  --sams-primary:               #000666;
+  --sams-primary-container:     #1a237e;
+  --sams-on-primary:            #ffffff;
+  --sams-on-primary-container:  #8690ee;
+  --sams-on-primary-fixed:      #000767;
+  --sams-primary-fixed:         #e0e0ff;
+  --sams-primary-fixed-dim:     #bdc2ff;
+  --sams-inverse-primary:       #bdc2ff;
+  --sams-surface-tint:          #4c56af;
+
+  /* Secondary Palette */
+  --sams-secondary:             #4c616c;
+  --sams-secondary-container:   #cfe6f2;
+  --sams-on-secondary:          #ffffff;
+  --sams-on-secondary-container:#526772;
+  --sams-secondary-fixed:       #cfe6f2;
+  --sams-secondary-fixed-dim:   #b4cad6;
+
+  /* Tertiary Palette */
+  --sams-tertiary:              #380b00;
+  --sams-tertiary-container:    #5c1800;
+  --sams-on-tertiary:           #ffffff;
+  --sams-on-tertiary-container: #e17c5a;
+  --sams-tertiary-fixed:        #ffdbd0;
+  --sams-tertiary-fixed-dim:    #ffb59d;
+
+  /* Neutral / Surface Palette */
+  --sams-background:            #f8f9fa;
+  --sams-on-background:         #191c1d;
+  --sams-surface:               #f8f9fa;
+  --sams-surface-bright:        #f8f9fa;
+  --sams-surface-dim:           #d9dadb;
+  --sams-surface-variant:       #e1e3e4;
+  --sams-on-surface:            #191c1d;
+  --sams-on-surface-variant:    #454652;
+  --sams-inverse-surface:       #2e3132;
+  --sams-inverse-on-surface:    #f0f1f2;
+
+  /* Surface Containers (tonal hierarchy) */
+  --sams-surface-container-lowest:  #ffffff;
+  --sams-surface-container-low:     #f3f4f5;
+  --sams-surface-container:         #edeeef;
+  --sams-surface-container-high:    #e7e8e9;
+  --sams-surface-container-highest: #e1e3e4;
+
+  /* Outline */
+  --sams-outline:          #767683;
+  --sams-outline-variant:  #c6c5d4;
+
+  /* Error */
+  --sams-error:            #ba1a1a;
+  --sams-error-container:  #ffdad6;
+  --sams-on-error:         #ffffff;
+  --sams-on-error-container:#93000a;
+
+  /* ───── 2. Typography Tokens  ───── */
+  --sams-font-headline: 'Manrope', system-ui, -apple-system, sans-serif;
+  --sams-font-body:     'Inter',   system-ui, -apple-system, sans-serif;
+  --sams-font-label:    'Inter',   system-ui, -apple-system, sans-serif;
+
+  /* ───── 3. Spacing & Sizing  ───── */
+  --sams-radius-sm:  0.125rem;   /* 2px */
+  --sams-radius-md:  0.25rem;    /* 4px */
+  --sams-radius-lg:  0.5rem;     /* 8px */
+  --sams-radius-xl:  0.75rem;    /* 12px */
+  --sams-radius-2xl: 1rem;       /* 16px */
+
+  /* ───── 4. Elevation  ───── */
+  --sams-shadow-tint:   0 20px 40px rgba(0, 7, 103, 0.06);
+  --sams-shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.06);
+  --sams-shadow-md:     0 4px 12px rgba(0, 7, 103, 0.08);
+  --sams-shadow-lg:     0 12px 32px rgba(0, 7, 103, 0.10);
+
+  /* ───── 5. Layout  ───── */
+  --sams-sidebar-width: 16rem;   /* 256px */
+  --sams-topbar-height: 3.5rem;  /* 56px */
+}
+
+/* ═══════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════ */
+
+/* Primary gradient for CTAs */
+.bg-primary-gradient {
+  background: linear-gradient(135deg, var(--sams-primary) 0%, var(--sams-primary-container) 100%);
+}
+
+/* Frosted glassmorphism */
+.frosted-archive {
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Ghost border (no-line rule) */
+.ghost-border {
+  outline: 1px solid rgba(198, 197, 212, 0.2);
+}
+.ghost-border-strong {
+  outline: 1px solid rgba(198, 197, 212, 0.4);
+}
+
+/* Shadow tint from DESIGN.md */
+.shadow-tint {
+  box-shadow: var(--sams-shadow-tint);
+}
+
+/* Material Symbols baseline */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ═══════════════════════════════════════════════════════
+   GLOBAL RESETS  ·  Applied to every page via the master layout
+   ═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--sams-font-body);
+  background-color: var(--sams-background);
+  color: var(--sams-on-surface);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--sams-font-headline);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR  — "The Academic Sentinel" Navigation
+   (matches admin_dashboard_sams_overview_1)
+   ═══════════════════════════════════════════════════════ */
+.sams-sidebar {
+  position: fixed;
+  left: 0; top: 0;
+  width: var(--sams-sidebar-width);
+  height: 100vh;
+  background: var(--sams-surface-container-lowest);
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+/* Brand header */
+.sams-sidebar .sidebar-brand {
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sams-sidebar .sidebar-brand .brand-logo {
+  width: 2rem; height: 2rem;
+  background: linear-gradient(135deg, var(--sams-primary), var(--sams-primary-container));
+  border-radius: var(--sams-radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+.sams-sidebar .sidebar-brand .brand-name {
+  font-family: var(--sams-font-headline);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #172554;
+  line-height: 1;
+}
+.sams-sidebar .sidebar-brand .brand-subtitle {
+  font-size: 0.625rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 0.25rem;
+}
+
+/* Navigation */
+.sams-sidebar .sidebar-nav {
+  flex-grow: 1;
+  padding: 0 0.75rem;
+  margin-top: 0.5rem;
+}
+.sams-sidebar .sidebar-nav .nav-section-title {
+  font-family: var(--sams-font-label);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  padding: 1rem 0.75rem 0.5rem;
+}
+.sams-sidebar .sidebar-nav .nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+  border-radius: 0 var(--sams-radius-md) var(--sams-radius-md) 0;
+}
+.sams-sidebar .sidebar-nav .nav-item:hover {
+  color: #172554;
+  background: #f8fafc;
+}
+.sams-sidebar .sidebar-nav .nav-item.active {
+  border-left-color: var(--sams-primary);
+  color: #172554;
+  font-weight: 700;
+  background: #f8fafc;
+}
+.sams-sidebar .sidebar-nav .nav-item .nav-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  width: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sams-sidebar .sidebar-nav .nav-item .nav-badge {
+  margin-left: auto;
+  background: var(--sams-primary);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+/* Sidebar footer */
+.sams-sidebar .sidebar-footer {
+  padding: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+.sams-sidebar .sidebar-footer .quick-action-btn {
+  width: 100%;
+  margin-top: 0.75rem;
+  background: var(--sams-primary);
+  color: white;
+  padding: 0.75rem;
+  border-radius: var(--sams-radius-xl);
+  border: none;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 6, 102, 0.1);
+  transition: all 0.2s ease;
+}
+.sams-sidebar .sidebar-footer .quick-action-btn:hover {
+  background: var(--sams-primary-container);
+  box-shadow: 0 8px 24px rgba(0, 6, 102, 0.15);
+  transform: translateY(-1px);
+}
+
+/* User profile card (bottom of sidebar) */
+.sams-sidebar .sidebar-user {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sams-sidebar .sidebar-user .user-avatar {
+  width: 2.25rem; height: 2.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sams-primary), var(--sams-primary-container));
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.sams-sidebar .sidebar-user .user-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.sams-sidebar .sidebar-user .user-name {
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--sams-on-surface);
+}
+.sams-sidebar .sidebar-user .user-role {
+  font-size: 0.625rem;
+  color: #64748b;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOP NAV BAR  — Frosted Header
+   ═══════════════════════════════════════════════════════ */
+.sams-topbar {
+  position: sticky;
+  top: 0; z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f1f5f9;
+  font-family: var(--sams-font-headline);
+  font-size: 0.875rem;
+}
+.sams-topbar .search-box {
+  position: relative;
+  width: 100%;
+  max-width: 24rem;
+}
+.sams-topbar .search-box input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  background: rgba(241, 245, 249, 0.5);
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  color: var(--sams-on-surface);
+  transition: all 0.2s ease;
+}
+.sams-topbar .search-box input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(76, 86, 175, 0.2);
+  background: rgba(241, 245, 249, 0.8);
+}
+.sams-topbar .search-box .search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 1.125rem;
+}
+.sams-topbar .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.sams-topbar .topbar-actions .icon-btn {
+  background: none; border: none;
+  color: #475569;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: flex; align-items: center;
+}
+.sams-topbar .topbar-actions .icon-btn:hover {
+  color: #1d4ed8;
+}
+.sams-topbar .topbar-actions .user-info {
+  text-align: right;
+}
+.sams-topbar .topbar-actions .user-info .user-name {
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #172554;
+}
+.sams-topbar .topbar-actions .user-info .user-role {
+  font-size: 0.625rem;
+  color: #64748b;
+}
+.sams-topbar .topbar-actions .user-avatar {
+  width: 2.5rem; height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sams-primary), var(--sams-primary-container));
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN CONTENT AREA
+   ═══════════════════════════════════════════════════════ */
+.sams-main {
+  margin-left: var(--sams-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.sams-canvas {
+  padding: 2rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Page header with asymmetric layout from DESIGN.md */
+.sams-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+.sams-page-header .page-title {
+  font-family: var(--sams-font-headline);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--sams-primary);
+}
+.sams-page-header .page-subtitle {
+  font-weight: 500;
+  color: var(--sams-on-surface-variant);
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
+.sams-page-header .page-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARDS — Tonal Stacking (no borders per DESIGN.md)
+   ═══════════════════════════════════════════════════════ */
+.sams-card {
+  background: var(--sams-surface-container-lowest);
+  border-radius: var(--sams-radius-xl);
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--sams-shadow-sm);
+  padding: 1.5rem;
+}
+.sams-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.sams-card-header .card-title {
+  font-family: var(--sams-font-headline);
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--sams-primary);
+}
+
+/* Stats widgets */
+.sams-stat-card {
+  background: var(--sams-surface-container-lowest);
+  padding: 1.5rem;
+  border-radius: var(--sams-radius-xl);
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--sams-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 8rem;
+}
+.sams-stat-card .stat-label {
+  font-family: var(--sams-font-label);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+}
+.sams-stat-card .stat-value {
+  font-family: var(--sams-font-headline);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--sams-primary);
+  margin-top: 0.75rem;
+}
+.sams-stat-card .stat-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+.sams-stat-card .stat-badge {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+}
+.sams-stat-card .stat-badge.up {
+  background: #ecfdf5; color: #059669;
+}
+.sams-stat-card .stat-badge.down {
+  background: #fffbeb; color: #d97706;
+}
+.sams-stat-card .stat-badge.stable {
+  background: #eff6ff; color: #2563eb;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════ */
+.sams-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--sams-radius-xl);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.sams-btn-primary {
+  background: var(--sams-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 6, 102, 0.1);
+}
+.sams-btn-primary:hover {
+  background: var(--sams-primary-container);
+  box-shadow: 0 8px 24px rgba(0, 6, 102, 0.15);
+  transform: translateY(-1px);
+}
+.sams-btn-secondary {
+  background: transparent;
+  color: var(--sams-primary);
+  border: 1px solid #e2e8f0;
+}
+.sams-btn-secondary:hover {
+  background: #f8fafc;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DATA TABLES — Zebra stripe via tonal shift (DESIGN.md)
+   ═══════════════════════════════════════════════════════ */
+.sams-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.sams-table thead th {
+  font-family: var(--sams-font-label);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sams-on-surface-variant);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+.sams-table tbody tr {
+  transition: background 0.15s ease;
+}
+.sams-table tbody tr:nth-child(even) {
+  background: var(--sams-surface-container-low);
+}
+.sams-table tbody tr:hover {
+  background: var(--sams-surface-container-high);
+}
+.sams-table tbody td {
+  padding: 0.875rem 1rem;
+  color: var(--sams-on-surface);
+}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════ */
+.sams-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  margin-top: auto;
+  background: var(--sams-surface-container-lowest);
+  border-top: 1px solid #f1f5f9;
+  font-family: var(--sams-font-headline);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+}
+.sams-footer a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.sams-footer a:hover {
+  color: #2563eb;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE SIDEBAR OVERLAY & RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+.sams-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 45;
+}
+.sams-sidebar-overlay.active {
+  display: block;
+}
+
+.sams-mobile-toggle {
+  display: none;
+  background: none; border: none;
+  color: var(--sams-on-surface);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  .sams-sidebar {
+    transform: translateX(-100%);
+  }
+  .sams-sidebar.active {
+    transform: translateX(0);
+  }
+  .sams-main {
+    margin-left: 0;
+  }
+  .sams-mobile-toggle {
+    display: flex;
+    align-items: center;
+  }
+  .sams-sidebar-overlay.active {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .sams-canvas {
+    padding: 1rem;
+  }
+  .sams-topbar {
+    padding: 0.5rem 1rem;
+  }
+  .sams-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .sams-page-header .page-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+.sams-fade-in {
+  animation: samsFadeIn 0.3s ease-out forwards;
+}
+@keyframes samsFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   FORM INPUTS  — Stitch-matching input fields
+   ═══════════════════════════════════════════════════════ */
+.sams-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--sams-surface-container-low);
+  border: none;
+  border-radius: var(--sams-radius-lg);
+  font-size: 0.875rem;
+  color: var(--sams-on-surface);
+  transition: all 0.2s ease;
+}
+.sams-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(76, 86, 175, 0.25);
+}
+.sams-input-label {
+  font-family: var(--sams-font-label);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sams-on-surface-variant);
+  margin-bottom: 0.5rem;
+  display: block;
+  margin-left: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BADGES & STATUS INDICATORS
+   ═══════════════════════════════════════════════════════ */
+.sams-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+.sams-badge-success { background: #ecfdf5; color: #059669; }
+.sams-badge-warning { background: #fffbeb; color: #d97706; }
+.sams-badge-danger  { background: #fef2f2; color: #dc2626; }
+.sams-badge-info    { background: #eff6ff; color: #2563eb; }
+.sams-badge-neutral { background: #f1f5f9; color: #64748b; }
+
+/* ═══════════════════════════════════════════════════════
+   EMPTY STATE  — Per DESIGN.md: show clean centered label
+   ═══════════════════════════════════════════════════════ */
+.sams-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+  text-align: center;
+}
+.sams-empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+.sams-empty-state .empty-text {
+  font-family: var(--sams-font-label);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LOADING SKELETON
+   ═══════════════════════════════════════════════════════ */
+.sams-skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: samsShimmer 1.5s infinite;
+  border-radius: var(--sams-radius-md);
+}
+@keyframes samsShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

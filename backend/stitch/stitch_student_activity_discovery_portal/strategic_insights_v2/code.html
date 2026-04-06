@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategic Financial Hub | SAMS AI Copilot</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-container": "#edeeef",
+                "primary-fixed-dim": "#bdc2ff",
+                "on-error": "#ffffff",
+                "surface": "#f8f9fa",
+                "surface-container-low": "#f3f4f5",
+                "on-tertiary-fixed-variant": "#7b2e12",
+                "surface-variant": "#e1e3e4",
+                "on-secondary": "#ffffff",
+                "primary": "#000666",
+                "on-surface-variant": "#454652",
+                "tertiary-fixed": "#ffdbd0",
+                "surface-container-high": "#e7e8e9",
+                "inverse-on-surface": "#f0f1f2",
+                "on-secondary-fixed": "#071e27",
+                "on-surface": "#191c1d",
+                "tertiary": "#380b00",
+                "outline": "#767683",
+                "primary-fixed": "#e0e0ff",
+                "on-primary-fixed": "#000767",
+                "secondary-container": "#cfe6f2",
+                "tertiary-fixed-dim": "#ffb59d",
+                "surface-container-highest": "#e1e3e4",
+                "on-tertiary-fixed": "#390c00",
+                "secondary": "#4c616c",
+                "surface-dim": "#d9dadb",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed-dim": "#b4cad6",
+                "on-secondary-fixed-variant": "#354a53",
+                "on-primary": "#ffffff",
+                "surface-bright": "#f8f9fa",
+                "on-tertiary": "#ffffff",
+                "error-container": "#ffdad6",
+                "outline-variant": "#c6c5d4",
+                "on-background": "#191c1d",
+                "on-primary-fixed-variant": "#343d96",
+                "on-secondary-container": "#526772",
+                "secondary-fixed": "#cfe6f2",
+                "inverse-surface": "#2e3132",
+                "primary-container": "#1a237e",
+                "error": "#ba1a1a",
+                "background": "#f8f9fa",
+                "tertiary-container": "#5c1800",
+                "surface-tint": "#4c56af",
+                "on-primary-container": "#8690ee",
+                "on-error-container": "#93000a",
+                "inverse-primary": "#bdc2ff",
+                "on-tertiary-container": "#e17c5a"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .premium-gradient {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+        .frosted-archive {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .ghost-border {
+            outline: 1px solid rgba(198, 197, 212, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-blue-900 dark:text-white font-headline">SAMS AI Copilot</span>
+<div class="hidden md:flex gap-6 font-manrope text-sm tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Architecture</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Logs</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Permissions</a>
+<a class="text-blue-900 dark:text-white font-bold border-b-2 border-blue-900 dark:border-blue-400 pb-1" href="#">Gateway</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low rounded-xl border-none text-sm focus:ring-2 focus:ring-primary/20 w-64" placeholder="Search analytics..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all rounded-full">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-outline-variant/30 object-cover" data-alt="professional portrait of a financial executive in a dark suit against a neutral studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjbAl_EBQ6gjxlqffqsTGUd7ldMOmo8WhHFGD_CxJ6MEzgfRulCcpvoRyXjoZLxBG1Ts3aEjMD9mUJGdp_Q5O0Gs60Lm9VzgSHJ6elo5D8m9-symtxJrNaVoQIKRYcfG5JmekIZl1ECN9kR8y8uwCGD_dPf6BGoWap262DulTl2UAcAxpNmZtmhjBDCrbTD-MaepIBBSdyIDRlOvdIVojx3k5eIxDT2jJ5UEg-2dGvkX9SQeXZ6zsEwEXcZLTyVJBA8Ic0cE3UOXQ"/>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 h-[1px] w-full"></div>
+</nav>
+<div class="flex min-h-[calc(100vh-64px)]">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 dark:bg-slate-950 h-screen w-64 border-r-0 fixed left-0 top-16 h-[calc(100vh-64px)] flex flex-col justify-between py-6 font-inter text-sm font-medium">
+<div class="space-y-1">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg premium-gradient flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">account_balance</span>
+</div>
+<div>
+<p class="text-on-surface font-bold leading-tight">Backend Core</p>
+<p class="text-[10px] text-on-surface-variant tracking-widest uppercase">v2.4.0-stable</p>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span>Intent Interpreter</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span>Permission Engine</span>
+</a>
+<a class="flex items-center gap-4 py-3 border-l-4 border-blue-900 dark:border-blue-500 bg-transparent font-bold text-blue-900 dark:text-white pl-4 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span>API Gateway</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span>Audit Logger</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span>System Health</span>
+</a>
+</nav>
+</div>
+<div class="px-5 space-y-4">
+<div class="bg-slate-100 dark:bg-slate-900 h-[1px] w-full"></div>
+<div class="space-y-1">
+<a class="flex items-center gap-4 py-2 text-on-surface-variant hover:text-primary text-xs" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span>
+<span>Documentation</span>
+</a>
+<a class="flex items-center gap-4 py-2 text-on-surface-variant hover:text-primary text-xs" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 flex-1 p-8 bg-surface min-h-screen overflow-x-hidden">
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-12 gap-16">
+<div>
+<h1 class="font-headline text-5xl font-extrabold text-primary tracking-tighter mb-2">Strategic Financial Hub</h1>
+<p class="text-on-surface-variant font-label text-lg">Central Intelligence for Portfolio &amp; Institutional Growth</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-lg premium-gradient text-white font-semibold flex items-center gap-2 shadow-lg hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Investment</span>
+</button>
+<button class="px-6 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-primary font-semibold hover:bg-surface-container-low transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm inline-block translate-y-[2px] mr-1">file_download</span>
+<span>Export Report</span>
+</button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Portfolio Health Matrix -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 ghost-border">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="font-headline text-2xl font-bold text-on-surface">Portfolio Health Matrix</h2>
+<p class="text-on-surface-variant text-sm">Real-time risk vs. return distribution</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded-full">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Active Monitoring</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-6 h-64">
+<!-- Simulated Data Viz -->
+<div class="col-span-2 relative bg-surface-container rounded-xl overflow-hidden group">
+<div class="absolute inset-0 p-6 flex flex-col justify-end">
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-4xl font-extrabold text-primary">84.2%</span>
+<span class="text-emerald-600 font-bold text-sm flex items-center">
+<span class="material-symbols-outlined text-xs">trending_up</span> 2.4%
+                                    </span>
+</div>
+<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Aggregate Health Score</p>
+</div>
+<!-- Background Pattern/Graphic -->
+<div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none p-4">
+<svg class="w-full h-full" viewbox="0 0 400 200">
+<path class="text-primary" d="M0 150 Q 50 120 100 140 T 200 80 T 300 110 T 400 40" fill="none" stroke="currentColor" stroke-width="4"></path>
+</svg>
+</div>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-primary/5 rounded-xl border-l-4 border-primary">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest mb-1">Risk Profile</p>
+<p class="text-primary font-bold text-lg leading-tight">Conservative-Growth</p>
+</div>
+<div class="p-4 bg-tertiary-container/5 rounded-xl border-l-4 border-tertiary-container">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest mb-1">Urgent Alerts</p>
+<p class="text-tertiary-container font-bold text-lg leading-tight">2 Underperforming</p>
+</div>
+</div>
+</div>
+</section>
+<!-- High-Impact Stat -->
+<div class="col-span-12 lg:col-span-4 bg-primary text-white rounded-xl p-8 flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl mb-4 opacity-50" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<h3 class="text-on-primary-container text-xs font-bold uppercase tracking-[0.2em]">Total Managed Capital</h3>
+<p class="font-headline text-4xl font-extrabold mt-2">$242.8M</p>
+</div>
+<div class="relative z-10 pt-4 border-t border-white/10 mt-8">
+<p class="text-sm opacity-80">Fiscal Year Target: <span class="font-bold">$250M</span></p>
+<div class="w-full bg-white/10 h-1.5 rounded-full mt-2">
+<div class="bg-white h-full rounded-full" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+</div>
+<!-- Long-term Enrollment Trends -->
+<section class="col-span-12 lg:col-span-7 bg-surface-container-lowest rounded-xl p-8 ghost-border">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="font-headline text-2xl font-bold text-on-surface">Long-term Enrollment</h2>
+<p class="text-on-surface-variant text-sm">Projected vs. Historical Trends (5Y Cycle)</p>
+</div>
+<select class="bg-surface-container-low border-none rounded-lg text-xs font-bold text-on-surface-variant px-4">
+<option>2020 - 2025</option>
+<option>2015 - 2020</option>
+</select>
+</div>
+<!-- Modern Data List (No Borders) -->
+<div class="space-y-2">
+<div class="grid grid-cols-12 py-4 px-6 bg-surface-container-low/50 rounded-xl items-center">
+<div class="col-span-4">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Institution</p>
+</div>
+<div class="col-span-3">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest text-center">Status</p>
+</div>
+<div class="col-span-5">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest text-right">Enrollment Cap</p>
+</div>
+</div>
+<div class="grid grid-cols-12 py-5 px-6 items-center group hover:bg-surface-container-low transition-colors rounded-xl">
+<div class="col-span-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-900">
+<span class="material-symbols-outlined text-sm">school</span>
+</div>
+<span class="font-bold text-on-surface">North Campus Academy</span>
+</div>
+<div class="col-span-3 text-center">
+<span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full uppercase">Saturated</span>
+</div>
+<div class="col-span-5 text-right">
+<p class="font-headline font-bold text-primary">1,240 / 1,250</p>
+<p class="text-[10px] text-on-surface-variant">99.2% Capacity</p>
+</div>
+</div>
+<div class="grid grid-cols-12 py-5 px-6 items-center group hover:bg-surface-container-low transition-colors rounded-xl bg-surface-container-low/20">
+<div class="col-span-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-900">
+<span class="material-symbols-outlined text-sm">foundation</span>
+</div>
+<span class="font-bold text-on-surface">West Side Prep</span>
+</div>
+<div class="col-span-3 text-center">
+<span class="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-extrabold rounded-full uppercase">Expanding</span>
+</div>
+<div class="col-span-5 text-right">
+<p class="font-headline font-bold text-primary">850 / 1,100</p>
+<p class="text-[10px] text-on-surface-variant">77.3% Capacity</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Investment Tracking -->
+<section class="col-span-12 lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 ghost-border flex flex-col">
+<div class="mb-8">
+<h2 class="font-headline text-2xl font-bold text-on-surface">Facility Investments</h2>
+<p class="text-on-surface-variant text-sm">New infrastructure &amp; campus expansion</p>
+</div>
+<div class="space-y-6 flex-1">
+<div class="relative pl-8 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-primary ring-4 ring-white"></div>
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Stem Lab Wing - Phase 1</p>
+<p class="text-on-surface font-medium text-sm mb-2">Groundbreaking completed. Initial capital outlay secured.</p>
+<span class="text-primary font-bold text-sm">$4.2M Allocated</span>
+</div>
+<div class="relative pl-8 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-surface-variant ring-4 ring-white"></div>
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Central Library Modernization</p>
+<p class="text-on-surface font-medium text-sm mb-2">Architectural review in progress. Vendor bidding open.</p>
+<span class="text-on-surface-variant font-bold text-sm">$1.8M Projected</span>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-slate-50">
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional architect in a white hard hat reviewing site plans in a modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSQvfEbCtexk-IT8jB6AVt0QP1G2_uzBKHXLl39tIZlxcc3xYKZ7SxDXED6RsQfVB7fv3tw21Xpg6_35BofbcdqryONCk0AEbY6d0C2hQPxhqfdUsZyy4zFVklsznq5B1ALDJQNanI9XtFj2MkcqB_w0WkClcq0slDSYh_C6KXCZwTMkc3rI2i0y80ERzUoV_7MSBBwX15ZKH9KwwWX2R3BTbjWWXxQdqO1HX29KgGJh_V2cFprnMlUeEKXe1S8D9B2qn51QqOODM"/>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Elena Rodriguez</p>
+<p class="text-[10px] text-on-surface-variant">Capital Project Manager</p>
+</div>
+</div>
+<button class="p-2 bg-white rounded-full text-primary hover:shadow-md transition-shadow">
+<span class="material-symbols-outlined">mail</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Activity Log / Recent Events -->
+<section class="col-span-12 bg-surface-container-lowest rounded-xl p-8 ghost-border">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline text-xl font-bold text-on-surface">Institutional Ledger Activity</h2>
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+                            View Archive <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="py-4 px-6 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Transaction ID</th>
+<th class="py-4 px-6 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Category</th>
+<th class="py-4 px-6 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Entity</th>
+<th class="py-4 px-6 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Amount</th>
+<th class="py-4 px-6 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-5 px-6 font-mono text-xs text-on-surface-variant">#TX-94821</td>
+<td class="py-5 px-6 font-medium text-sm">Grant Disbursement</td>
+<td class="py-5 px-6 text-sm">Arts Foundation</td>
+<td class="py-5 px-6 font-bold text-primary">$45,000.00</td>
+<td class="py-5 px-6"><span class="px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold rounded uppercase">Processed</span></td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/30 transition-colors">
+<td class="py-5 px-6 font-mono text-xs text-on-surface-variant">#TX-94819</td>
+<td class="py-5 px-6 font-medium text-sm">Operations Cost</td>
+<td class="py-5 px-6 text-sm">Logistics Fleet</td>
+<td class="py-5 px-6 font-bold text-primary">$12,400.00</td>
+<td class="py-5 px-6"><span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded uppercase">Settled</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Floating Action Button - Contextual for Hub Actions -->
+<button class="fixed bottom-8 right-8 w-14 h-14 premium-gradient rounded-full text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<div class="absolute right-full mr-4 px-4 py-2 bg-inverse-surface text-inverse-on-surface text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Quick Analysis
+        </div>
+</button>
+</body></html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Balance Sheet | SAMS Accountant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f0f3ff",
+                        "primary-fixed-dim": "#aec6ff",
+                        "on-secondary-fixed-variant": "#633f00",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "secondary-fixed": "#ffddb4",
+                        "tertiary-container": "#9c40d0",
+                        "primary-fixed": "#d8e2ff",
+                        "tertiary-fixed-dim": "#e7b4ff",
+                        "outline": "#727785",
+                        "on-secondary-fixed": "#291800",
+                        "secondary-container": "#ffaa08",
+                        "on-secondary-container": "#694300",
+                        "on-tertiary-fixed-variant": "#7100a5",
+                        "tertiary": "#8120b5",
+                        "outline-variant": "#c2c6d6",
+                        "inverse-surface": "#20314b",
+                        "on-primary-fixed-variant": "#004397",
+                        "on-background": "#091c35",
+                        "on-tertiary-fixed": "#30004a",
+                        "surface-tint": "#0059c5",
+                        "on-tertiary-container": "#fcebff",
+                        "on-surface-variant": "#424753",
+                        "on-surface": "#091c35",
+                        "on-error": "#ffffff",
+                        "surface-container": "#e7eeff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#ecefff",
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed": "#f5d9ff",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#d6e3ff",
+                        "on-primary-fixed": "#001a43",
+                        "background": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "primary": "#0050b2",
+                        "surface-container-high": "#dfe8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#d6e3ff",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#1868db",
+                        "secondary": "#835500",
+                        "secondary-fixed-dim": "#ffb954",
+                        "inverse-primary": "#aec6ff",
+                        "surface-dim": "#cadbfc",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#ecf0ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-shift { background-color: #f0f3ff; }
+        @media (prefers-color-scheme: dark) {
+            .tonal-shift { background-color: #0f172a; }
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f0f3ff] dark:bg-slate-900 flex flex-col p-4 space-y-2 z-40">
+<div class="mb-8 px-2">
+<div class="text-lg font-black text-[#091c35] dark:text-white font-headline">Acme Academy</div>
+<div class="text-xs text-on-surface-variant font-medium">Finance Dept</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg">payments</span>
+<span>Fees Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg">account_balance_wallet</span>
+<span>Payroll</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg">receipt_long</span>
+<span>Invoices</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg">trending_down</span>
+<span>Expenses</span>
+</a>
+<!-- Active Tab: Reports -->
+<a class="flex items-center gap-3 px-3 py-2 text-[#1868DB] bg-[#d6e3ff] dark:bg-[#1868DB]/20 font-manrope text-sm font-bold rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">assessment</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="pt-4 mt-auto space-y-1">
+<button class="w-full mb-4 bg-primary-container text-white py-2 px-4 rounded-xl text-sm font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                Create New Entry
+            </button>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#424753] dark:text-slate-400 font-manrope text-sm font-medium hover:bg-[#d6e3ff]/50 dark:hover:bg-slate-800 rounded-md transition-all" href="#">
+<span class="material-symbols-outlined text-lg text-error">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top Bar Shell -->
+<header class="flex justify-between items-center px-8 w-full sticky top-0 z-50 h-16 bg-[#f9f9ff] dark:bg-slate-950 backdrop-blur-md tonal-shift bg-[#f0f3ff] dark:bg-slate-900">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-[#091c35] dark:text-white font-headline">SAMS Accountant</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+<span class="material-symbols-outlined">help</span>
+</div>
+<img alt="Accountant Profile" class="w-8 h-8 rounded-full border-2 border-surface-container-highest" data-alt="professional headshot of a female accountant in a business environment, soft natural office lighting, friendly and authoritative expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNW-XdAIfM_mTvUfVcSiULuz1NbWAr0ulQ9zTKv0QUzaXAo_FKoKebEK-afvjgQOmqQdvHZDqziBS-vPKnHK4RYewpbFgWj-gS58y7zz7eodU69Qsguv4J3fTyJyvWdMzgT_CN2AJfPlCsinIEIm711cZnsQ4Ixp9Mh6-gmcTCtKF-1OykAt11kQLG2V9AUcUy0CixmtCaZaEdEtuahsuOHyIpvj5i0fA0XgKR8CZ8cqSBeX0kZm5ErsMuZVsxUcDOFSGZOGxVc_oU"/>
+</div>
+</header>
+<!-- Balance Sheet Content Canvas -->
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Header Section & Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div class="space-y-1">
+<h1 class="text-4xl font-extrabold font-headline tracking-tight text-on-surface">Balance Sheet</h1>
+<p class="text-on-surface-variant font-medium">Fiscal Year: July 1, 2023 - June 30, 2024</p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="relative group">
+<label class="absolute -top-2 left-3 bg-surface px-1 text-[10px] font-bold text-primary tracking-widest uppercase">As-of Date</label>
+<input class="bg-surface-container-low border-none rounded-xl px-4 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-primary/40 text-on-surface min-w-[180px]" type="date" value="2024-05-20"/>
+</div>
+<div class="h-10 w-[1px] bg-outline-variant/30 mx-2 hidden md:block"></div>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">print</span>
+                        Print Report
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export
+                    </button>
+</div>
+</div>
+<!-- KPI Cards - Bento Style -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<!-- Assets -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(9,28,53,0.04)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-primary tracking-widest uppercase">Total Assets</span>
+<span class="material-symbols-outlined text-primary/30 group-hover:scale-110 transition-transform">account_balance</span>
+</div>
+<div class="text-3xl font-extrabold font-headline text-on-surface">$1,452,890.00</div>
+<div class="mt-2 text-xs text-secondary-container font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                        +4.2% vs Prior Period
+                    </div>
+</div>
+<!-- Liabilities -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(9,28,53,0.04)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-error tracking-widest uppercase">Total Liabilities</span>
+<span class="material-symbols-outlined text-error/30 group-hover:scale-110 transition-transform">credit_card</span>
+</div>
+<div class="text-3xl font-extrabold font-headline text-on-surface">$642,320.00</div>
+<div class="mt-2 text-xs text-on-surface-variant font-medium">Includes Current &amp; Long-term</div>
+</div>
+<!-- Equity -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(9,28,53,0.04)] relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-tertiary tracking-widest uppercase">Total Equity</span>
+<span class="material-symbols-outlined text-tertiary/30 group-hover:scale-110 transition-transform">pie_chart</span>
+</div>
+<div class="text-3xl font-extrabold font-headline text-on-surface">$810,570.00</div>
+<div class="mt-2 text-xs text-on-surface-variant font-medium">Shareholder's Funds</div>
+</div>
+<!-- Balance Status -->
+<div class="bg-surface-container-highest/30 backdrop-blur-sm p-6 rounded-xl border border-primary/10 flex flex-col justify-center items-center text-center">
+<div class="w-12 h-12 bg-secondary-container/20 rounded-full flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="text-lg font-black text-on-surface font-headline uppercase tracking-tighter">Status: Balanced</div>
+<div class="text-[10px] text-on-surface-variant mt-1 font-mono">A ($1.45M) = L ($642K) + E ($810K)</div>
+</div>
+</div>
+<!-- Financial Table -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-xl overflow-hidden mb-8 border border-outline-variant/10">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Account Name</th>
+<th class="px-6 py-5 text-[10px] font-black text-on-surface-variant uppercase tracking-widest text-right">Current Balance</th>
+<th class="px-6 py-5 text-[10px] font-black text-on-surface-variant uppercase tracking-widest text-right">Prior Period</th>
+<th class="px-6 py-5 text-[10px] font-black text-on-surface-variant uppercase tracking-widest text-right">Variance ($)</th>
+<th class="px-6 py-5 text-[10px] font-black text-on-surface-variant uppercase tracking-widest text-right">Var (%)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- ASSETS SECTION -->
+<tr class="bg-primary/5">
+<td class="px-8 py-3 text-sm font-black text-primary font-headline" colspan="5">ASSETS</td>
+</tr>
+<!-- Current Assets -->
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-4 text-sm font-bold text-on-surface pl-12">Current Assets</td>
+<td class="px-6 py-4" colspan="4"></td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-16">Cash and Cash Equivalents</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$420,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$380,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">+$40,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">10.5%</td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-16">Accounts Receivable</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$125,890</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$135,000</td>
+<td class="px-6 py-3 text-sm text-right text-error font-bold">-$9,110</td>
+<td class="px-6 py-3 text-sm text-right text-error font-bold">-6.7%</td>
+</tr>
+<tr class="bg-surface-container-low/30 italic">
+<td class="px-8 py-3 text-xs font-bold text-on-surface pl-16 uppercase">Subtotal Current Assets</td>
+<td class="px-6 py-3 text-sm text-right font-bold">$545,890</td>
+<td colspan="3"></td>
+</tr>
+<!-- Fixed Assets -->
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-4 text-sm font-bold text-on-surface pl-12">Fixed Assets</td>
+<td class="px-6 py-4" colspan="4"></td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-16">School Infrastructure</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$850,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$850,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant font-medium">$0</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant font-medium">0.0%</td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-16">Office Equipment</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$57,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$48,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">+$9,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">18.7%</td>
+</tr>
+<tr class="bg-primary/10 border-t border-primary/20">
+<td class="px-8 py-5 text-sm font-black text-primary pl-8 uppercase">Total Assets</td>
+<td class="px-6 py-5 text-lg font-black text-primary text-right">$1,452,890</td>
+<td class="px-6 py-5 text-sm font-bold text-on-surface-variant text-right">$1,413,000</td>
+<td class="px-6 py-5 text-sm font-bold text-secondary-container text-right">+$39,890</td>
+<td class="px-6 py-5 text-sm font-bold text-secondary-container text-right">2.8%</td>
+</tr>
+<!-- LIABILITIES SECTION -->
+<tr class="bg-error/5 mt-4">
+<td class="px-8 py-3 text-sm font-black text-error font-headline" colspan="5">LIABILITIES</td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-12">Accounts Payable</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$85,320</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$92,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">-$6,680</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">-7.2%</td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-12">Long-term Loan</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$557,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$600,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">-$43,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">-7.1%</td>
+</tr>
+<tr class="bg-error/10 border-t border-error/20">
+<td class="px-8 py-5 text-sm font-black text-error pl-8 uppercase">Total Liabilities</td>
+<td class="px-6 py-5 text-lg font-black text-error text-right">$642,320</td>
+<td class="px-6 py-5 text-sm font-bold text-on-surface-variant text-right">$692,000</td>
+<td class="px-6 py-5 text-sm font-bold text-secondary-container text-right">-$49,680</td>
+<td class="px-6 py-5 text-sm font-bold text-secondary-container text-right">-7.1%</td>
+</tr>
+<!-- EQUITY SECTION -->
+<tr class="bg-tertiary/5 mt-4">
+<td class="px-8 py-3 text-sm font-black text-tertiary font-headline" colspan="5">EQUITY</td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-12">Retained Earnings</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$510,570</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$421,000</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">+$89,570</td>
+<td class="px-6 py-3 text-sm text-right text-secondary-container font-bold">21.2%</td>
+</tr>
+<tr class="group hover:bg-surface-container/30 transition-colors">
+<td class="px-8 py-3 text-sm text-on-surface-variant pl-12">Initial Capital Investment</td>
+<td class="px-6 py-3 text-sm text-right font-medium">$300,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant">$300,000</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant font-medium">$0</td>
+<td class="px-6 py-3 text-sm text-right text-on-surface-variant font-medium">0.0%</td>
+</tr>
+<tr class="bg-tertiary/10 border-t border-tertiary/20">
+<td class="px-8 py-5 text-sm font-black text-tertiary pl-8 uppercase">Total Equity</td>
+<td class="px-6 py-5 text-lg font-black text-tertiary text-right">$810,570</td>
+<td class="px-6 py-5 text-sm font-bold text-on-surface-variant text-right">$721,000</td>
+<td class="px-6 py-5 text-sm font-bold text-secondary-container text-right">+$89,570</td>
+<td class="px-6 py-5 text-sm font-bold text-secondary-container text-right">12.4%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Verification Footer Card -->
+<div class="bg-inverse-surface text-inverse-on-surface p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-5">
+<div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">verified</span>
+</div>
+<div>
+<h3 class="text-xl font-bold font-headline leading-none">Equation Integrity Verified</h3>
+<p class="text-white/60 text-sm mt-1">All ledger entries are balanced across standard accounting parameters.</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-2xl font-black font-headline">
+<span>$1,452,890</span>
+<span class="text-white/40 text-sm font-normal">ASSETS</span>
+<span class="text-primary-fixed-dim">=</span>
+<span>$642,320</span>
+<span class="text-white/40 text-sm font-normal">LIABILITIES</span>
+<span class="text-primary-fixed-dim">+</span>
+<span>$810,570</span>
+<span class="text-white/40 text-sm font-normal">EQUITY</span>
+</div>
+</div>
+<!-- Editorial Quote / Note Area -->
+<div class="mt-12 mb-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="md:col-span-2">
+<h4 class="text-[10px] font-black text-primary tracking-[0.2em] uppercase mb-4">Accountant's Summary Note</h4>
+<p class="text-xl text-on-surface-variant font-medium leading-relaxed italic border-l-4 border-primary/20 pl-8">
+                        "The fiscal position remains strong with a significant 21.2% growth in retained earnings. Liquidity ratios are stable at 6.4x, ensuring all short-term obligations can be comfortably met using cash reserves without liquidation of fixed assets."
+                    </p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-center">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Last Audit Date</p>
+<p class="text-lg font-black text-on-surface">March 15, 2024</p>
+<div class="mt-4 h-1 w-full bg-outline-variant/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-2 font-medium">85% Compliance Score</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB Suppression (Per Mandate, FAB hidden on Report screens) -->
+</body></html>

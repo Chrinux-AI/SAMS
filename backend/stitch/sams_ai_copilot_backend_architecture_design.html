@@ -1,0 +1,59 @@
+# SAMS AI Copilot: Secure Backend Architecture Specification
+
+## 1. Architectural Overview
+The SAMS AI Copilot is designed as a **controlled operator**, not an autonomous administrator. It sits between the user and the system's API layer, acting as a translator of natural language intent into secure, validated system operations. The architecture follows a strict "Zero Trust" model where the AI is never granted inherent authority.
+
+## 2. The Execution Pipeline
+Every request from the AI Copilot must pass through the following stages:
+
+### Stage 1: Intent Interpretation (Intent Parser)
+- **Input:** Natural language from the user + current session context.
+- **Process:** The AI identifies the goal (e.g., "Schedule a class") and maps it to a **Structured Intent**.
+- **Constraint:** AI cannot generate raw queries or access non-registered intents.
+- **Example Output:** `{ "intent": "CREATE_CLASS", "params": { "name": "Physics 101", "grade": 10 } }`
+
+### Stage 2: Action Translation (Action Registry)
+- **Process:** The intent is looked up in the **Action Registry**.
+- **Requirement:** Every intent must map to an existing, versioned internal API endpoint.
+- **Constraint:** If no mapping exists, the action is rejected immediately.
+
+### Stage 3: Permission Engine (The Gatekeeper)
+- **Check 1:** **Authentication:** Is the user session valid?
+- **Check 2:** **Tenant Isolation:** Does the target resource belong to the user's school (tenant)?
+- **Check 3:** **RBAC (Role-Based Access Control):** Does the user's role (e.g., Teacher) have permission to execute this specific API endpoint?
+- **Result:** Any failure results in a `403 Forbidden` and a safe explanation to the user.
+
+### Stage 4: Validation & Safety Service
+- **Schema Validation:** Ensures all parameters match the API's expected types/formats.
+- **Business Rule Check:** E.g., "Cannot schedule a class in a room that is already occupied."
+- **Anomaly Detection:** Flags unusual bulk operations or rapid-fire requests.
+
+### Stage 5: Confirmation Workflow Manager
+- **Trigger:** High-impact or destructive actions (Delete, Bulk Update, Financial Transfer).
+- **Process:** UI prompts the user with a "Review & Approve" card showing exactly what the AI is about to do.
+- **Constraint:** The backend will not execute the API call until a signed approval token is received from the UI.
+
+### Stage 6: API Execution Layer
+- **Execution:** The request is sent to the standard system backend.
+- **Isolation:** The AI has no direct database access; it uses the same APIs as the web UI.
+
+### Stage 7: Immutable Audit Logging Service
+- **Logs:** User ID, Role, Intent, Sanitized Parameters, Success/Failure, Timestamp, and User Approval Token.
+- **Storage:** Secure, append-only log store for compliance and forensic review.
+
+## 3. Security Principles
+- **Least Privilege:** AI inherits user permissions; it cannot escalate.
+- **Sanitization:** All AI responses are filtered to prevent leaking system metadata or PII.
+- **Auditability:** Every single "click" the AI makes is recorded.
+- **Human-in-the-Loop:** Critical actions require explicit human confirmation.
+
+## 4. System Components
+| Component | Responsibility |
+| :--- | :--- |
+| **AI Intent Parser** | Maps text to structured commands. |
+| **Action Registry** | The "allow-list" of system capabilities. |
+| **Permission Middleware**| Enforces RBAC and tenant isolation. |
+| **Validation Service** | Checks data integrity and business rules. |
+| **Secure API Gateway** | The only entry point for AI-requested actions. |
+| **Audit Log Service** | Records all activity in an immutable store. |
+| **Workflow Manager** | Manages the user confirmation state machine. |

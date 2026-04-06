@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SAMS - Librarian Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-lowest": "#ffffff",
+              "primary": "#000666",
+              "surface-tint": "#4c56af",
+              "primary-container": "#1a237e",
+              "tertiary-container": "#5c1800",
+              "error": "#ba1a1a",
+              "on-primary-container": "#8690ee",
+              "on-secondary-container": "#526772",
+              "secondary": "#4c616c",
+              "on-surface-variant": "#454652",
+              "secondary-fixed-dim": "#b4cad6",
+              "inverse-on-surface": "#f0f1f2",
+              "surface": "#f8f9fa",
+              "on-secondary": "#ffffff",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#e0e0ff",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-primary-fixed": "#000767",
+              "on-tertiary-fixed": "#390c00",
+              "outline": "#767683",
+              "tertiary-fixed": "#ffdbd0",
+              "surface-variant": "#e1e3e4",
+              "tertiary-fixed-dim": "#ffb59d",
+              "secondary-container": "#cfe6f2",
+              "background": "#f8f9fa",
+              "surface-dim": "#d9dadb",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#e17c5a",
+              "on-error-container": "#93000a",
+              "tertiary": "#380b00",
+              "surface-container-high": "#e7e8e9",
+              "surface-container-low": "#f3f4f5",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "secondary-fixed": "#cfe6f2",
+              "on-background": "#191c1d",
+              "inverse-surface": "#2e3132",
+              "inverse-primary": "#bdc2ff",
+              "on-primary-fixed-variant": "#343d96",
+              "on-primary": "#ffffff",
+              "outline-variant": "#c6c5d4",
+              "surface-bright": "#f8f9fa",
+              "surface-container": "#edeeef",
+              "on-surface": "#191c1d",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed": "#071e27",
+              "on-secondary-fixed-variant": "#354a53"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="flex flex-col fixed left-0 top-0 h-full h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-900 font-manrope text-sm font-medium duration-200 ease-in-out z-50">
+<div class="px-6 py-8">
+<h1 class="text-2xl font-bold tracking-tight text-blue-950 dark:text-white">SAMS</h1>
+<p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Academic Sentinel</p>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<!-- Active: Management -->
+<a class="flex items-center gap-3 px-3 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 border-l-4 border-blue-900 font-bold text-blue-950 dark:text-white dark:border-blue-400 bg-slate-100 dark:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span>Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span>Communication</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-900 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full bg-primary text-white py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95">
+                Check In
+            </button>
+<a class="flex items-center gap-3 px-3 py-3 mt-4 text-slate-500 dark:text-slate-400 hover:text-blue-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+<span>Bulk Import</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar (Execution from JSON) -->
+<header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm dark:shadow-none font-manrope text-sm">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" data-icon="search">search</span>
+<input class="w-full bg-slate-100 border-none rounded-full pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Search Catalog" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-600 dark:text-slate-400">
+<button class="hover:text-blue-700 transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:text-blue-700 transition-all">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="hover:text-blue-700 transition-all">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-slate-200"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-bold text-blue-950 leading-none">Profile</p>
+<p class="text-[10px] text-slate-500 uppercase mt-1">Librarian</p>
+</div>
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover" data-alt="Close up portrait of a professional woman in a library setting with warm natural light and books in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCImuFfAbSR3KRQk3y5yCpJWc8b-6Gj9FEImpi1d4T04E97qECk7RIncDnttQv_Az1kTfDv7X7hhT2cnIV4cARYdHmb-NZkpcQNC0t0AlyZzGLY1o-9Rcb-03BTEAloAlsqA79TM9jIZcoRQAs9e997njYrE9UJiZtjvGabL_h0u4ufdFY6H2c8CruU3sZHJk5-j9wD2V4t9ZPDpKC5Q5b2Dhct8qM237-yhFEnlN7XrVoaW-U72f0Snv7WNnsGTDc-ZN9Di_U6ceA"/>
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<section class="p-8 space-y-12">
+<!-- Hero Header -->
+<div class="flex justify-between items-end">
+<div class="space-y-2">
+<p class="font-label text-sm uppercase tracking-[0.2em] text-on-surface-variant font-medium">Library Management</p>
+<h2 class="font-headline text-5xl font-extrabold text-primary tracking-tight">Digital Registrar</h2>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-6 py-3 border border-outline/20 rounded-xl font-bold text-primary hover:bg-slate-50 transition-all">
+<span class="material-symbols-outlined" data-icon="library_add">library_add</span>
+                        Add New Book
+                    </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all">
+<span class="material-symbols-outlined" data-icon="assignment_return">assignment_return</span>
+                        Issue Resource
+                    </button>
+</div>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Large Card: Attendance/Inventory Trend -->
+<div class="col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_40px_rgba(0,7,103,0.06)] relative overflow-hidden flex flex-col justify-between">
+<div class="relative z-10">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline text-lg font-bold text-primary">Resource Utilization</h3>
+<p class="text-on-surface-variant text-sm mt-1">Active circulation performance over 30 days</p>
+</div>
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed text-xs font-bold rounded-full">+12% vs LY</span>
+</div>
+<div class="mt-8 flex items-baseline gap-4">
+<span class="font-headline text-6xl font-black text-primary">12,482</span>
+<span class="font-label text-sm text-on-surface-variant">Total Catalogued Items</span>
+</div>
+</div>
+<!-- Abstract Decorative Element -->
+<div class="absolute -right-12 -bottom-12 w-64 h-64 bg-slate-50 rounded-full blur-3xl opacity-50"></div>
+</div>
+<!-- Vertical Card: Overdue Returns -->
+<div class="col-span-4 bg-tertiary-container text-white rounded-xl p-8 relative overflow-hidden group">
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div class="space-y-1">
+<div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center backdrop-blur-sm mb-4">
+<span class="material-symbols-outlined text-white" data-icon="alarm">alarm</span>
+</div>
+<h3 class="font-headline text-lg font-bold text-white/90">Critical Absences</h3>
+<p class="text-white/60 text-xs">Overdue resources requiring immediate follow-up</p>
+</div>
+<div class="mt-6">
+<span class="font-headline text-5xl font-black">24</span>
+<p class="font-label text-xs uppercase tracking-wider mt-2 font-bold text-on-tertiary-container">Pending Returns</p>
+</div>
+</div>
+<!-- Abstract Texture -->
+<div class="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+</div>
+</div>
+<!-- Table Section: Recent Loans -->
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+<h3 class="font-headline text-xl font-bold text-blue-950">Recent Circulation Logs</h3>
+</div>
+<button class="text-primary font-bold text-sm hover:underline">View Full Archive</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,7,103,0.06)]">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50/50">
+<th class="px-8 py-5 font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold">Student / Staff Name</th>
+<th class="px-8 py-5 font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold">Resource Title</th>
+<th class="px-8 py-5 font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold">Date Issued</th>
+<th class="px-8 py-5 font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold">Due Date</th>
+<th class="px-8 py-5 font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary text-[10px] font-bold">AL</div>
+<span class="font-body text-sm font-semibold text-primary">Alexander Thorne</span>
+</div>
+</td>
+<td class="px-8 py-5">
+<p class="font-body text-sm text-on-surface">The Wealth of Nations</p>
+<p class="text-[10px] text-slate-400">ISBN: 978-0140448139</p>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">Oct 12, 2023</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant font-medium">Oct 26, 2023</td>
+<td class="px-8 py-5 text-right">
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">IN CIRCULATION</span>
+</td>
+</tr>
+<!-- Row 2 (Zebra shift) -->
+<tr class="bg-surface-container-low/30 hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary text-[10px] font-bold">EM</div>
+<span class="font-body text-sm font-semibold text-primary">Elena Martinez</span>
+</div>
+</td>
+<td class="px-8 py-5">
+<p class="font-body text-sm text-on-surface">Advanced Calculus</p>
+<p class="text-[10px] text-slate-400">ISBN: 978-0486450360</p>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">Oct 10, 2023</td>
+<td class="px-8 py-5 text-sm text-error font-bold">Oct 24, 2023</td>
+<td class="px-8 py-5 text-right">
+<span class="px-3 py-1 bg-error-container text-error text-[10px] font-bold rounded-full">OVERDUE</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant text-[10px] font-bold">JD</div>
+<span class="font-body text-sm font-semibold text-primary">Julian Drake</span>
+</div>
+</td>
+<td class="px-8 py-5">
+<p class="font-body text-sm text-on-surface">Digital Signal Processing</p>
+<p class="text-[10px] text-slate-400">ISBN: 978-0131873742</p>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">Oct 15, 2023</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant font-medium">Oct 29, 2023</td>
+<td class="px-8 py-5 text-right">
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">IN CIRCULATION</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Asymmetric Grid: Categories & Library News -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<div class="col-span-4 space-y-6">
+<h4 class="font-headline text-lg font-bold text-blue-950">Resource Categories</h4>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="biotech">biotech</span>
+<span class="text-sm font-semibold">Science &amp; Tech</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">4,203</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="history_edu">history_edu</span>
+<span class="text-sm font-semibold">Arts &amp; Literature</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">3,120</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="architecture">architecture</span>
+<span class="text-sm font-semibold">Engineering</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">2,854</span>
+</div>
+</div>
+</div>
+<div class="col-span-8 bg-surface-container-high rounded-xl p-8 h-full">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-headline text-lg font-bold text-blue-950">Administrative Bulletins</h4>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest mb-2 block">Announcement</span>
+<p class="font-headline text-sm font-bold text-primary mb-2 leading-snug">System Upgrade: Catalog Cloud v4.2</p>
+<p class="text-xs text-on-surface-variant">The digital catalog system will undergo maintenance this Sunday between 02:00 and 06:00 UTC.</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<span class="text-[10px] font-bold text-on-tertiary-container uppercase tracking-widest mb-2 block">Policy Change</span>
+<p class="font-headline text-sm font-bold text-primary mb-2 leading-snug">Revised Loan Periods for Journals</p>
+<p class="text-xs text-on-surface-variant">Effective immediately, physical journal loan periods are extended from 3 to 7 business days.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer (Execution from JSON) -->
+<footer class="flex justify-between items-center px-8 py-4 w-full mt-auto bg-slate-50 dark:bg-slate-950 opacity-80 hover:opacity-100 transition-all font-manrope text-xs tracking-wide uppercase">
+<div class="text-slate-500 dark:text-slate-400">
+                v2.0.4 © SAMS Academic Sentinel
+            </div>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Help</a>
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Support</a>
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Privacy</a>
+</div>
+</footer>
+</main>
+<!-- Contextual FAB (Restricted to relevant views) -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="bg-primary text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group">
+<span class="material-symbols-outlined transition-transform group-hover:rotate-90" data-icon="add">add</span>
+</button>
+</div>
+</body></html>

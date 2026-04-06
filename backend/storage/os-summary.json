@@ -1,0 +1,250 @@
+{
+    "timestamp": "2026-03-12T10:30:19-04:00",
+    "phases": {
+        "boot": {
+            "timestamp": "2026-03-12T10:30:19-04:00",
+            "phases": {
+                "policy": {
+                    "session": {
+                        "status": "regenerated"
+                    },
+                    "rate_limit": {
+                        "status": "ok",
+                        "count": 0
+                    },
+                    "audit": {
+                        "status": "cli"
+                    }
+                },
+                "identity": {
+                    "authenticated": false,
+                    "role": null,
+                    "user_id": null,
+                    "session_valid": false,
+                    "checks": [
+                        "no_user_id"
+                    ]
+                },
+                "state": {
+                    "timestamp": "2026-03-12T10:30:19-04:00",
+                    "academic": {
+                        "term": "Term 1",
+                        "month": 3,
+                        "is_school_day": true,
+                        "is_school_hour": true,
+                        "day_of_week": 4,
+                        "hour": 10
+                    },
+                    "users": {
+                        "total": 17,
+                        "active_now": 0,
+                        "by_role": {
+                            "": 2,
+                            "admin": 4,
+                            "teacher": 3,
+                            "student": 3,
+                            "parent": 2,
+                            "accountant": 1,
+                            "librarian": 1,
+                            "transport": 1
+                        }
+                    },
+                    "attendance": {
+                        "date": "2026-03-12",
+                        "total": 0,
+                        "present": 0,
+                        "absent": 0,
+                        "late": 0,
+                        "rate": 0
+                    },
+                    "classes": {
+                        "total": 1
+                    },
+                    "system": {
+                        "php_version": "8.2.12",
+                        "memory_usage": "2 MB",
+                        "memory_peak": "2 MB",
+                        "storage_exists": true,
+                        "uploads_exists": true,
+                        "disk_free": "37.52 GB"
+                    }
+                },
+                "academic": {
+                    "period": {
+                        "term": "Term 1",
+                        "month": 3,
+                        "is_school_day": true,
+                        "is_school_hour": true,
+                        "day_of_week": 4,
+                        "hour": 10
+                    },
+                    "attendance_open": true,
+                    "classes_summary": {
+                        "total": 0,
+                        "classes": []
+                    },
+                    "today_stats": {
+                        "date": "2026-03-12",
+                        "total": 0,
+                        "present": 0,
+                        "absent": 0,
+                        "late": 0,
+                        "rate": 0
+                    }
+                }
+            },
+            "boot_time": 0.0631
+        },
+        "scheduler": {
+            "executed": 3,
+            "skipped": 0,
+            "tasks": [
+                {
+                    "name": "attendance_window_check",
+                    "status": "ok"
+                },
+                {
+                    "name": "daily_cleanup",
+                    "status": "ok"
+                },
+                {
+                    "name": "daily_report",
+                    "status": "ok"
+                }
+            ]
+        },
+        "automation": {
+            "processed": 4,
+            "triggered": 0,
+            "results": []
+        },
+        "communication": {
+            "channels": {
+                "in_app": {
+                    "status": "ok",
+                    "type": "in_app"
+                },
+                "notifications": {
+                    "status": "ok",
+                    "type": "notifications"
+                },
+                "email": {
+                    "status": "configured",
+                    "type": "email"
+                },
+                "whatsapp": {
+                    "status": "not_configured",
+                    "type": "whatsapp"
+                },
+                "chat": {
+                    "status": "ok",
+                    "type": "chat"
+                }
+            },
+            "timestamp": "2026-03-12T10:30:19-04:00"
+        },
+        "resources": {
+            "storage": {
+                "status": "ok",
+                "files": 22,
+                "size": "163.07 KB",
+                "bytes": 166985
+            },
+            "uploads": {
+                "status": "ok",
+                "files": 5,
+                "size": "355 B",
+                "bytes": 355,
+                "by_type": {
+                    "htaccess": 5
+                }
+            },
+            "documents": {
+                "status": "no_table",
+                "count": 0
+            },
+            "timestamp": "2026-03-12T10:30:19-04:00"
+        },
+        "devices": {
+            "total": 0,
+            "online": 0,
+            "offline": 0
+        },
+        "healing": {
+            "phases": {
+                "detection": {
+                    "faults_found": 0,
+                    "faults": []
+                },
+                "schema": {
+                    "indexes": [],
+                    "columns": [],
+                    "orphans": []
+                },
+                "routes": {
+                    "total_routes": 260
+                },
+                "repair": {
+                    "attempted": 0,
+                    "repaired": 0,
+                    "note": "No faults to repair"
+                },
+                "verification": {
+                    "health_check": "passed"
+                },
+                "ui_integrity": {
+                    "tab_issues": 0,
+                    "dashboard_issues": 5,
+                    "layout_issues": 0,
+                    "total_issues": 5,
+                    "status": "degraded"
+                },
+                "services": {
+                    "total_services": 5,
+                    "healthy": 5,
+                    "status": "all_healthy",
+                    "details": {
+                        "session": {
+                            "service": "session",
+                            "status": "skipped",
+                            "note": "CLI mode"
+                        },
+                        "cache": {
+                            "service": "cache",
+                            "status": "healthy"
+                        },
+                        "storage": {
+                            "service": "storage",
+                            "status": "healthy"
+                        },
+                        "ai": {
+                            "service": "ai",
+                            "status": "healthy"
+                        },
+                        "eventbus": {
+                            "service": "eventbus",
+                            "status": "healthy"
+                        }
+                    }
+                },
+                "cache": {
+                    "cache_files": 6,
+                    "cache_writable": true
+                },
+                "memory": {
+                    "total_repairs": 0,
+                    "successes": 0,
+                    "success_rate": 0,
+                    "today": 0,
+                    "top_faults": []
+                }
+            },
+            "timestamp": "2026-03-12T10:30:19-04:00",
+            "stability_score": 85,
+            "duration": 0.478
+        }
+    },
+    "os_health": 100,
+    "duration": 0.6391,
+    "phase_count": 7
+}

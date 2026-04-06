@@ -1,0 +1,633 @@
+/* ============================================
+   MCC — Master Control Center Theme
+   Cyberpunk Developer Mode
+   ============================================ */
+
+:root {
+  --mcc-bg: #060a12;
+  --mcc-bg2: #0a0f1a;
+  --mcc-card: rgba(10, 18, 34, 0.92);
+  --mcc-card-hover: rgba(14, 24, 44, 0.95);
+  --mcc-border: rgba(0, 229, 255, 0.1);
+  --mcc-border-hover: rgba(0, 229, 255, 0.3);
+  --mcc-text: #c8d8e8;
+  --mcc-muted: #5a6a7a;
+  --mcc-cyan: #00e5ff;
+  --mcc-green: #00ff41;
+  --mcc-red: #ff3b3b;
+  --mcc-orange: #ff9100;
+  --mcc-yellow: #ffc107;
+  --mcc-magenta: #e040fb;
+  --mcc-purple: #b388ff;
+  --mcc-glow-cyan: 0 0 20px rgba(0, 229, 255, 0.15);
+  --mcc-glow-green: 0 0 20px rgba(0, 255, 65, 0.15);
+  --mcc-glow-red: 0 0 20px rgba(255, 59, 59, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.mcc-body {
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+  background: var(--mcc-bg);
+  color: var(--mcc-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background grid */
+body.mcc-body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Top Bar ── */
+.mcc-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6, 10, 18, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--mcc-border);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mcc-topbar h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--mcc-cyan), var(--mcc-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+}
+
+.mcc-topbar .mcc-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.mcc-status-pill.stable {
+  background: rgba(0, 255, 65, 0.1);
+  color: var(--mcc-green);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.mcc-status-pill.warning {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--mcc-yellow);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.mcc-status-pill.critical {
+  background: rgba(255, 59, 59, 0.1);
+  color: var(--mcc-red);
+  border: 1px solid rgba(255, 59, 59, 0.2);
+}
+
+.mcc-topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.mcc-topbar-actions a {
+  color: var(--mcc-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+.mcc-topbar-actions a:hover {
+  color: var(--mcc-cyan);
+}
+
+/* Pulse indicator */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: mcc-pulse 2s ease-in-out infinite;
+}
+
+.pulse-dot.green {
+  background: var(--mcc-green);
+  box-shadow: 0 0 8px var(--mcc-green);
+}
+.pulse-dot.red {
+  background: var(--mcc-red);
+  box-shadow: 0 0 8px var(--mcc-red);
+}
+.pulse-dot.yellow {
+  background: var(--mcc-yellow);
+  box-shadow: 0 0 8px var(--mcc-yellow);
+}
+
+@keyframes mcc-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+/* ── Grid Layout ── */
+.mcc-container {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.mcc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mcc-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mcc-full {
+  grid-column: 1 / -1;
+}
+
+/* ── Cards ── */
+.mcc-card {
+  background: var(--mcc-card);
+  border: 1px solid var(--mcc-border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.mcc-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--mcc-cyan), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mcc-card:hover {
+  border-color: var(--mcc-border-hover);
+  box-shadow: var(--mcc-glow-cyan);
+}
+
+.mcc-card:hover::before {
+  opacity: 1;
+}
+
+.mcc-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mcc-card-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--mcc-cyan);
+}
+
+.mcc-card-title i {
+  margin-right: 8px;
+  font-size: 0.9rem;
+}
+
+/* Accent stripe colors */
+.mcc-card.accent-green::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mcc-green),
+    transparent
+  );
+  opacity: 1;
+}
+.mcc-card.accent-cyan::before {
+  background: linear-gradient(90deg, transparent, var(--mcc-cyan), transparent);
+  opacity: 1;
+}
+.mcc-card.accent-red::before {
+  background: linear-gradient(90deg, transparent, var(--mcc-red), transparent);
+  opacity: 1;
+}
+.mcc-card.accent-magenta::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mcc-magenta),
+    transparent
+  );
+  opacity: 1;
+}
+.mcc-card.accent-orange::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mcc-orange),
+    transparent
+  );
+  opacity: 1;
+}
+.mcc-card.accent-purple::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mcc-purple),
+    transparent
+  );
+  opacity: 1;
+}
+.mcc-card.accent-yellow::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mcc-yellow),
+    transparent
+  );
+  opacity: 1;
+}
+
+/* ── Metrics ── */
+.mcc-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.82rem;
+}
+
+.mcc-metric-label {
+  color: var(--mcc-muted);
+}
+.mcc-metric-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.mcc-metric-value.good {
+  color: var(--mcc-green);
+}
+.mcc-metric-value.warn {
+  color: var(--mcc-yellow);
+}
+.mcc-metric-value.bad {
+  color: var(--mcc-red);
+}
+
+/* Big score display */
+.mcc-score {
+  text-align: center;
+  padding: 12px 0;
+}
+
+.mcc-score-value {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.mcc-score-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--mcc-muted);
+  margin-top: 4px;
+}
+
+/* ── Buttons ── */
+.mcc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--mcc-border);
+  background: rgba(0, 229, 255, 0.06);
+  color: var(--mcc-cyan);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mcc-btn:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--mcc-cyan);
+  box-shadow: var(--mcc-glow-cyan);
+}
+
+.mcc-btn.danger {
+  background: rgba(255, 59, 59, 0.08);
+  color: var(--mcc-red);
+  border-color: rgba(255, 59, 59, 0.2);
+}
+
+.mcc-btn.danger:hover {
+  background: rgba(255, 59, 59, 0.2);
+  border-color: var(--mcc-red);
+  box-shadow: var(--mcc-glow-red);
+}
+
+.mcc-btn.success {
+  background: rgba(0, 255, 65, 0.08);
+  color: var(--mcc-green);
+  border-color: rgba(0, 255, 65, 0.2);
+}
+
+.mcc-btn.success:hover {
+  background: rgba(0, 255, 65, 0.2);
+  border-color: var(--mcc-green);
+  box-shadow: var(--mcc-glow-green);
+}
+
+.mcc-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mcc-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ── Status Badge ── */
+.mcc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mcc-badge.online {
+  background: rgba(0, 255, 65, 0.1);
+  color: var(--mcc-green);
+}
+.mcc-badge.offline {
+  background: rgba(255, 59, 59, 0.1);
+  color: var(--mcc-red);
+}
+.mcc-badge.partial {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--mcc-yellow);
+}
+
+/* ── Live Event Stream ── */
+.mcc-event-stream {
+  max-height: 280px;
+  overflow-y: auto;
+  font-size: 0.78rem;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.mcc-event-stream::-webkit-scrollbar {
+  width: 4px;
+}
+.mcc-event-stream::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mcc-event-stream::-webkit-scrollbar-thumb {
+  background: var(--mcc-border);
+  border-radius: 4px;
+}
+
+.mcc-event {
+  padding: 5px 8px;
+  border-left: 2px solid var(--mcc-border);
+  margin-bottom: 2px;
+  transition: background 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mcc-event:hover {
+  background: rgba(0, 229, 255, 0.04);
+}
+.mcc-event.ok {
+  border-left-color: var(--mcc-green);
+}
+.mcc-event.warn {
+  border-left-color: var(--mcc-yellow);
+}
+.mcc-event.err {
+  border-left-color: var(--mcc-red);
+}
+.mcc-event.info {
+  border-left-color: var(--mcc-cyan);
+}
+
+.mcc-event-time {
+  color: var(--mcc-muted);
+  margin-right: 8px;
+  font-size: 0.72rem;
+}
+
+/* ── Emergency Panel ── */
+.mcc-emergency {
+  background: rgba(255, 59, 59, 0.04);
+  border: 1px solid rgba(255, 59, 59, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.mcc-emergency .mcc-card-title {
+  color: var(--mcc-red);
+}
+
+.mcc-emergency .mcc-btn {
+  min-width: 180px;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 0.8rem;
+}
+
+/* ── Table ── */
+.mcc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.mcc-table th {
+  text-align: left;
+  padding: 6px 10px;
+  color: var(--mcc-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--mcc-border);
+}
+
+.mcc-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.mcc-table tr:hover td {
+  background: rgba(0, 229, 255, 0.03);
+}
+
+/* ── Progress bar ── */
+.mcc-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.mcc-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1400px) {
+  .mcc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mcc-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .mcc-grid,
+  .mcc-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .mcc-container {
+    padding: 12px;
+  }
+}
+
+/* ── Loading shimmer ── */
+.mcc-loading {
+  background: linear-gradient(
+    90deg,
+    var(--mcc-card) 25%,
+    rgba(0, 229, 255, 0.05) 50%,
+    var(--mcc-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: mcc-shimmer 1.5s infinite;
+}
+
+@keyframes mcc-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Glow animation for active items ── */
+@keyframes mcc-neon-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(0, 229, 255, 0.4),
+      0 0 40px rgba(0, 229, 255, 0.1);
+  }
+}
+
+.mcc-active-glow {
+  animation: mcc-neon-glow 3s ease-in-out infinite;
+}
+
+/* Notification toast */
+.mcc-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.mcc-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.mcc-toast.success {
+  background: rgba(0, 255, 65, 0.15);
+  color: var(--mcc-green);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+.mcc-toast.error {
+  background: rgba(255, 59, 59, 0.15);
+  color: var(--mcc-red);
+  border: 1px solid rgba(255, 59, 59, 0.3);
+}
+.mcc-toast.info {
+  background: rgba(0, 229, 255, 0.15);
+  color: var(--mcc-cyan);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}

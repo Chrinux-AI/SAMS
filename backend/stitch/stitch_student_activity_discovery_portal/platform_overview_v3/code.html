@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SAMS AI Copilot | NOC Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#edeeef",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "surface-variant": "#e1e3e4",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000666",
+                        "on-surface-variant": "#454652",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-high": "#e7e8e9",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-secondary-fixed": "#071e27",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#380b00",
+                        "outline": "#767683",
+                        "primary-fixed": "#e0e0ff",
+                        "on-primary-fixed": "#000767",
+                        "secondary-container": "#cfe6f2",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed": "#390c00",
+                        "secondary": "#4c616c",
+                        "surface-dim": "#d9dadb",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "on-secondary-fixed-variant": "#354a53",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c6c5d4",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#343d96",
+                        "on-secondary-container": "#526772",
+                        "secondary-fixed": "#cfe6f2",
+                        "inverse-surface": "#2e3132",
+                        "primary-container": "#1a237e",
+                        "error": "#ba1a1a",
+                        "background": "#f8f9fa",
+                        "tertiary-container": "#5c1800",
+                        "surface-tint": "#4c56af",
+                        "on-primary-container": "#8690ee",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#bdc2ff",
+                        "on-tertiary-container": "#e17c5a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #020617; /* Dark Slate 950 for NOC variant */
+            color: #f8f9fa;
+        }
+        /* Custom scrollbar for NOC feel */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .noc-grid {
+            background-image: radial-gradient(circle, #1e293b 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container selection:text-white">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-blue-900 dark:text-white">SAMS AI Copilot</span>
+<nav class="hidden md:flex items-center gap-6 font-manrope text-sm tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Architecture</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Logs</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Permissions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Gateway</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-slate-500 hover:text-blue-900 dark:hover:text-white transition-all active:scale-95 duration-200" data-icon="settings">settings</button>
+<button class="material-symbols-outlined text-slate-500 hover:text-blue-900 dark:hover:text-white transition-all active:scale-95 duration-200" data-icon="help">help</button>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a professional male software architect in a modern office setting with blue ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACvbQPwGUa2NJ6Ja_oD0SFFM3TGFq3UgheW2M3xlycDDNhKzvYkUYvrRih_SK58fNFG6nhMhuBgRJ78v5oPWa1b7ndJX7con0LAXLvdY4241EPWY4vy3vAFEziT89XilvA3vsHj4MyvKK7gsVcmw9Yvh8b4pYaMow0GqGg0-7Ol8o4i509cqgFFSvZRPd_klD7WAykYlV-RaKwRN2r8PIN9pqK2cdVFVBze_bKAO1704kvuVKZLVsZrsDEHy8vNgqGpWmGIcPmbJc"/>
+</div>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 h-[1px] w-full"></div>
+</header>
+<div class="flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="bg-slate-50 dark:bg-slate-950 h-screen w-64 border-r-0 fixed left-0 top-16 h-[calc(100vh-64px)] flex flex-col justify-between py-6 z-40">
+<div class="space-y-8">
+<div class="px-6 space-y-1">
+<div class="flex items-center gap-3 mb-6">
+<div class="h-10 w-10 rounded-lg bg-blue-900 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="terminal">terminal</span>
+</div>
+<div>
+<p class="text-sm font-bold text-blue-900 dark:text-blue-400 leading-none">Backend Core</p>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">v2.4.0-stable</p>
+</div>
+</div>
+<nav class="space-y-1 font-inter text-sm font-medium">
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="psychology">psychology</span>
+<span>Intent Interpreter</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="security">security</span>
+<span>Permission Engine</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="hub">hub</span>
+<span>API Gateway</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="history_edu">history_edu</span>
+<span>Audit Logger</span>
+</a>
+<a class="flex items-center gap-3 py-3 border-l-4 border-blue-900 dark:border-blue-500 bg-transparent font-bold text-blue-900 dark:text-white pl-4 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="query_stats">query_stats</span>
+<span>System Health</span>
+</a>
+</nav>
+</div>
+</div>
+<div class="px-6 space-y-1">
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span>
+<span>Documentation</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-slate-600 dark:text-slate-400 pl-5 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 p-8 min-h-screen bg-slate-950 noc-grid">
+<!-- Hero Header Section -->
+<section class="mb-12 flex justify-between items-end">
+<div class="max-w-2xl">
+<h1 class="text-5xl font-extrabold font-headline tracking-tighter text-white mb-2 uppercase italic">Global Tenant Pulse</h1>
+<p class="text-slate-400 font-body text-lg border-l-2 border-blue-600 pl-4">Monitoring 14 clusters across 3 global regions. All systems operational.</p>
+</div>
+<div class="flex gap-2">
+<div class="px-4 py-2 bg-slate-900 rounded-lg border border-slate-800 flex items-center gap-3">
+<span class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-xs font-mono text-slate-300">UPTIME: 99.998%</span>
+</div>
+<div class="px-4 py-2 bg-slate-900 rounded-lg border border-slate-800 flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-400 text-sm" data-icon="refresh">refresh</span>
+<span class="text-xs font-mono text-slate-300">AUTO-SYNC: ON</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Primary Metric Card -->
+<div class="col-span-12 lg:col-span-8 h-80 bg-slate-900/50 backdrop-blur-xl rounded-xl border border-slate-800/50 p-6 flex flex-col justify-between overflow-hidden relative">
+<div class="relative z-10 flex justify-between items-start">
+<div>
+<span class="text-[10px] uppercase tracking-[0.2em] text-blue-400 font-bold">Network Load</span>
+<h2 class="text-3xl font-headline font-bold text-white mt-1">4.2 TB/s</h2>
+</div>
+<div class="text-right">
+<span class="text-green-400 font-mono text-xs">+12.4% vs prev hour</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-48 opacity-20 overflow-hidden pointer-events-none">
+<!-- Abstract data visualization line -->
+<svg class="w-full h-full preserve-3d" viewbox="0 0 1000 200">
+<path d="M0 150 Q 100 80 200 130 T 400 100 T 600 120 T 800 60 T 1000 110" fill="transparent" stroke="#3b82f6" stroke-width="4"></path>
+<path d="M0 160 Q 100 90 200 140 T 400 110 T 600 130 T 800 70 T 1000 120" fill="transparent" stroke="#1d4ed8" stroke-width="2"></path>
+</svg>
+</div>
+<div class="grid grid-cols-4 gap-4 mt-auto">
+<div class="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30">
+<p class="text-[10px] text-slate-500 uppercase">Latency</p>
+<p class="text-lg font-bold text-white">12ms</p>
+</div>
+<div class="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30">
+<p class="text-[10px] text-slate-500 uppercase">Loss</p>
+<p class="text-lg font-bold text-white">0.00%</p>
+</div>
+<div class="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30">
+<p class="text-[10px] text-slate-500 uppercase">Jitter</p>
+<p class="text-lg font-bold text-white">1.4ms</p>
+</div>
+<div class="bg-slate-800/40 p-3 rounded-lg border border-slate-700/30">
+<p class="text-[10px] text-slate-500 uppercase">Requests</p>
+<p class="text-lg font-bold text-white">88k/s</p>
+</div>
+</div>
+</div>
+<!-- Secondary Alert Card -->
+<div class="col-span-12 lg:col-span-4 h-80 bg-gradient-to-br from-slate-900 to-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Active Incidents</h3>
+<span class="bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded text-[10px] font-mono border border-blue-900">3 TOTAL</span>
+</div>
+<div class="space-y-4 flex-1 overflow-y-auto pr-2">
+<div class="p-3 bg-red-900/10 border-l-2 border-red-500 rounded flex gap-4">
+<span class="material-symbols-outlined text-red-500 text-sm" data-icon="warning">warning</span>
+<div>
+<p class="text-xs font-bold text-red-100">US-EAST-1 High CPU</p>
+<p class="text-[10px] text-red-400/80 mt-1">Pod autoscaler failed to initialize</p>
+</div>
+</div>
+<div class="p-3 bg-amber-900/10 border-l-2 border-amber-500 rounded flex gap-4">
+<span class="material-symbols-outlined text-amber-500 text-sm" data-icon="info">info</span>
+<div>
+<p class="text-xs font-bold text-amber-100">API Gateway Latency</p>
+<p class="text-[10px] text-amber-400/80 mt-1">Throttling detected in sandbox</p>
+</div>
+</div>
+<div class="p-3 bg-slate-800/30 border-l-2 border-slate-500 rounded flex gap-4">
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="schedule">schedule</span>
+<div>
+<p class="text-xs font-bold text-slate-200">Scheduled Maintenance</p>
+<p class="text-[10px] text-slate-500 mt-1">DB Backup starting in 12m</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Table Section -->
+<div class="col-span-12 bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+<div class="px-8 py-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+<h3 class="font-headline font-bold text-white text-xl">Multi-Tenant Fleet Status</h3>
+<div class="flex gap-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg" data-icon="search">search</span>
+<input class="bg-slate-950 border-slate-800 text-slate-300 text-xs rounded-lg pl-10 pr-4 py-2 w-64 focus:ring-1 focus:ring-blue-600 outline-none transition-all" placeholder="Filter tenants..." type="text"/>
+</div>
+<button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                                PROVISION NEW
+                            </button>
+</div>
+</div>
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-900/20 text-[10px] font-mono text-slate-500 uppercase tracking-tighter">
+<th class="px-8 py-4">Tenant Identifier</th>
+<th class="px-8 py-4">Region</th>
+<th class="px-8 py-4">Utilization</th>
+<th class="px-8 py-4">Security Level</th>
+<th class="px-8 py-4 text-right">Status</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-slate-800/30 font-body">
+<tr class="hover:bg-blue-900/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center font-bold text-xs text-blue-400">AX</div>
+<div>
+<p class="font-bold text-slate-200">Axiom Financial</p>
+<p class="text-[10px] text-slate-600 font-mono">T-4892-BB</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-slate-400">EU-WEST-2 (London)</td>
+<td class="px-8 py-5">
+<div class="w-32 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-[65%]"></div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-400 border border-slate-700">COMPLIANCE-L3</span>
+</td>
+<td class="px-8 py-5 text-right">
+<span class="inline-flex items-center gap-1.5 text-green-400 font-bold text-xs">
+<span class="h-1.5 w-1.5 rounded-full bg-green-400"></span>
+                                        ACTIVE
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-blue-900/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center font-bold text-xs text-blue-400">NT</div>
+<div>
+<p class="font-bold text-slate-200">NexTech Solutions</p>
+<p class="text-[10px] text-slate-600 font-mono">T-9021-CS</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-slate-400">US-EAST-1 (N. Virginia)</td>
+<td class="px-8 py-5">
+<div class="w-32 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-[88%]"></div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-400 border border-slate-700">ISO-27001</span>
+</td>
+<td class="px-8 py-5 text-right">
+<span class="inline-flex items-center gap-1.5 text-amber-400 font-bold text-xs">
+<span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                                        LOAD_WARN
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-blue-900/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center font-bold text-xs text-blue-400">SP</div>
+<div>
+<p class="font-bold text-slate-200">Spectral Labs</p>
+<p class="text-[10px] text-slate-600 font-mono">T-1144-XZ</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-slate-400">AP-SOUTH-1 (Mumbai)</td>
+<td class="px-8 py-5">
+<div class="w-32 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-[12%]"></div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-400 border border-slate-700">DEFAULT</span>
+</td>
+<td class="px-8 py-5 text-right">
+<span class="inline-flex items-center gap-1.5 text-green-400 font-bold text-xs">
+<span class="h-1.5 w-1.5 rounded-full bg-green-400"></span>
+                                        ACTIVE
+                                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Footer Stats Grid -->
+<div class="col-span-12 lg:col-span-3 bg-slate-900/40 p-6 rounded-xl border border-slate-800/50">
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">API Errors</p>
+<p class="text-2xl font-headline font-extrabold text-white">0.02%</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-green-400 text-sm" data-icon="trending_down">trending_down</span>
+<span class="text-[10px] text-green-400">Down 5% since boot</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3 bg-slate-900/40 p-6 rounded-xl border border-slate-800/50">
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Memory Cache</p>
+<p class="text-2xl font-headline font-extrabold text-white">12.4 GB</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500 text-sm" data-icon="speed">speed</span>
+<span class="text-[10px] text-slate-400">85% Hit Ratio</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-6 bg-slate-900/40 p-6 rounded-xl border border-slate-800/50 flex items-center gap-8">
+<div>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Gateway Queue</p>
+<p class="text-2xl font-headline font-extrabold text-white">0 Req</p>
+</div>
+<div class="flex-1 flex gap-1 h-8 items-end">
+<div class="w-2 bg-blue-900 h-2 rounded-t-sm"></div>
+<div class="w-2 bg-blue-900 h-1 rounded-t-sm"></div>
+<div class="w-2 bg-blue-900 h-3 rounded-t-sm"></div>
+<div class="w-2 bg-blue-900 h-2 rounded-t-sm"></div>
+<div class="w-2 bg-blue-900 h-4 rounded-t-sm"></div>
+<div class="w-2 bg-blue-900 h-1 rounded-t-sm"></div>
+<div class="w-2 bg-blue-900 h-2 rounded-t-sm"></div>
+<div class="w-2 bg-blue-600 h-5 rounded-t-sm animate-pulse"></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

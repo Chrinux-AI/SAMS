@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Schola Ledger - Budget Master</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed-variant": "#0040a2",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c3c6d6",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#ffca81",
+                    "outline": "#737685",
+                    "on-secondary-fixed": "#002113",
+                    "tertiary-fixed": "#ffddb3",
+                    "secondary-container": "#82f9be",
+                    "inverse-primary": "#b2c5ff",
+                    "on-primary-fixed": "#001848",
+                    "secondary": "#006c47",
+                    "tertiary-fixed-dim": "#ffb950",
+                    "on-surface": "#1a1b1f",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#82f9be",
+                    "surface-bright": "#faf9fe",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e3e2e7",
+                    "tertiary": "#5e3c00",
+                    "surface-dim": "#dad9de",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#00734c",
+                    "inverse-on-surface": "#f1f0f5",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "surface": "#faf9fe",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#faf9fe",
+                    "on-primary-container": "#c4d2ff",
+                    "surface-container": "#eeedf2",
+                    "on-surface-variant": "#434654",
+                    "primary-container": "#0052cc",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#7d5200",
+                    "primary": "#003d9b",
+                    "surface-container-highest": "#e3e2e7",
+                    "secondary-fixed-dim": "#65dca4",
+                    "primary-fixed": "#dae2ff",
+                    "on-tertiary-fixed": "#291800",
+                    "surface-tint": "#0c56d0",
+                    "on-secondary-fixed-variant": "#005235",
+                    "surface-container-low": "#f4f3f8",
+                    "surface-container-high": "#e9e7ed",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "inverse-surface": "#2f3034",
+                    "on-background": "#1a1b1f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 pt-16 bg-[#f4f3f8] dark:bg-slate-950 flex flex-col py-4 border-r-0 z-40 hidden md:flex">
+<div class="px-6 mb-8">
+<h2 class="text-lg font-black text-[#1a1b1f] dark:text-white">Sovereign Ledger</h2>
+<p class="text-xs text-slate-500">Accounting Suite</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e2e7] transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#003d9b] bg-white dark:bg-slate-900 rounded-r-full font-bold transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">account_balance</span>
+<span class="text-sm font-medium">General Ledger</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e2e7] transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="text-sm font-medium">Accounts Payable</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e2e7] transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">receipt_long</span>
+<span class="text-sm font-medium">Accounts Receivable</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e2e7] transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">assessment</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e2e7] transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="text-sm font-medium">School Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-slate-200 pt-4">
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-[#e3e2e7] transition-all" href="#">
+<span class="material-symbols-outlined mr-3">contact_support</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-[#e3e2e7] transition-all" href="#">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="text-sm font-medium">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar (Execution from JSON) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 flex justify-between items-center w-full px-6 py-2">
+<div class="flex items-center gap-8">
+<div class="text-xl font-bold text-[#003d9b] dark:text-blue-500">Schola Ledger</div>
+<div class="hidden md:flex gap-6">
+<a class="text-slate-600 text-sm font-medium hover:text-[#003d9b]" href="#">Overview</a>
+<a class="text-[#003d9b] font-semibold border-b-2 border-[#003d9b] text-sm" href="#">Budgeting</a>
+<a class="text-slate-600 text-sm font-medium hover:text-[#003d9b]" href="#">Invoicing</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-surface-container border-none rounded-lg pl-10 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search ledger..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors duration-200">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-slate-200" data-alt="Professional headshot of a school administrator in a bright office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ8pM1l2j6xEa6-Zwe5bRYhRDEHiUsHBk_k5D6bw7swdXLLEVQn1OV4l-VKFWElV0mmfdePadWMfxcowksc9y1D8qglwr4rrSeSumsnWoOxPUB2RGm80s4ZbqnFNDPjWJzfE7pus7I9duBlxrwiHe7TTo6lHXXlOspjSZ94fnEEHjnyAE2zUpilys7ngBFLykWnFoHE1rO-PJ4fPQV77CROhgRhfDWwjSvlfB6fZGnJ_40ZlE6sc2iudgo02S35KUQtWSmEA2_x-15"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-20 px-8 pb-12">
+<!-- Budget Master Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="text-xs font-bold tracking-widest text-on-surface-variant uppercase">Financial Governance</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-wider">Approved</span>
+</div>
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Budget Master</h1>
+<div class="flex items-center gap-6 text-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Fiscal Year 2024-25</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">payments</span>
+<span class="font-semibold text-on-surface">Total Budget: $1.2M</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 text-sm font-semibold text-primary border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors">
+                    Export PDF
+                </button>
+<button class="px-6 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white text-sm font-bold rounded-lg shadow-sm hover:opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                    Approve Budget
+                </button>
+</div>
+</div>
+<!-- Bento Layout Grid -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Critical Budget Alerts -->
+<div class="col-span-12 lg:col-span-4 space-y-4">
+<div class="p-6 bg-[#fff4f2] border-l-4 border-error rounded-xl">
+<div class="flex items-start gap-4">
+<div class="p-2 bg-error-container text-error rounded-lg">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h3 class="font-bold text-on-error-container text-sm">Maintenance at 96%</h3>
+<p class="text-sm text-on-error-container opacity-90 mt-1 leading-relaxed">
+                                Campus Infrastructure budget is nearing its annual limit. Critical repairs prioritized.
+                            </p>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low rounded-xl">
+<h3 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-4">Summary Projection</h3>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium">Total Spent</span>
+<span class="font-bold">$742,000</span>
+</div>
+<div class="h-2.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[62%]"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-2">
+<div class="p-3 bg-white rounded-lg">
+<span class="text-[10px] uppercase font-bold text-slate-400">Available</span>
+<p class="text-lg font-bold text-secondary">$458k</p>
+</div>
+<div class="p-3 bg-white rounded-lg">
+<span class="text-[10px] uppercase font-bold text-slate-400">Burn Rate</span>
+<p class="text-lg font-bold text-primary">High</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Performance -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold tracking-tight">Category Performance</h2>
+<button class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+                        View Detailed Report
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-separate border-spacing-y-4">
+<thead>
+<tr class="text-on-surface-variant text-[10px] uppercase font-black tracking-widest">
+<th class="pb-2">Category</th>
+<th class="pb-2">Allocated</th>
+<th class="pb-2">Actual</th>
+<th class="pb-2 w-48">Utilization</th>
+<th class="pb-2 text-right">Variance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-surface hover:bg-surface-container-highest transition-colors group">
+<td class="py-4 px-4 rounded-l-lg font-bold text-sm border-l-4 border-transparent group-hover:border-primary">Academic Depts</td>
+<td class="py-4 text-sm">$450,000</td>
+<td class="py-4 text-sm font-medium">$280,000</td>
+<td class="py-4">
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[62%]"></div>
+</div>
+</td>
+<td class="py-4 px-4 rounded-r-lg text-right">
+<span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-xs font-bold">+ 38%</span>
+</td>
+</tr>
+<tr class="bg-surface-container-low hover:bg-surface-container-highest transition-colors group">
+<td class="py-4 px-4 rounded-l-lg font-bold text-sm border-l-4 border-transparent group-hover:border-primary">Infrastructure</td>
+<td class="py-4 text-sm">$320,000</td>
+<td class="py-4 text-sm font-medium text-error">$307,200</td>
+<td class="py-4">
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error w-[96%]"></div>
+</div>
+</td>
+<td class="py-4 px-4 rounded-r-lg text-right">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-xs font-bold">- 4%</span>
+</td>
+</tr>
+<tr class="bg-surface hover:bg-surface-container-highest transition-colors group">
+<td class="py-4 px-4 rounded-l-lg font-bold text-sm border-l-4 border-transparent group-hover:border-primary">Technology</td>
+<td class="py-4 text-sm">$250,000</td>
+<td class="py-4 text-sm font-medium">$125,000</td>
+<td class="py-4">
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[50%]"></div>
+</div>
+</td>
+<td class="py-4 px-4 rounded-r-lg text-right">
+<span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-xs font-bold">+ 50%</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Monthly Line-Item Allocations -->
+<div class="col-span-12">
+<div class="bg-surface-container-low rounded-2xl p-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="text-2xl font-black text-on-surface">Monthly Line-Item Allocations</h2>
+<p class="text-on-surface-variant text-sm">Disbursement schedule for Q3 Operational Expenses</p>
+</div>
+<div class="flex items-center bg-white rounded-lg p-1 shadow-sm">
+<button class="px-4 py-1.5 text-xs font-bold text-primary bg-primary-fixed rounded-md">Q1</button>
+<button class="px-4 py-1.5 text-xs font-bold text-slate-400">Q2</button>
+<button class="px-4 py-1.5 text-xs font-bold text-slate-400">Q3</button>
+<button class="px-4 py-1.5 text-xs font-bold text-slate-400">Q4</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- Allocation Cards -->
+<div class="bg-white p-5 rounded-xl border-l-4 border-primary">
+<span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">July 2024</span>
+<div class="mt-2 mb-4">
+<p class="text-2xl font-bold">$98,400</p>
+<p class="text-xs text-secondary font-medium">Under Budget</p>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-primary-fixed border-2 border-white flex items-center justify-center text-[8px] font-bold">JD</div>
+<div class="w-6 h-6 rounded-full bg-secondary-fixed border-2 border-white flex items-center justify-center text-[8px] font-bold">AS</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-primary">
+<span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">August 2024</span>
+<div class="mt-2 mb-4">
+<p class="text-2xl font-bold">$102,150</p>
+<p class="text-xs text-secondary font-medium">Under Budget</p>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-tertiary-fixed border-2 border-white flex items-center justify-center text-[8px] font-bold">ML</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-error">
+<span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">September 2024</span>
+<div class="mt-2 mb-4">
+<p class="text-2xl font-bold">$145,000</p>
+<p class="text-xs text-error font-medium">Over-Allocated</p>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-error-container border-2 border-white flex items-center justify-center text-[8px] font-bold">!</div>
+</div>
+</div>
+<div class="bg-surface-container-high/50 p-5 rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-slate-400">
+<span class="material-symbols-outlined mb-1">add_circle</span>
+<span class="text-[10px] font-bold uppercase">Projection</span>
+</div>
+<div class="bg-white/50 p-5 rounded-xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
+<div class="relative z-10">
+<span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Total Q3</span>
+<p class="text-2xl font-black text-primary mt-2">$345,550</p>
+<button class="mt-4 w-full py-2 border border-primary text-primary text-[10px] font-bold uppercase tracking-widest rounded hover:bg-primary hover:text-white transition-all">
+                                    Finalize Period
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t-0 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex justify-around py-3 px-4 z-50">
+<button class="flex flex-col items-center gap-1 text-[#003d9b]">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="text-[10px] font-bold">Budget</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-bold">Spend</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</nav>
+</body></html>
