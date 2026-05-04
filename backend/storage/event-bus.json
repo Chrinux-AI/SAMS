@@ -51,5 +51,1391 @@
         },
         "timestamp": 1773325819,
         "datetime": "2026-03-12 10:30:19"
+    },
+    {
+        "id": "9f137b7fe8cb59c7",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at C:\\xampp\\htdocs\\attendance\\frontend\\accountant\\dashboard.php:7) in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:618\nStack trace:\n#0 [internal function]: ErrorHandler::handleError(2, 'Cannot modify h...', 'C:\\\\xampp\\\\htdocs...', 618)\n#1 C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php(618): header('Location: ..\/lo...')\n#2 C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php(412): redirect('..\/login.php', 'Please login to...', 'error')\n#3 C:\\xampp\\htdocs\\attendance\\frontend\\accountant\\dashboard.php(11): require_login('..\/login.php')\n#4 Command line code(1): require('C:\\\\xampp\\\\htdocs...')\n#5 {main}\n  thrown",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 618
+        },
+        "timestamp": 1775642529,
+        "datetime": "2026-04-08 06:02:09"
+    },
+    {
+        "id": "c401af020c7b9299",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at C:\\xampp\\htdocs\\attendance\\frontend\\accountant\\dashboard.php:7) in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:618\nStack trace:\n#0 [internal function]: ErrorHandler::handleError(2, 'Cannot modify h...', 'C:\\\\xampp\\\\htdocs...', 618)\n#1 C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php(618): header('Location: ..\/lo...')\n#2 C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php(412): redirect('..\/login.php', 'Please login to...', 'error')\n#3 C:\\xampp\\htdocs\\attendance\\frontend\\accountant\\dashboard.php(11): require_login('..\/login.php')\n#4 Command line code(1): require('C:\\\\xampp\\\\htdocs...')\n#5 {main}\n  thrown",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 618,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775642529,
+        "datetime": "2026-04-08 06:02:09"
+    },
+    {
+        "id": "7a054e56c188a72b",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1775643909,
+        "datetime": "2026-04-08 06:25:09"
+    },
+    {
+        "id": "ffc095a617b04b68",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775643909,
+        "datetime": "2026-04-08 06:25:09"
+    },
+    {
+        "id": "fbaf439dcf39698c",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1775643943,
+        "datetime": "2026-04-08 06:25:43"
+    },
+    {
+        "id": "961e3e43b3fa32f5",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775643943,
+        "datetime": "2026-04-08 06:25:43"
+    },
+    {
+        "id": "bb458a134470350f",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1775643953,
+        "datetime": "2026-04-08 06:25:53"
+    },
+    {
+        "id": "86d8939f80dc09f4",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775643953,
+        "datetime": "2026-04-08 06:25:53"
+    },
+    {
+        "id": "fa3f4c2b6c8a9331",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1775644033,
+        "datetime": "2026-04-08 06:27:13"
+    },
+    {
+        "id": "1b5d7a5b6e2da6de",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775644033,
+        "datetime": "2026-04-08 06:27:13"
+    },
+    {
+        "id": "566bddc3eb229ca7",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646958,
+        "datetime": "2026-04-08 07:15:58"
+    },
+    {
+        "id": "3e500716bb6ac673",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646958,
+        "datetime": "2026-04-08 07:15:58"
+    },
+    {
+        "id": "5b277d160183d958",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646959,
+        "datetime": "2026-04-08 07:15:59"
+    },
+    {
+        "id": "7b59a290db66766d",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646959,
+        "datetime": "2026-04-08 07:15:59"
+    },
+    {
+        "id": "10a5eca4cbe552ce",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646960,
+        "datetime": "2026-04-08 07:16:00"
+    },
+    {
+        "id": "a4e5cdd1bbf6e032",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646960,
+        "datetime": "2026-04-08 07:16:00"
+    },
+    {
+        "id": "39bff246ff7f8e69",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646960,
+        "datetime": "2026-04-08 07:16:00"
+    },
+    {
+        "id": "e440c3b2b8bd8bbe",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646960,
+        "datetime": "2026-04-08 07:16:00"
+    },
+    {
+        "id": "354c19ba77568a01",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646960,
+        "datetime": "2026-04-08 07:16:00"
+    },
+    {
+        "id": "d1d9078408999892",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646960,
+        "datetime": "2026-04-08 07:16:00"
+    },
+    {
+        "id": "d4797fc1ca5d6097",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646962,
+        "datetime": "2026-04-08 07:16:02"
+    },
+    {
+        "id": "e259747d76b3cc33",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646962,
+        "datetime": "2026-04-08 07:16:02"
+    },
+    {
+        "id": "d29d006bd52327a5",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646963,
+        "datetime": "2026-04-08 07:16:03"
+    },
+    {
+        "id": "ce614338c37249e9",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646963,
+        "datetime": "2026-04-08 07:16:03"
+    },
+    {
+        "id": "eec802d0747265cf",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646964,
+        "datetime": "2026-04-08 07:16:04"
+    },
+    {
+        "id": "3c5a23667d75a395",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646964,
+        "datetime": "2026-04-08 07:16:04"
+    },
+    {
+        "id": "8737f9a5b2666a71",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646964,
+        "datetime": "2026-04-08 07:16:04"
+    },
+    {
+        "id": "1c0f38662af20dfe",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646964,
+        "datetime": "2026-04-08 07:16:04"
+    },
+    {
+        "id": "2c1410ff9046eedd",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646964,
+        "datetime": "2026-04-08 07:16:04"
+    },
+    {
+        "id": "ee547cbb1362997d",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646964,
+        "datetime": "2026-04-08 07:16:04"
+    },
+    {
+        "id": "1727651545a0cd05",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646965,
+        "datetime": "2026-04-08 07:16:05"
+    },
+    {
+        "id": "6ddc9aca2ca4f4dd",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646965,
+        "datetime": "2026-04-08 07:16:05"
+    },
+    {
+        "id": "5feabd8c8b278ff5",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646965,
+        "datetime": "2026-04-08 07:16:05"
+    },
+    {
+        "id": "029dabb09c69d0ee",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646965,
+        "datetime": "2026-04-08 07:16:05"
+    },
+    {
+        "id": "0b8ef89ce02ab3ec",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646965,
+        "datetime": "2026-04-08 07:16:05"
+    },
+    {
+        "id": "34c8d56284240e0a",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646965,
+        "datetime": "2026-04-08 07:16:05"
+    },
+    {
+        "id": "7042cd1e156f9d28",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646969,
+        "datetime": "2026-04-08 07:16:09"
+    },
+    {
+        "id": "9c8ab5288a09019a",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646969,
+        "datetime": "2026-04-08 07:16:09"
+    },
+    {
+        "id": "dd6fb661761803c8",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646969,
+        "datetime": "2026-04-08 07:16:09"
+    },
+    {
+        "id": "1c42fa99872fb937",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646970,
+        "datetime": "2026-04-08 07:16:10"
+    },
+    {
+        "id": "79aded0eebdafaee",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646970,
+        "datetime": "2026-04-08 07:16:10"
+    },
+    {
+        "id": "0c7bf278833678c7",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646970,
+        "datetime": "2026-04-08 07:16:10"
+    },
+    {
+        "id": "feec7eb5de89e2dd",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646970,
+        "datetime": "2026-04-08 07:16:10"
+    },
+    {
+        "id": "5d524ce783761d15",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646970,
+        "datetime": "2026-04-08 07:16:10"
+    },
+    {
+        "id": "a83c7bfa28ce6a13",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646971,
+        "datetime": "2026-04-08 07:16:11"
+    },
+    {
+        "id": "77de483faf9e779e",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646971,
+        "datetime": "2026-04-08 07:16:11"
+    },
+    {
+        "id": "b4ad4d96c7fdc83a",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646972,
+        "datetime": "2026-04-08 07:16:12"
+    },
+    {
+        "id": "9a5263dce955141a",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646972,
+        "datetime": "2026-04-08 07:16:12"
+    },
+    {
+        "id": "9363f7d804e18a7b",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646972,
+        "datetime": "2026-04-08 07:16:12"
+    },
+    {
+        "id": "cf9086101a03e7ff",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646972,
+        "datetime": "2026-04-08 07:16:12"
+    },
+    {
+        "id": "75d8ca06ac9028b7",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747
+        },
+        "timestamp": 1775646972,
+        "datetime": "2026-04-08 07:16:12"
+    },
+    {
+        "id": "deb62dfebf30928a",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 1747,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1775646972,
+        "datetime": "2026-04-08 07:16:12"
+    },
+    {
+        "id": "67cd6535adeb6048",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1776635715,
+        "datetime": "2026-04-19 17:55:15"
+    },
+    {
+        "id": "7088f1f4acdd63a9",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1776635715,
+        "datetime": "2026-04-19 17:55:15"
+    },
+    {
+        "id": "831e576fbca8f1be",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1776698214,
+        "datetime": "2026-04-20 11:16:54"
+    },
+    {
+        "id": "128cfcceee3e75b0",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1776698214,
+        "datetime": "2026-04-20 11:16:54"
+    },
+    {
+        "id": "bb03ec9c52d2a784",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1776698214,
+        "datetime": "2026-04-20 11:16:54"
+    },
+    {
+        "id": "6c76a2f0fb0a5af5",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+            "line": 130
+        },
+        "timestamp": 1777117326,
+        "datetime": "2026-04-25 07:42:06"
+    },
+    {
+        "id": "7302139f286842cc",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+            "line": 130,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777117326,
+        "datetime": "2026-04-25 07:42:06"
+    },
+    {
+        "id": "ac5cc9401edb3978",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+            "line": 130
+        },
+        "timestamp": 1777117400,
+        "datetime": "2026-04-25 07:43:20"
+    },
+    {
+        "id": "aec574f3c3d06573",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+            "line": 130,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777117400,
+        "datetime": "2026-04-25 07:43:20"
+    },
+    {
+        "id": "f1e05722080678c3",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+            "line": 130
+        },
+        "timestamp": 1777117514,
+        "datetime": "2026-04-25 07:45:14"
+    },
+    {
+        "id": "4f45f7f824014dac",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+            "line": 130,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777117514,
+        "datetime": "2026-04-25 07:45:14"
+    },
+    {
+        "id": "fd02c4782c47d2ed",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1777237476,
+        "datetime": "2026-04-26 17:04:36"
+    },
+    {
+        "id": "b19c0dd02d907670",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777237477,
+        "datetime": "2026-04-26 17:04:37"
+    },
+    {
+        "id": "7454b17a1fc6f2dc",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1777237964,
+        "datetime": "2026-04-26 17:12:44"
+    },
+    {
+        "id": "98902f887a24aa75",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777237964,
+        "datetime": "2026-04-26 17:12:44"
+    },
+    {
+        "id": "becd9cdebaab1b07",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117
+        },
+        "timestamp": 1777238253,
+        "datetime": "2026-04-26 17:17:33"
+    },
+    {
+        "id": "4caf248422cee603",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777238253,
+        "datetime": "2026-04-26 17:17:33"
+    },
+    {
+        "id": "b85b9a6e75136c11",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117
+        },
+        "timestamp": 1777238253,
+        "datetime": "2026-04-26 17:17:33"
+    },
+    {
+        "id": "1a9790c11f1fc1e1",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777238253,
+        "datetime": "2026-04-26 17:17:33"
+    },
+    {
+        "id": "177b433b13e01d79",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117
+        },
+        "timestamp": 1777238411,
+        "datetime": "2026-04-26 17:20:11"
+    },
+    {
+        "id": "828cf86fd8e0ba12",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777238411,
+        "datetime": "2026-04-26 17:20:11"
+    },
+    {
+        "id": "e4efeb4e5e978e1c",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117
+        },
+        "timestamp": 1777238411,
+        "datetime": "2026-04-26 17:20:11"
+    },
+    {
+        "id": "8976220f407e9901",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+            "line": 2117,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777238411,
+        "datetime": "2026-04-26 17:20:11"
+    },
+    {
+        "id": "dd9f7879086fcf50",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1777506648,
+        "datetime": "2026-04-29 19:50:48"
+    },
+    {
+        "id": "14585832eecc23ab",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777506648,
+        "datetime": "2026-04-29 19:50:48"
+    },
+    {
+        "id": "411d44a12d37218a",
+        "channel": "system",
+        "event": "failure_contained",
+        "payload": {
+            "module": "php_fatal",
+            "severity": "critical",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7
+        },
+        "timestamp": 1777858360,
+        "datetime": "2026-05-03 21:32:40"
+    },
+    {
+        "id": "5334f1e905a20c51",
+        "channel": "system",
+        "event": "critical_failure",
+        "payload": {
+            "module": "php_fatal",
+            "error": "Cannot declare class Database, because the name is already in use",
+            "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+            "line": 7,
+            "trace": [
+                {
+                    "function": "onShutdown",
+                    "class": "FailureContainment",
+                    "type": "::",
+                    "args": []
+                }
+            ]
+        },
+        "timestamp": 1777858363,
+        "datetime": "2026-05-03 21:32:43"
     }
 ]

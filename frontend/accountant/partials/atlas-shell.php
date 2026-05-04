@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 if (!function_exists('render_accountant_atlas_shell')) {
   /**
@@ -8,9 +8,17 @@ if (!function_exists('render_accountant_atlas_shell')) {
    * @param string $activeTab one of: dashboard|ledger|expenses|income|payroll|reports|settings|support
    * @param string $contentHtml pre-rendered page content
    * @param string $fullName
+   * @param string $pageSubtitle
+   * @param string $pageIcon
    */
-  function render_accountant_atlas_shell(string $pageTitle, string $activeTab, string $contentHtml, string $fullName = 'Accountant'): void
-  {
+  function render_accountant_atlas_shell(
+    string $pageTitle,
+    string $activeTab,
+    string $contentHtml,
+    string $fullName = 'Accountant',
+    string $pageSubtitle = '',
+    string $pageIcon = 'account_balance'
+  ): void {
     $initial = strtoupper(substr(trim($fullName), 0, 1));
     if ($initial === '') {
       $initial = 'A';
@@ -27,13 +35,27 @@ if (!function_exists('render_accountant_atlas_shell')) {
     $root = rtrim($appBase, '/');
     $accountantBase = $root . '/frontend/accountant/';
 
-    $tabs = [
-      'dashboard' => ['href' => $accountantBase . 'dashboard.php', 'icon' => 'dashboard', 'label' => 'Dashboard'],
-      'ledger' => ['href' => $accountantBase . 'ledger.php', 'icon' => 'account_balance', 'label' => 'General Ledger'],
-      'expenses' => ['href' => $accountantBase . 'expenses.php', 'icon' => 'receipt_long', 'label' => 'Expenses'],
-      'income' => ['href' => $accountantBase . 'income.php', 'icon' => 'payments', 'label' => 'Income'],
-      'payroll' => ['href' => $accountantBase . 'payroll.php', 'icon' => 'group', 'label' => 'Payroll'],
-      'reports' => ['href' => $accountantBase . 'reports.php', 'icon' => 'analytics', 'label' => 'Reports'],
+    $primaryTabs = [
+      'dashboard' => ['href' => $accountantBase . 'index.php?page=dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
+      'team-selection' => ['href' => $accountantBase . 'index.php?page=team-selection', 'icon' => 'groups', 'label' => 'Team Selection'],
+      'ledger' => ['href' => $accountantBase . 'index.php?page=ledger', 'icon' => 'menu_book', 'label' => 'General Ledger'],
+      'expenses' => ['href' => $accountantBase . 'index.php?page=expenses', 'icon' => 'receipt', 'label' => 'Expenses'],
+      'income' => ['href' => $accountantBase . 'index.php?page=income', 'icon' => 'savings', 'label' => 'Income'],
+      'payroll' => ['href' => $accountantBase . 'index.php?page=payroll', 'icon' => 'account_balance', 'label' => 'Payroll'],
+      'budget' => ['href' => $accountantBase . 'index.php?page=budget', 'icon' => 'pie_chart', 'label' => 'Budget'],
+      'reports' => ['href' => $accountantBase . 'index.php?page=reports', 'icon' => 'bar_chart', 'label' => 'Reports'],
+    ];
+
+    $reportingTabs = [
+      'balance-sheet' => ['href' => $accountantBase . 'index.php?page=balance-sheet', 'icon' => 'account_balance_wallet', 'label' => 'Balance Sheet'],
+      'profit-loss' => ['href' => $accountantBase . 'index.php?page=profit-loss', 'icon' => 'monitoring', 'label' => 'Profit & Loss'],
+      'tax-reports' => ['href' => $accountantBase . 'index.php?page=tax-reports', 'icon' => 'receipt_long', 'label' => 'Tax Reports'],
+      'audit-trail' => ['href' => $accountantBase . 'index.php?page=audit-trail', 'icon' => 'history', 'label' => 'Audit Trail'],
+      'project-goals' => ['href' => $accountantBase . 'index.php?page=project-goals', 'icon' => 'checklist', 'label' => 'Project Goals'],
+    ];
+
+    $utilityTabs = [
+      'settings' => ['href' => $accountantBase . 'index.php?page=settings', 'icon' => 'settings', 'label' => 'Settings'],
     ];
 
     $csrfToken = generate_csrf_token();
@@ -57,7 +79,7 @@ if (!function_exists('render_accountant_atlas_shell')) {
       $accountantUserId = (int)($_SESSION['user_id'] ?? 0);
       if ($accountantUserId > 0 && function_exists('table_exists') && table_exists('notifications')) {
         $accountantNotifications = db()->fetchAll(
-          "SELECT id, title, message, category, is_read, created_at
+          "SELECT id, title, message, type as category, is_read, created_at
            FROM notifications
            WHERE user_id = ?
            ORDER BY created_at DESC
@@ -78,6 +100,8 @@ if (!function_exists('render_accountant_atlas_shell')) {
     <html class="light" lang="en">
 
     <head>
+      <?php require_once __DIR__ . '/../../includes/theme-manager.php';
+      themeInjectFaviconMeta(); ?>
       <meta charset="utf-8" />
       <meta content="width=device-width, initial-scale=1.0" name="viewport" />
       <meta name="csrf-token" content="<?php echo htmlspecialchars((string)$csrfToken, ENT_QUOTES, 'UTF-8'); ?>" />
@@ -85,53 +109,8 @@ if (!function_exists('render_accountant_atlas_shell')) {
       <script src="<?php echo htmlspecialchars($root . '/assets/js/theme-loader.js'); ?>"></script>
       <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+      <?php themeInjectTailwindConfig(); ?>
       <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-      <script>
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                primary: "#1868DB",
-                "primary-container": "#D6E4FF",
-                "on-primary": "#FFFFFF",
-                "on-primary-container": "#001B3D",
-                secondary: "#545F71",
-                "secondary-container": "#D9E3F8",
-                "on-secondary": "#FFFFFF",
-                "on-secondary-container": "#111C2B",
-                tertiary: "#8F4C00",
-                "tertiary-container": "#FFDCC0",
-                "on-tertiary": "#FFFFFF",
-                error: "#BA1A1A",
-                "error-container": "#FFDAD6",
-                surface: "#FDFBFF",
-                "surface-container-low": "#F7F9FF",
-                "surface-container": "#F1F4FA",
-                "surface-container-high": "#EBEFF5",
-                "surface-container-highest": "#E2E7EF",
-                outline: "#73777F",
-                "outline-variant": "#C3C7CF",
-                background: "#FDFBFF",
-                "on-background": "#1A1C1E",
-                "on-surface": "#1A1C1E",
-                "on-surface-variant": "#43474E"
-              },
-              borderRadius: {
-                DEFAULT: "0.75rem",
-                lg: "1rem",
-                xl: "1.25rem",
-                full: "9999px"
-              },
-              fontFamily: {
-                headline: ["Manrope", "sans-serif"],
-                body: ["Manrope", "sans-serif"],
-                label: ["Manrope", "sans-serif"]
-              }
-            }
-          }
-        };
-      </script>
       <style>
         body {
           font-family: 'Manrope', sans-serif;
@@ -183,6 +162,21 @@ if (!function_exists('render_accountant_atlas_shell')) {
           color: #9ca3af !important;
         }
 
+        html.dark .text-gray-500,
+        html.dark .text-gray-600,
+        html.dark .text-gray-700,
+        html.dark .text-gray-800,
+        html.dark .text-slate-400,
+        html.dark .text-slate-500,
+        html[data-theme="dark"] .text-gray-500,
+        html[data-theme="dark"] .text-gray-600,
+        html[data-theme="dark"] .text-gray-700,
+        html[data-theme="dark"] .text-gray-800,
+        html[data-theme="dark"] .text-slate-400,
+        html[data-theme="dark"] .text-slate-500 {
+          color: #cbd5e1 !important;
+        }
+
         html.dark [class*="bg-surface-container"],
         html[data-theme="dark"] [class*="bg-surface-container"] {
           background: #1f2937 !important;
@@ -205,6 +199,33 @@ if (!function_exists('render_accountant_atlas_shell')) {
         html.dark .bg-primary-container,
         html[data-theme="dark"] .bg-primary-container {
           background: rgba(37, 99, 235, 0.32) !important;
+        }
+
+        html.dark .bg-gray-50,
+        html.dark .bg-gray-100,
+        html.dark .bg-slate-100,
+        html[data-theme="dark"] .bg-gray-50,
+        html[data-theme="dark"] .bg-gray-100,
+        html[data-theme="dark"] .bg-slate-100 {
+          background: #1f2937 !important;
+        }
+
+        html.dark .border-gray-100,
+        html.dark .border-gray-200,
+        html.dark .divide-gray-100,
+        html[data-theme="dark"] .border-gray-100,
+        html[data-theme="dark"] .border-gray-200,
+        html[data-theme="dark"] .divide-gray-100 {
+          border-color: rgba(148, 163, 184, 0.28) !important;
+        }
+
+        html.dark .hover\:bg-gray-50:hover,
+        html.dark .hover\:bg-slate-100:hover,
+        html.dark .hover\:bg-white:hover,
+        html[data-theme="dark"] .hover\:bg-gray-50:hover,
+        html[data-theme="dark"] .hover\:bg-slate-100:hover,
+        html[data-theme="dark"] .hover\:bg-white:hover {
+          background: rgba(30, 41, 59, 0.92) !important;
         }
 
         html.dark .text-on-primary-container,
@@ -258,6 +279,49 @@ if (!function_exists('render_accountant_atlas_shell')) {
           box-shadow: 0 24px 44px rgba(15, 23, 42, 0.16);
         }
 
+        .accountant-profile-trigger {
+          box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
+        }
+
+        .accountant-profile-trigger:hover {
+          border-color: rgba(24, 104, 219, 0.24);
+          background: #ffffff;
+          box-shadow: 0 20px 34px rgba(15, 23, 42, 0.12);
+        }
+
+        .accountant-profile-menu {
+          box-shadow: 0 28px 52px rgba(15, 23, 42, 0.18);
+        }
+
+        .accountant-profile-menu__hero {
+          background:
+            radial-gradient(circle at top left, rgba(24, 104, 219, 0.16), transparent 55%),
+            linear-gradient(180deg, rgba(214, 228, 255, 0.58), rgba(255, 255, 255, 0.96));
+        }
+
+        .accountant-profile-item:hover {
+          background: rgba(214, 228, 255, 0.52);
+        }
+
+        .accountant-profile-item__icon {
+          width: 2.25rem;
+          height: 2.25rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 9999px;
+          background: rgba(24, 104, 219, 0.1);
+        }
+
+        .accountant-profile-item-danger:hover {
+          background: rgba(255, 217, 214, 0.88);
+        }
+
+        .accountant-profile-item-danger .accountant-profile-item__icon {
+          background: rgba(186, 26, 26, 0.12);
+          color: #ba1a1a;
+        }
+
         .accountant-side-action {
           position: relative;
           overflow: hidden;
@@ -303,9 +367,8 @@ if (!function_exists('render_accountant_atlas_shell')) {
           position: fixed;
           inset: 0;
           background: rgba(15, 23, 42, 0.2);
-          backdrop-filter: blur(2px);
-          -webkit-backdrop-filter: blur(2px);
-          opacity: 0;
+
+          -webkit- opacity: 0;
           pointer-events: none;
           transition: opacity 160ms ease;
           z-index: 35;
@@ -372,6 +435,54 @@ if (!function_exists('render_accountant_atlas_shell')) {
           background: rgba(2, 6, 23, 0.32);
         }
 
+        html.dark .accountant-profile-trigger,
+        html[data-theme="dark"] .accountant-profile-trigger {
+          background: rgba(15, 23, 42, 0.82);
+          border-color: rgba(100, 116, 139, 0.32);
+          box-shadow: 0 18px 32px rgba(0, 0, 0, 0.34);
+        }
+
+        html.dark .accountant-profile-trigger:hover,
+        html[data-theme="dark"] .accountant-profile-trigger:hover {
+          background: rgba(15, 23, 42, 0.95);
+          border-color: rgba(147, 197, 253, 0.32);
+          box-shadow: 0 22px 38px rgba(0, 0, 0, 0.42);
+        }
+
+        html.dark .accountant-profile-menu,
+        html[data-theme="dark"] .accountant-profile-menu {
+          box-shadow: 0 30px 52px rgba(0, 0, 0, 0.55);
+        }
+
+        html.dark .accountant-profile-menu__hero,
+        html[data-theme="dark"] .accountant-profile-menu__hero {
+          background:
+            radial-gradient(circle at top left, rgba(59, 130, 246, 0.24), transparent 55%),
+            linear-gradient(180deg, rgba(30, 41, 59, 0.96), rgba(17, 24, 39, 0.98));
+        }
+
+        html.dark .accountant-profile-item:hover,
+        html[data-theme="dark"] .accountant-profile-item:hover {
+          background: rgba(30, 41, 59, 0.92);
+        }
+
+        html.dark .accountant-profile-item__icon,
+        html[data-theme="dark"] .accountant-profile-item__icon {
+          background: rgba(59, 130, 246, 0.16);
+          color: #bfdbfe;
+        }
+
+        html.dark .accountant-profile-item-danger:hover,
+        html[data-theme="dark"] .accountant-profile-item-danger:hover {
+          background: rgba(127, 29, 29, 0.34);
+        }
+
+        html.dark .accountant-profile-item-danger .accountant-profile-item__icon,
+        html[data-theme="dark"] .accountant-profile-item-danger .accountant-profile-item__icon {
+          background: rgba(248, 113, 113, 0.16);
+          color: #fca5a5;
+        }
+
         html.dark .bg-error-container,
         html[data-theme="dark"] .bg-error-container {
           background: rgba(127, 29, 29, 0.36) !important;
@@ -410,63 +521,83 @@ if (!function_exists('render_accountant_atlas_shell')) {
           </div>
         </div>
 
-        <nav class="flex-1 space-y-1">
-          <?php foreach ($tabs as $key => $item):
-            $isActive = $activeTab === $key;
-          ?>
-            <a class="flex items-center gap-3 px-4 py-3 transition-all group <?php echo $isActive ? 'bg-primary-container text-on-primary-container rounded-lg font-bold' : 'text-secondary hover:bg-surface-container rounded-lg'; ?>" href="<?php echo htmlspecialchars($item['href']); ?>">
-              <span class="material-symbols-outlined <?php echo $isActive ? 'text-primary' : ''; ?>" <?php echo $isActive ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>><?php echo htmlspecialchars($item['icon']); ?></span>
-              <span class="text-sm <?php echo $isActive ? 'font-bold' : 'font-medium'; ?>"><?php echo htmlspecialchars($item['label']); ?></span>
+        <nav class="flex-1 space-y-5 overflow-y-auto pr-1">
+          <div class="space-y-1">
+            <p class="px-3 text-[10px] font-extrabold uppercase tracking-[0.24em] text-outline">Workspace</p>
+            <?php foreach ($primaryTabs as $key => $item):
+              $isActive = $activeTab === $key;
+            ?>
+              <a class="flex items-center gap-3 px-4 py-3 transition-all group <?php echo $isActive ? 'bg-primary-container text-on-primary-container rounded-lg font-bold' : 'text-secondary hover:bg-surface-container rounded-lg'; ?>" href="<?php echo htmlspecialchars($item['href']); ?>">
+                <span class="material-symbols-outlined <?php echo $isActive ? 'text-primary' : ''; ?>" <?php echo $isActive ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>><?php echo htmlspecialchars($item['icon']); ?></span>
+                <span class="text-sm <?php echo $isActive ? 'font-bold' : 'font-medium'; ?>"><?php echo htmlspecialchars($item['label']); ?></span>
+              </a>
+            <?php endforeach; ?>
+          </div>
+
+          <div class="space-y-1">
+            <p class="px-3 text-[10px] font-extrabold uppercase tracking-[0.24em] text-outline">Reporting</p>
+            <?php foreach ($reportingTabs as $key => $item):
+              $isActive = $activeTab === $key;
+            ?>
+              <a class="flex items-center gap-3 px-4 py-3 transition-all group <?php echo $isActive ? 'bg-primary-container text-on-primary-container rounded-lg font-bold' : 'text-secondary hover:bg-surface-container rounded-lg'; ?>" href="<?php echo htmlspecialchars($item['href']); ?>">
+                <span class="material-symbols-outlined <?php echo $isActive ? 'text-primary' : ''; ?>" <?php echo $isActive ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>><?php echo htmlspecialchars($item['icon']); ?></span>
+                <span class="text-sm <?php echo $isActive ? 'font-bold' : 'font-medium'; ?>"><?php echo htmlspecialchars($item['label']); ?></span>
+              </a>
+            <?php endforeach; ?>
+          </div>
+
+          <div class="space-y-1">
+            <p class="px-3 text-[10px] font-extrabold uppercase tracking-[0.24em] text-outline">Account</p>
+            <?php foreach ($utilityTabs as $key => $item):
+              $isActive = $activeTab === $key;
+            ?>
+              <a class="flex items-center gap-3 px-4 py-3 transition-all group <?php echo $isActive ? 'bg-primary-container text-on-primary-container rounded-lg font-bold' : 'text-secondary hover:bg-surface-container rounded-lg'; ?>" href="<?php echo htmlspecialchars($item['href']); ?>">
+                <span class="material-symbols-outlined <?php echo $isActive ? 'text-primary' : ''; ?>" <?php echo $isActive ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>><?php echo htmlspecialchars($item['icon']); ?></span>
+                <span class="text-sm <?php echo $isActive ? 'font-bold' : 'font-medium'; ?>"><?php echo htmlspecialchars($item['label']); ?></span>
+              </a>
+            <?php endforeach; ?>
+
+            <a class="accountant-side-action flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container rounded-lg transition-all" href="<?php echo htmlspecialchars(site_url('frontend/notices.php')); ?>">
+              <span class="material-symbols-outlined">support_agent</span>
+              <span class="text-sm font-medium">Support</span>
             </a>
-          <?php endforeach; ?>
+            <a class="accountant-side-action accountant-side-action-danger flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container rounded-lg transition-all" href="<?php echo htmlspecialchars(site_url('logout.php')); ?>">
+              <span class="material-symbols-outlined">logout</span>
+              <span class="text-sm font-medium">Logout</span>
+            </a>
+          </div>
         </nav>
 
-        <div class="mt-auto border-t border-outline-variant/20 pt-4 space-y-1">
-          <a class="accountant-side-action flex items-center gap-3 px-4 py-3 rounded-lg transition-all <?php echo $activeTab === 'settings' ? 'bg-primary-container text-on-primary-container font-bold' : 'text-secondary hover:bg-surface-container'; ?>" href="<?php echo htmlspecialchars($accountantBase . 'settings.php'); ?>">
-            <span class="material-symbols-outlined" <?php echo $activeTab === 'settings' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>settings</span>
-            <span class="text-sm font-medium">Settings</span>
-          </a>
-          <a class="accountant-side-action flex items-center gap-3 px-4 py-3 rounded-lg transition-all <?php echo $activeTab === 'support' ? 'bg-primary-container text-on-primary-container font-bold' : 'text-secondary hover:bg-surface-container'; ?>" href="<?php echo htmlspecialchars($root . '/frontend/notices.php'); ?>">
-            <span class="material-symbols-outlined">contact_support</span>
-            <span class="text-sm font-medium">Support</span>
-          </a>
-          <a class="accountant-side-action accountant-side-action-danger flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container rounded-lg transition-all" href="<?php echo htmlspecialchars($root . '/logout.php'); ?>">
-            <span class="material-symbols-outlined">logout</span>
-            <span class="text-sm font-medium">Logout</span>
-          </a>
-        </div>
       </aside>
 
       <main class="ml-64 min-h-screen flex flex-col">
-        <header class="accountant-topbar sticky top-0 bg-white/95 backdrop-blur-md border-b border-outline-variant/20 h-16 flex justify-between items-center w-full px-8">
-          <div class="flex items-center gap-4 flex-1">
-            <div class="relative w-full max-w-md">
+        <header class="accountant-topbar sticky top-0 bg-white backdrop-blur-md border-b border-outline-variant/20 min-h-16 flex justify-between items-center w-full px-8 py-4 gap-6">
+          <div class="flex items-center gap-4 flex-1 min-w-0">
+            <div class="hidden lg:flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-container text-primary shadow-sm shrink-0">
+              <span class="material-symbols-outlined"><?php echo htmlspecialchars($pageIcon); ?></span>
+            </div>
+            <div class="min-w-0">
+              <p class="truncate text-lg font-extrabold text-on-surface"><?php echo htmlspecialchars($pageTitle); ?></p>
+              <?php if ($pageSubtitle !== ''): ?>
+                <p class="truncate text-sm text-secondary"><?php echo htmlspecialchars($pageSubtitle); ?></p>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 flex-1 justify-end">
+            <div class="relative w-full max-w-md hidden xl:block">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
               <input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline" placeholder="Search transactions, ledgers..." type="text" />
             </div>
           </div>
-          <div class="flex items-center gap-6">
-            <div class="relative flex items-center gap-1 text-secondary" data-accountant-toolbar>
-              <button type="button" class="accountant-icon-btn relative p-2 hover:bg-surface-container rounded-full transition-all" title="Notifications" aria-label="Notifications" aria-expanded="false" aria-controls="accountant-notifications-menu" data-accountant-dropdown-toggle="accountant-notifications-menu">
-                <span class="material-symbols-outlined">notifications</span>
-                <?php if ($accountantUnreadNotifications > 0): ?>
-                  <span class="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-error text-white text-[9px] font-bold flex items-center justify-center leading-none">
-                    <?php echo $accountantUnreadNotifications > 9 ? '9+' : (int) $accountantUnreadNotifications; ?>
-                  </span>
-                <?php endif; ?>
+          <div class="flex items-center gap-4">
+            <div class="relative flex items-center gap-2 text-slate-500" data-accountant-toolbar>
+              <?php $role = "accountant";
+              $show_icon = true;
+              include __DIR__ . '/../../includes/theme-navbar-template.php'; ?>
+
+              <button type="button" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors" title="More actions" aria-label="More actions" aria-expanded="false" aria-controls="accountant-more-menu" data-accountant-dropdown-toggle="accountant-more-menu">
+                <span class="material-symbols-outlined text-xl">apps</span>
               </button>
-              <button type="button" class="accountant-icon-btn p-2 hover:bg-surface-container rounded-full transition-all" title="Theme mode" aria-label="Theme mode" aria-expanded="false" aria-controls="accountant-theme-menu" data-accountant-dropdown-toggle="accountant-theme-menu">
-                <span class="material-symbols-outlined" data-accountant-theme-icon>light_mode</span>
-              </button>
-              <a href="<?php echo htmlspecialchars($accountantBase . 'settings.php'); ?>" class="accountant-icon-btn p-2 hover:bg-surface-container rounded-full transition-all" title="Settings" aria-label="Settings">
-                <span class="material-symbols-outlined">settings</span>
-              </a>
-              <button type="button" class="accountant-icon-btn p-2 hover:bg-surface-container rounded-full transition-all" title="More actions" aria-label="More actions" aria-expanded="false" aria-controls="accountant-more-menu" data-accountant-dropdown-toggle="accountant-more-menu">
-                <span class="material-symbols-outlined">more_vert</span>
-              </button>
-              <a href="<?php echo htmlspecialchars($root . '/frontend/notices.php'); ?>" class="accountant-icon-btn p-2 hover:bg-surface-container rounded-full transition-all" title="Help" aria-label="Help">
-                <span class="material-symbols-outlined">help_outline</span>
-              </a>
 
               <div id="accountant-notifications-menu" class="accountant-dropdown-card hidden absolute right-0 top-full mt-3 w-[23rem] overflow-hidden rounded-2xl border border-outline-variant/20 bg-white shadow-xl shadow-black/10 z-50" data-accountant-dropdown-menu>
                 <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/10 bg-surface-container-low">
@@ -474,7 +605,7 @@ if (!function_exists('render_accountant_atlas_shell')) {
                     <p class="text-sm font-extrabold text-on-surface">Notifications</p>
                     <p class="text-[10px] uppercase tracking-[0.24em] text-secondary font-bold"><?php echo $accountantUnreadNotifications > 0 ? (int) $accountantUnreadNotifications . ' unread' : 'All caught up'; ?></p>
                   </div>
-                  <a href="<?php echo htmlspecialchars($accountantBase . 'settings.php#notifications'); ?>" class="text-xs font-bold text-primary hover:underline">Preferences</a>
+                  <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=settings#notifications'); ?>" class="text-xs font-bold text-primary hover:underline">Preferences</a>
                 </div>
                 <div class="max-h-80 overflow-y-auto divide-y divide-outline-variant/10">
                   <?php if (!empty($accountantNotifications)): ?>
@@ -493,7 +624,7 @@ if (!function_exists('render_accountant_atlas_shell')) {
                       $notificationTime = !empty($notification['created_at']) ? date('M j, g:i A', strtotime((string)$notification['created_at'])) : 'Just now';
                       $isUnread = (int)($notification['is_read'] ?? 0) === 0;
                     ?>
-                      <a href="<?php echo htmlspecialchars($accountantBase . 'settings.php#notifications'); ?>" class="block px-4 py-3 transition-colors hover:bg-surface-container-low <?php echo $isUnread ? 'bg-primary-container/20' : ''; ?>">
+                      <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=settings#notifications'); ?>" class="block px-4 py-3 transition-colors hover:bg-surface-container-low <?php echo $isUnread ? 'bg-primary-container' : ''; ?>">
                         <div class="flex items-start gap-3">
                           <div class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full <?php echo $isUnread ? 'bg-primary-container text-primary' : 'bg-surface-container text-secondary'; ?>">
                             <span class="material-symbols-outlined text-[20px]"><?php echo htmlspecialchars($notificationIcon); ?></span>
@@ -516,7 +647,7 @@ if (!function_exists('render_accountant_atlas_shell')) {
                   <?php else: ?>
                     <div class="px-4 py-6 text-sm text-secondary">
                       <p class="font-bold text-on-surface">No notifications yet.</p>
-                      <p class="mt-1 text-sm leading-relaxed">When alerts arrive, they’ll appear here with a custom accountant dropdown.</p>
+                      <p class="mt-1 text-sm leading-relaxed">When alerts arrive, theyâ€™ll appear here.</p>
                     </div>
                   <?php endif; ?>
                 </div>
@@ -528,294 +659,51 @@ if (!function_exists('render_accountant_atlas_shell')) {
                 </div>
               </div>
 
-              <div id="accountant-theme-menu" class="accountant-dropdown-card hidden absolute right-0 top-full mt-3 w-[22rem] overflow-hidden rounded-2xl border border-outline-variant/20 bg-white shadow-xl shadow-black/10 z-50" data-accountant-dropdown-menu>
-                <div class="px-4 py-3 border-b border-outline-variant/10 bg-surface-container-low">
-                  <p class="text-sm font-extrabold text-on-surface">Theme Selection</p>
-                  <p class="text-[10px] uppercase tracking-[0.24em] text-secondary font-bold">Unified across all accountant tabs</p>
-                </div>
-                <div class="p-3 grid grid-cols-2 gap-3">
-                  <button type="button" class="accountant-theme-option w-full flex flex-col items-start gap-2 rounded-xl px-3 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors" data-accountant-theme-choice="light">
+              <div id="accountant-theme-menu" class="accountant-dropdown-card hidden absolute right-0 top-full mt-3 w-48 overflow-hidden rounded-2xl border border-outline-variant/20 bg-white shadow-xl shadow-black/10 z-50" data-accountant-dropdown-menu>
+                <div class="p-2 grid gap-1">
+                  <button type="button" class="accountant-theme-option w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors" data-accountant-theme-choice="light">
                     <span class="material-symbols-outlined text-[18px]">light_mode</span>
-                    <span class="text-left">Light mode</span>
-                    <span class="material-symbols-outlined text-primary hidden" data-accountant-theme-check>check</span>
+                    Light mode
                   </button>
-                  <button type="button" class="accountant-theme-option w-full flex flex-col items-start gap-2 rounded-xl px-3 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors" data-accountant-theme-choice="dark">
+                  <button type="button" class="accountant-theme-option w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors" data-accountant-theme-choice="dark">
                     <span class="material-symbols-outlined text-[18px]">dark_mode</span>
-                    <span class="text-left">Dark mode</span>
-                    <span class="material-symbols-outlined text-primary hidden" data-accountant-theme-check>check</span>
+                    Dark mode
                   </button>
                 </div>
               </div>
 
               <div id="accountant-more-menu" class="accountant-dropdown-card hidden absolute right-0 top-full mt-3 w-56 overflow-hidden rounded-2xl border border-outline-variant/20 bg-white shadow-xl shadow-black/10 z-50" data-accountant-dropdown-menu>
-                <a href="<?php echo htmlspecialchars($accountantBase . 'expenses.php'); ?>" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container-low">
+                <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=expenses'); ?>" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container-low">
                   <span class="material-symbols-outlined text-secondary">receipt_long</span>
                   Record expense
                 </a>
-                <a href="<?php echo htmlspecialchars($accountantBase . 'reports.php'); ?>" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container-low">
-                  <span class="material-symbols-outlined text-secondary">analytics</span>
-                  Open reports
-                </a>
-                <a href="<?php echo htmlspecialchars($accountantBase . 'settings.php#notifications'); ?>" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container-low">
-                  <span class="material-symbols-outlined text-secondary">tune</span>
-                  Notification settings
-                </a>
-                <a href="<?php echo htmlspecialchars($root . '/logout.php'); ?>" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-error hover:bg-error-container/50">
-                  <span class="material-symbols-outlined text-error">logout</span>
-                  Sign out
-                </a>
               </div>
             </div>
-            <a href="<?php echo htmlspecialchars($accountantBase . 'expenses.php'); ?>" class="bg-primary text-on-primary px-5 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition-all shadow-md shadow-primary/10">Add Expense</a>
-            <a href="<?php echo htmlspecialchars($accountantBase . 'settings.php'); ?>" class="inline-flex items-center gap-3 pl-4 border-l border-outline-variant/30 hover:opacity-90" title="Edit Profile">
-              <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold text-xs"><?php echo htmlspecialchars($initial); ?></div>
-              <div class="hidden lg:block text-left">
-                <p class="text-xs font-bold text-on-surface leading-none"><?php echo htmlspecialchars($fullName); ?></p>
-                <p class="text-[10px] text-secondary font-semibold uppercase tracking-tighter mt-1">Edit Profile</p>
-              </div>
+
+            <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=expenses'); ?>" class="hidden md:flex ml-2 bg-[#1868DB] hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold active:scale-95 duration-200 transition-all shadow-sm">
+              Add Expense
             </a>
+
+            <?php include __DIR__ . '/avatar-dropdown.php'; ?>
           </div>
         </header>
+
 
         <div class="p-8 space-y-8">
           <?php echo $contentHtml; ?>
         </div>
 
         <div class="md:hidden sticky bottom-0 w-full bg-white border-t border-outline-variant/20 flex justify-around p-4 z-50">
-          <a href="<?php echo htmlspecialchars($accountantBase . 'dashboard.php'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'dashboard' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'dashboard' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>dashboard</span></a>
-          <a href="<?php echo htmlspecialchars($accountantBase . 'income.php'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'income' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'income' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>payments</span></a>
-          <a href="<?php echo htmlspecialchars($accountantBase . 'expenses.php'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'expenses' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'expenses' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>receipt_long</span></a>
-          <a href="<?php echo htmlspecialchars($accountantBase . 'settings.php'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'settings' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'settings' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>person</span></a>
+          <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=dashboard'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'dashboard' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'dashboard' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>dashboard</span></a>
+          <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=reports'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'reports' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'reports' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>bar_chart</span></a>
+          <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=expenses'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'expenses' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'expenses' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>receipt_long</span></a>
+          <a href="<?php echo htmlspecialchars($accountantBase . 'index.php?page=settings'); ?>"><span class="material-symbols-outlined <?php echo $activeTab === 'settings' ? 'text-primary' : 'text-secondary'; ?>" <?php echo $activeTab === 'settings' ? "style=\"font-variation-settings: 'FILL' 1\"" : ''; ?>>person</span></a>
         </div>
       </main>
       <div class="accountant-overlay-scrim" data-accountant-menu-overlay></div>
-      <script>
-        (() => {
-          const toolbar = document.querySelector('[data-accountant-toolbar]');
-          if (!toolbar) {
-            return;
-          }
-
-          const toggles = Array.from(toolbar.querySelectorAll('[data-accountant-dropdown-toggle]'));
-          const menus = Array.from(toolbar.querySelectorAll('[data-accountant-dropdown-menu]'));
-          const themeChoices = Array.from(toolbar.querySelectorAll('[data-accountant-theme-choice]'));
-          const themeIcon = toolbar.querySelector('[data-accountant-theme-icon]');
-          const overlay = document.querySelector('[data-accountant-menu-overlay]');
-          const brandImg = document.querySelector('[data-accountant-brand-img]');
-          const csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
-          const themeApiUrl = '<?php echo htmlspecialchars($root . '/api/save-theme.php', ENT_QUOTES, 'UTF-8'); ?>';
-          const serverTheme = <?php echo json_encode($savedTheme); ?>;
-          const iconBase = '<?php echo htmlspecialchars($root . '/assets/images/icons/', ENT_QUOTES, 'UTF-8'); ?>';
-          const lightIcon = iconBase + 'logo5.png';
-          const darkIcon = iconBase + 'logo4.png';
-          let scrollLockY = 0;
-          let previousBodyPaddingRight = '';
-
-          const normalizeTheme = (theme) => theme === 'dark' ? 'dark' : 'light';
-
-          const readTheme = () => {
-            try {
-              const preferred = localStorage.getItem('sams_theme') || localStorage.getItem('sams-theme');
-              if (preferred) {
-                return normalizeTheme(preferred);
-              }
-            } catch (error) {
-              // ignore storage read issues
-            }
-
-            if (serverTheme) {
-              return normalizeTheme(serverTheme);
-            }
-
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-              return 'dark';
-            }
-
-            return 'light';
-          };
-
-          const persistTheme = (theme) => {
-            try {
-              localStorage.setItem('sams_theme', theme);
-              localStorage.setItem('sams-theme', theme);
-            } catch (error) {
-              // ignore storage write issues
-            }
-
-            fetch(themeApiUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-              },
-              body: JSON.stringify({
-                theme: theme,
-                csrf_token: csrfToken
-              })
-            }).catch(() => {
-              // local persistence is still valid
-            });
-          };
-
-          const setOrCreateHeadLink = (rel, href) => {
-            let link = document.querySelector('link[rel="' + rel + '"]');
-            if (!link) {
-              link = document.createElement('link');
-              link.rel = rel;
-              document.head.appendChild(link);
-            }
-            link.href = href;
-          };
-
-          const syncThemeIcons = (theme) => {
-            const isDark = theme === 'dark';
-            const targetIcon = isDark ? darkIcon : lightIcon;
-            setOrCreateHeadLink('icon', targetIcon);
-            setOrCreateHeadLink('shortcut icon', targetIcon);
-            setOrCreateHeadLink('apple-touch-icon', targetIcon);
-
-            if (brandImg) {
-              const lightBrand = brandImg.getAttribute('data-brand-light') || '';
-              const darkBrand = brandImg.getAttribute('data-brand-dark') || '';
-              brandImg.src = isDark ? (darkBrand || targetIcon) : (lightBrand || targetIcon);
-            }
-          };
-
-          const updateThemeButtons = (theme) => {
-            themeChoices.forEach((button) => {
-              const selected = button.getAttribute('data-accountant-theme-choice') === theme;
-              button.classList.toggle('bg-primary-container', selected);
-              button.classList.toggle('text-on-primary-container', selected);
-              button.classList.toggle('text-on-surface', !selected);
-              button.classList.toggle('active', selected);
-              const check = button.querySelector('[data-accountant-theme-check]');
-              if (check) {
-                check.classList.toggle('hidden', !selected);
-              }
-            });
-
-            if (themeIcon) {
-              themeIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
-            }
-          };
-
-          const applyTheme = (theme) => {
-            const normalizedTheme = normalizeTheme(theme);
-            document.documentElement.setAttribute('data-theme', normalizedTheme);
-            document.documentElement.classList.toggle('dark', normalizedTheme === 'dark');
-            document.documentElement.classList.toggle('light', normalizedTheme !== 'dark');
-            persistTheme(normalizedTheme);
-            updateThemeButtons(normalizedTheme);
-            syncThemeIcons(normalizedTheme);
-          };
-
-          const lockPageScroll = () => {
-            if (document.body.classList.contains('accountant-scroll-locked')) {
-              return;
-            }
-
-            scrollLockY = window.scrollY || window.pageYOffset || 0;
-            previousBodyPaddingRight = document.body.style.paddingRight || '';
-            const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
-
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollLockY}px`;
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.width = '100%';
-            if (scrollbarWidth > 0) {
-              document.body.style.paddingRight = `${scrollbarWidth}px`;
-            }
-            document.body.classList.add('accountant-scroll-locked');
-          };
-
-          const unlockPageScroll = () => {
-            if (!document.body.classList.contains('accountant-scroll-locked')) {
-              return;
-            }
-
-            document.body.classList.remove('accountant-scroll-locked');
-            document.documentElement.style.overflow = '';
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.width = '';
-            document.body.style.paddingRight = previousBodyPaddingRight;
-            window.scrollTo(0, scrollLockY);
-          };
-
-          const closeMenus = () => {
-            toggles.forEach((toggle) => toggle.setAttribute('aria-expanded', 'false'));
-            menus.forEach((menu) => menu.classList.add('hidden'));
-            if (overlay) {
-              overlay.classList.remove('active');
-            }
-            unlockPageScroll();
-          };
-
-          const openMenu = (menuId) => {
-            const menu = document.getElementById(menuId);
-            if (!menu) {
-              return;
-            }
-
-            const isHidden = menu.classList.contains('hidden');
-            closeMenus();
-            if (isHidden) {
-              menu.classList.remove('hidden');
-              const toggle = toolbar.querySelector('[data-accountant-dropdown-toggle="' + menuId + '"]');
-              if (toggle) {
-                toggle.setAttribute('aria-expanded', 'true');
-              }
-              if (overlay) {
-                overlay.classList.add('active');
-              }
-              lockPageScroll();
-            }
-          };
-
-          toggles.forEach((toggle) => {
-            toggle.addEventListener('click', (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              openMenu(toggle.getAttribute('data-accountant-dropdown-toggle'));
-            });
-          });
-
-          themeChoices.forEach((choice) => {
-            choice.addEventListener('click', (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              applyTheme(choice.getAttribute('data-accountant-theme-choice') || 'light');
-              closeMenus();
-            });
-          });
-
-          applyTheme(readTheme());
-
-          document.addEventListener('click', (event) => {
-            if (!toolbar.contains(event.target)) {
-              closeMenus();
-            }
-          });
-
-          document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-              closeMenus();
-            }
-          });
-
-          if (overlay) {
-            overlay.addEventListener('click', () => {
-              closeMenus();
-            });
-          }
-        })();
-      </script>
+      <?php if (function_exists("themeGetInitScript")) {
+        echo themeGetInitScript("accountant", ["basePath" => $root]);
+      } ?>
     </body>
 
     </html>

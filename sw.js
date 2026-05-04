@@ -14,6 +14,9 @@ const STATIC_ASSETS = [
   "/attendance/",
   "/attendance/index.php",
   "/attendance/login.php",
+  "/attendance/frontend/login.php",
+  "/attendance/frontend/accountant/index.php?page=dashboard",
+  "/attendance/frontend/accountant/dashboard.php",
   "/attendance/assets/css/cyberpunk-ui.css",
   "/attendance/assets/js/main.js",
   "/attendance/assets/images/icons/logo3.png",
@@ -37,6 +40,15 @@ const CACHE_STRATEGIES = {
   images: "cache-first",
 };
 
+function isSupportedRequestForCache(request) {
+  try {
+    const url = new URL(request.url);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (e) {
+    return false;
+  }
+}
+
 // Install event - cache static assets
 self.addEventListener("install", (event) => {
   console.log("[SW] Installing service worker...");
@@ -44,9 +56,21 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => {
+      .then(async (cache) => {
         console.log("[SW] Caching static assets");
-        return cache.addAll(STATIC_ASSETS);
+        await Promise.allSettled(
+          STATIC_ASSETS.map(async (assetPath) => {
+            try {
+              await cache.add(new Request(assetPath, { cache: "reload" }));
+            } catch (err) {
+              console.warn(
+                "[SW] Skipped asset during install cache:",
+                assetPath,
+                err,
+              );
+            }
+          }),
+        );
       })
       .then(() => self.skipWaiting()),
   );
@@ -77,6 +101,11 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // Ignore unsupported schemes like chrome-extension://
+  if (!isSupportedRequestForCache(request)) {
+    return;
+  }
 
   // Handle POST requests for offline attendance
   if (request.method === "POST" && url.pathname.includes("attendance")) {
@@ -125,8 +154,16 @@ async function cacheFirstStrategy(request, cacheName) {
 
   try {
     const response = await fetch(request);
-    if (response.ok) {
-      cache.put(request, response.clone());
+    if (response.ok && isSupportedRequestForCache(request)) {
+      try {
+        await cache.put(request, response.clone());
+      } catch (cacheErr) {
+        console.warn(
+          "[SW] cache.put failed (cache-first):",
+          request.url,
+          cacheErr,
+        );
+      }
     }
     return response;
   } catch (error) {
@@ -141,8 +178,22 @@ async function networkFirstStrategy(request, cacheName) {
 
   try {
     const response = await fetch(request);
-    if (response.ok) {
-      cache.put(request, response.clone());
+    if (request.mode === "navigate" && response && response.status >= 500) {
+      const fallback = await getNavigationFallback(cache, request);
+      if (fallback) {
+        return fallback;
+      }
+    }
+    if (response.ok && isSupportedRequestForCache(request)) {
+      try {
+        await cache.put(request, response.clone());
+      } catch (cacheErr) {
+        console.warn(
+          "[SW] cache.put failed (network-first):",
+          request.url,
+          cacheErr,
+        );
+      }
     }
     return response;
   } catch (error) {
@@ -153,9 +204,11 @@ async function networkFirstStrategy(request, cacheName) {
       return cached;
     }
 
-    // Return offline page for navigation requests
     if (request.mode === "navigate") {
-      return cache.match("/attendance/offline.html");
+      const fallback = await getNavigationFallback(cache, request);
+      if (fallback) {
+        return fallback;
+      }
     }
 
     return new Response("Network error", {
@@ -163,6 +216,36 @@ async function networkFirstStrategy(request, cacheName) {
       statusText: "Service Unavailable",
     });
   }
+}
+
+async function getNavigationFallback(cache, request) {
+  const directMatch = await cache.match(request, { ignoreSearch: true });
+  if (directMatch) {
+    return directMatch;
+  }
+
+  try {
+    const url = new URL(request.url);
+    if (url.searchParams.get("page") === "dashboard") {
+      const dashboardFallbacks = [
+        "/attendance/frontend/accountant/index.php?page=dashboard",
+        "/attendance/frontend/accountant/dashboard.php",
+        "/attendance/frontend/login.php",
+        "/attendance/login.php",
+      ];
+
+      for (const path of dashboardFallbacks) {
+        const match = await cache.match(path, { ignoreSearch: true });
+        if (match) {
+          return match;
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("[SW] Navigation fallback URL parse failed:", error);
+  }
+
+  return cache.match("/attendance/offline.html", { ignoreSearch: true });
 }
 
 // Background sync for offline actions

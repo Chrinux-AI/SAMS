@@ -28,9 +28,9 @@
  *  - Attack Simulation (SecuritySimulator)
  */
 
-defined('BASE_PATH') || define('BASE_PATH', dirname(__DIR__));
+defined('BASE_PATH') || define('BASE_PATH', dirname(__DIR__, 2));
 
-$appDir = BASE_PATH . '/app';
+$appDir = __DIR__;
 
 // Autoload function — loads class files from app/ subdirectories
 spl_autoload_register(function (string $class) use ($appDir) {

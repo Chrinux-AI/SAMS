@@ -50,10 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_maintenance'])) {
 $records = [];
 try {
   if (table_exists('vehicle_maintenance')) {
-    $db = db();
-    $stmt = $db->prepare("SELECT * FROM vehicle_maintenance WHERE (tenant_id = :tid OR tenant_id IS NULL) ORDER BY maintenance_date DESC LIMIT 100");
-    $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-    $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $records = db()->fetchAll("SELECT * FROM vehicle_maintenance WHERE (tenant_id = ? OR tenant_id IS NULL) ORDER BY maintenance_date DESC LIMIT 100", [$_SESSION['tenant_id'] ?? 1]) ?: [];
   }
 } catch (Exception $e) {
   $records = [];
@@ -82,6 +79,8 @@ $page_title = "Vehicle Maintenance";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

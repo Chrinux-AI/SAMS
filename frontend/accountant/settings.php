@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * SAMS - Accountant Settings Page
@@ -15,107 +15,14 @@ if (!has_role('accountant') && !has_role('admin')) {
 }
 
 $user_id = $_SESSION['user_id'];
-$tenant_id = (int)($_SESSION['tenant_id'] ?? 1);
 $user_role = $_SESSION['role'] ?? 'accountant';
 $message = '';
 $message_type = '';
 
 $user = db()->fetch("SELECT * FROM users WHERE id = ?", [$user_id]);
 
-function ensure_accountant_settings_table(): void
-{
-    db()->query(
-        "CREATE TABLE IF NOT EXISTS accountant_settings (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            tenant_id INT NOT NULL,
-            user_id INT NOT NULL,
-            setting_key VARCHAR(100) NOT NULL,
-            setting_value TEXT NULL,
-            setting_group VARCHAR(50) DEFAULT 'general',
-            created_at DATETIME NOT NULL,
-            updated_at DATETIME NOT NULL,
-            UNIQUE KEY uniq_accountant_setting (tenant_id, user_id, setting_key),
-            INDEX idx_accountant_settings_tenant_user (tenant_id, user_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
-}
-
-function load_accountant_settings(int $tenantId, int $userId, array $defaults): array
-{
-    $settings = $defaults;
-
-    if (table_exists('accountant_settings')) {
-        $rows = db()->fetchAll(
-            "SELECT setting_key, setting_value
-             FROM accountant_settings
-             WHERE tenant_id = ? AND user_id = ?",
-            [$tenantId, $userId]
-        ) ?: [];
-
-        foreach ($rows as $row) {
-            $key = (string)($row['setting_key'] ?? '');
-            if ($key !== '' && array_key_exists($key, $settings)) {
-                $value = $row['setting_value'];
-                if ($value !== null && $value !== '') {
-                    $settings[$key] = (string)$value;
-                }
-            }
-        }
-    }
-
-    // Backward-compatibility fallback for legacy global settings
-    foreach (array_keys($settings) as $settingKey) {
-        if ($settings[$settingKey] !== $defaults[$settingKey]) {
-            continue;
-        }
-        if (!table_exists('system_settings')) {
-            break;
-        }
-        $stored = db()->fetchOne("SELECT setting_value FROM system_settings WHERE setting_key = ?", [$settingKey]);
-        if ($stored && array_key_exists('setting_value', $stored) && $stored['setting_value'] !== null && $stored['setting_value'] !== '') {
-            $settings[$settingKey] = (string) $stored['setting_value'];
-        }
-    }
-
-    return $settings;
-}
-
-function save_accountant_settings(int $tenantId, int $userId, array $settings): void
-{
-    $groupMap = [
-        'currency' => 'finance',
-        'fiscal_start_month' => 'finance',
-        'accounting_method' => 'finance',
-        'rounding_policy' => 'finance',
-        'base_tax_rate' => 'tax',
-        'vat_gst_rate' => 'tax',
-        'current_tax_year' => 'tax',
-        'expense_approval' => 'workflow',
-        'budget_approval' => 'workflow',
-        'approval_threshold' => 'workflow',
-        'approval_chain' => 'workflow',
-        'notification_frequency' => 'notifications',
-        'default_report_type' => 'reports',
-        'default_date_range' => 'reports',
-        'default_recipients' => 'reports',
-    ];
-
-    $now = date('Y-m-d H:i:s');
-    foreach ($settings as $settingKey => $settingValue) {
-        $group = $groupMap[$settingKey] ?? 'general';
-        db()->query(
-            "INSERT INTO accountant_settings (tenant_id, user_id, setting_key, setting_value, setting_group, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), setting_group = VALUES(setting_group), updated_at = VALUES(updated_at)",
-            [$tenantId, $userId, (string)$settingKey, (string)$settingValue, $group, $now, $now]
-        );
-    }
-}
-
-ensure_accountant_settings_table();
-
-$accountantSettingsDefaults = [
-    'currency' => 'USD ($)',
+$accountantSettings = [
+    'currency' => 'NGN (₦)',
     'fiscal_start_month' => 'July',
     'accounting_method' => 'accrual',
     'rounding_policy' => 'Standard (0.5 up)',
@@ -132,100 +39,140 @@ $accountantSettingsDefaults = [
     'default_recipients' => 'board-reports@sams.edu',
 ];
 
-$accountantSettings = load_accountant_settings($tenant_id, (int)$user_id, $accountantSettingsDefaults);
+foreach (array_keys($accountantSettings) as $settingKey) {
+    $stored = db()->fetchOne("SELECT setting_value FROM system_settings WHERE setting_key = ?", [$settingKey]);
+    if ($stored && array_key_exists('setting_value', $stored) && $stored['setting_value'] !== null && $stored['setting_value'] !== '') {
+        $accountantSettings[$settingKey] = (string) $stored['setting_value'];
+    }
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Handle Profile Update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
         $message = 'Invalid CSRF token.';
         $message_type = 'error';
     } else {
-        $action = trim((string)($_POST['action'] ?? 'save_accountant_settings'));
+        $first_name = sanitize($_POST['first_name'] ?? '');
+        $last_name = sanitize($_POST['last_name'] ?? '');
+        $email = filter_var(sanitize($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+        $phone = sanitize($_POST['phone'] ?? '');
 
-        if ($action === 'change_password') {
-            $current_password = $_POST['current_password'] ?? '';
-            $new_password = $_POST['new_password'] ?? '';
-            $confirm_password = $_POST['confirm_password'] ?? '';
-            $user_check = db()->fetch("SELECT password FROM users WHERE id = ?", [$user_id]);
-
-            if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
-                $message = 'All password fields are required';
-                $message_type = 'error';
-            } elseif (!password_verify($current_password, (string)($user_check['password'] ?? ''))) {
-                $message = 'Current password is incorrect';
-                $message_type = 'error';
-            } elseif ($new_password !== $confirm_password) {
-                $message = 'New passwords do not match';
-                $message_type = 'error';
-            } elseif (strlen($new_password) < 8) {
-                $message = 'Password must be at least 8 characters long';
-                $message_type = 'error';
-            } else {
-                $hashed = password_hash($new_password, PASSWORD_DEFAULT);
-                db()->query("UPDATE users SET password = ? WHERE id = ?", [$hashed, $user_id]);
-                log_activity((int)$user_id, 'accountant_change_password', 'users', (int)$user_id);
-                $message = 'Password changed successfully!';
-                $message_type = 'success';
-            }
+        if (empty($first_name) || empty($last_name) || empty($email)) {
+            $message = 'Please fill in all required fields';
+            $message_type = 'error';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $message = 'Please enter a valid email address';
+            $message_type = 'error';
         } else {
-            $first_name = sanitize($_POST['first_name'] ?? '');
-            $last_name = sanitize($_POST['last_name'] ?? '');
-            $email = filter_var(sanitize($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
-            $phone = sanitize($_POST['phone'] ?? '');
+            db()->query(
+                "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?",
+                [$first_name, $last_name, $email, $phone, $user_id]
+            );
+            $_SESSION['full_name'] = "$first_name $last_name";
+            $message = 'Profile updated successfully!';
+            $message_type = 'success';
+            $user = db()->fetch("SELECT * FROM users WHERE id = ?", [$user_id]);
+        }
+    }
+}
 
-            if (empty($first_name) || empty($last_name) || empty($email)) {
-                $message = 'Please fill in all required fields';
-                $message_type = 'error';
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $message = 'Please enter a valid email address';
-                $message_type = 'error';
+// Handle Password Change
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $message = 'Invalid CSRF token.';
+        $message_type = 'error';
+    } else {
+        $current_password = $_POST['current_password'] ?? '';
+        $new_password = $_POST['new_password'] ?? '';
+        $confirm_password = $_POST['confirm_password'] ?? '';
+        $user_check = db()->fetch("SELECT password FROM users WHERE id = ?", [$user_id]);
+
+        if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
+            $message = 'All password fields are required';
+            $message_type = 'error';
+        } elseif (!password_verify($current_password, $user_check['password'])) {
+            $message = 'Current password is incorrect';
+            $message_type = 'error';
+        } elseif ($new_password !== $confirm_password) {
+            $message = 'New passwords do not match';
+            $message_type = 'error';
+        } elseif (strlen($new_password) < 8) {
+            $message = 'Password must be at least 8 characters long';
+            $message_type = 'error';
+        } else {
+            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+            db()->query("UPDATE users SET password = ? WHERE id = ?", [$hashed, $user_id]);
+            $message = 'Password changed successfully!';
+            $message_type = 'success';
+        }
+    }
+}
+
+// Handle notification preferences
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_notifications'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $message = 'Invalid CSRF token.';
+        $message_type = 'error';
+    } else {
+        $email_notifications = isset($_POST['email_notifications']) ? 1 : 0;
+        $sms_notifications = isset($_POST['sms_notifications']) ? 1 : 0;
+        $push_notifications = isset($_POST['push_notifications']) ? 1 : 0;
+        db()->query(
+            "UPDATE users SET email_notifications = ?, sms_notifications = ?, push_notifications = ? WHERE id = ?",
+            [$email_notifications, $sms_notifications, $push_notifications, $user_id]
+        );
+        $message = 'Notification preferences updated!';
+        $message_type = 'success';
+        $user = db()->fetch("SELECT * FROM users WHERE id = ?", [$user_id]);
+    }
+}
+
+// Handle accountant settings
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_accountant_settings'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $message = 'Invalid CSRF token.';
+        $message_type = 'error';
+    } else {
+        $allowedMethods = ['accrual', 'cash'];
+        $allowedRounding = ['Standard (0.5 up)', 'Floor (Always down)', 'Ceiling (Always up)'];
+        $allowedReportTypes = ['Balance Sheet', 'Profit & Loss', 'Cash Flow Projection', 'Aged Payables'];
+        $allowedDateRanges = ['Last Month', 'Last Quarter', 'Fiscal Year-to-Date'];
+        $allowedFrequencies = ['Real-time Push', 'Daily Digest', 'Weekly Summary'];
+
+        $accountantSettings['currency'] = trim((string) ($_POST['currency'] ?? $accountantSettings['currency']));
+        $accountantSettings['fiscal_start_month'] = trim((string) ($_POST['fiscal_start_month'] ?? $accountantSettings['fiscal_start_month']));
+        $accountantSettings['accounting_method'] = in_array(($_POST['accounting_method'] ?? ''), $allowedMethods, true) ? (string) $_POST['accounting_method'] : $accountantSettings['accounting_method'];
+        $accountantSettings['rounding_policy'] = in_array(($_POST['rounding_policy'] ?? ''), $allowedRounding, true) ? (string) $_POST['rounding_policy'] : $accountantSettings['rounding_policy'];
+        $accountantSettings['base_tax_rate'] = number_format((float) ($_POST['base_tax_rate'] ?? $accountantSettings['base_tax_rate']), 2, '.', '');
+        $accountantSettings['vat_gst_rate'] = number_format((float) ($_POST['vat_gst_rate'] ?? $accountantSettings['vat_gst_rate']), 2, '.', '');
+        $accountantSettings['current_tax_year'] = trim((string) ($_POST['current_tax_year'] ?? $accountantSettings['current_tax_year']));
+        $accountantSettings['expense_approval'] = isset($_POST['expense_approval']) ? '1' : '0';
+        $accountantSettings['budget_approval'] = isset($_POST['budget_approval']) ? '1' : '0';
+        $accountantSettings['approval_threshold'] = (string) max(0, (int) ($_POST['approval_threshold'] ?? $accountantSettings['approval_threshold']));
+        $accountantSettings['approval_chain'] = trim((string) ($_POST['approval_chain'] ?? $accountantSettings['approval_chain']));
+        $accountantSettings['notification_frequency'] = in_array(($_POST['notification_frequency'] ?? ''), $allowedFrequencies, true) ? (string) $_POST['notification_frequency'] : $accountantSettings['notification_frequency'];
+        $accountantSettings['default_report_type'] = in_array(($_POST['default_report_type'] ?? ''), $allowedReportTypes, true) ? (string) $_POST['default_report_type'] : $accountantSettings['default_report_type'];
+        $accountantSettings['default_date_range'] = in_array(($_POST['default_date_range'] ?? ''), $allowedDateRanges, true) ? (string) $_POST['default_date_range'] : $accountantSettings['default_date_range'];
+        $accountantSettings['default_recipients'] = trim((string) ($_POST['default_recipients'] ?? $accountantSettings['default_recipients']));
+
+        foreach ($accountantSettings as $settingKey => $settingValue) {
+            $existing = db()->fetchOne("SELECT setting_key FROM system_settings WHERE setting_key = ?", [$settingKey]);
+            if ($existing) {
+                db()->update('system_settings', [
+                    'setting_value' => $settingValue,
+                    'description' => 'Accountant settings preference'
+                ], 'setting_key = ?', [$settingKey]);
             } else {
-                db()->query(
-                    "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?",
-                    [$first_name, $last_name, $email, $phone, $user_id]
-                );
-                $_SESSION['full_name'] = "$first_name $last_name";
-
-                $email_notifications = isset($_POST['email_notifications']) ? 1 : 0;
-                $sms_notifications = isset($_POST['sms_notifications']) ? 1 : 0;
-                $push_notifications = isset($_POST['push_notifications']) ? 1 : 0;
-                db()->query(
-                    "UPDATE users SET email_notifications = ?, sms_notifications = ?, push_notifications = ? WHERE id = ?",
-                    [$email_notifications, $sms_notifications, $push_notifications, $user_id]
-                );
-
-                $allowedMethods = ['accrual', 'cash'];
-                $allowedRounding = ['Standard (0.5 up)', 'Floor (Always down)', 'Ceiling (Always up)'];
-                $allowedReportTypes = ['Balance Sheet', 'Profit & Loss', 'Cash Flow Projection', 'Aged Payables'];
-                $allowedDateRanges = ['Last Month', 'Last Quarter', 'Fiscal Year-to-Date'];
-                $allowedFrequencies = ['Real-time Push', 'Daily Digest', 'Weekly Summary'];
-
-                $accountantSettings['currency'] = trim((string) ($_POST['currency'] ?? $accountantSettings['currency']));
-                $accountantSettings['fiscal_start_month'] = trim((string) ($_POST['fiscal_start_month'] ?? $accountantSettings['fiscal_start_month']));
-                $accountantSettings['accounting_method'] = in_array(($_POST['accounting_method'] ?? ''), $allowedMethods, true) ? (string) $_POST['accounting_method'] : $accountantSettings['accounting_method'];
-                $accountantSettings['rounding_policy'] = in_array(($_POST['rounding_policy'] ?? ''), $allowedRounding, true) ? (string) $_POST['rounding_policy'] : $accountantSettings['rounding_policy'];
-                $accountantSettings['base_tax_rate'] = number_format((float) ($_POST['base_tax_rate'] ?? $accountantSettings['base_tax_rate']), 2, '.', '');
-                $accountantSettings['vat_gst_rate'] = number_format((float) ($_POST['vat_gst_rate'] ?? $accountantSettings['vat_gst_rate']), 2, '.', '');
-                $accountantSettings['current_tax_year'] = trim((string) ($_POST['current_tax_year'] ?? $accountantSettings['current_tax_year']));
-                $accountantSettings['expense_approval'] = isset($_POST['expense_approval']) ? '1' : '0';
-                $accountantSettings['budget_approval'] = isset($_POST['budget_approval']) ? '1' : '0';
-                $accountantSettings['approval_threshold'] = (string) max(0, (int) ($_POST['approval_threshold'] ?? $accountantSettings['approval_threshold']));
-                $accountantSettings['approval_chain'] = trim((string) ($_POST['approval_chain'] ?? $accountantSettings['approval_chain']));
-                $accountantSettings['notification_frequency'] = in_array(($_POST['notification_frequency'] ?? ''), $allowedFrequencies, true) ? (string) $_POST['notification_frequency'] : $accountantSettings['notification_frequency'];
-                $accountantSettings['default_report_type'] = in_array(($_POST['default_report_type'] ?? ''), $allowedReportTypes, true) ? (string) $_POST['default_report_type'] : $accountantSettings['default_report_type'];
-                $accountantSettings['default_date_range'] = in_array(($_POST['default_date_range'] ?? ''), $allowedDateRanges, true) ? (string) $_POST['default_date_range'] : $accountantSettings['default_date_range'];
-                $accountantSettings['default_recipients'] = trim((string) ($_POST['default_recipients'] ?? $accountantSettings['default_recipients']));
-
-                save_accountant_settings((int)$tenant_id, (int)$user_id, $accountantSettings);
-                log_activity((int)$user_id, 'accountant_update_settings', 'accountant_settings', (int)$user_id, [
-                    'tenant_id' => (int)$tenant_id,
-                    'updated_keys' => array_keys($accountantSettings)
+                db()->insert('system_settings', [
+                    'setting_key' => $settingKey,
+                    'setting_value' => $settingValue,
+                    'description' => 'Accountant settings preference'
                 ]);
-
-                $message = 'Accountant settings updated successfully!';
-                $message_type = 'success';
-                $user = db()->fetch("SELECT * FROM users WHERE id = ?", [$user_id]);
             }
         }
+
+        $message = 'Accountant settings updated successfully!';
+        $message_type = 'success';
     }
 }
 
@@ -235,7 +182,8 @@ $page_subtitle = 'Manage your profile, security options, notifications, and them
 $page_css = ['../assets/css/pwa-styles.css'];
 $page_js = ['../assets/js/pwa-manager.js', '../assets/js/pwa-analytics.js'];
 
-ob_start();
+$activeTab = 'settings';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <?php
@@ -283,7 +231,9 @@ $defaultRecipients = $accountantSettings['default_recipients'];
 
     <form method="POST" class="grid grid-cols-12 gap-6 items-start">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generate_csrf_token()); ?>">
-        <input type="hidden" name="action" value="save_accountant_settings">
+        <input type="hidden" name="update_profile" value="1">
+        <input type="hidden" name="update_notifications" value="1">
+        <input type="hidden" name="update_accountant_settings" value="1">
 
         <section class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
             <div class="flex items-center gap-3 mb-6">
@@ -444,16 +394,16 @@ $defaultRecipients = $accountantSettings['default_recipients'];
             </div>
         </section>
 
-        <section class="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant/10 overflow-hidden shadow-sm">
+        <section id="active-vendors" class="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant/10 overflow-hidden shadow-sm">
             <div class="p-8 flex justify-between items-center border-b border-outline-variant/5">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">store</span>
                     <h3 class="text-xl font-headline font-bold">Active Vendors</h3>
                 </div>
-                <button class="bg-primary text-white px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md" type="button">
+                <a href="index.php?page=expenses#quick-add-expense" class="inline-flex bg-primary text-white px-5 py-2.5 rounded-lg font-semibold items-center gap-2 hover:opacity-90 transition-all shadow-md">
                     <span class="material-symbols-outlined text-sm">add</span>
                     Add New Vendor
-                </button>
+                </a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -518,7 +468,7 @@ $defaultRecipients = $accountantSettings['default_recipients'];
             </section>
         </div>
 
-        <div class="fixed bottom-0 left-64 right-0 p-6 bg-surface-container-lowest/90 backdrop-blur-lg border-t border-outline-variant/10 flex justify-end items-center z-20">
+        <div class="fixed bottom-0 left-64 right-0 p-6 bg-surface-container-lowest backdrop-blur-lg border-t border-outline-variant/10 flex justify-end items-center z-20">
             <div class="mr-auto flex items-center text-xs text-on-surface-variant">
                 <span class="material-symbols-outlined text-sm mr-2 text-green-600">verified</span>
                 Settings automatically validated for 2024 compliance.
@@ -534,7 +484,7 @@ $defaultRecipients = $accountantSettings['default_recipients'];
         <h4 class="font-bold text-base mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-primary">lock</span>Quick Password Update</h4>
         <form method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generate_csrf_token()); ?>">
-            <input type="hidden" name="action" value="change_password">
+            <input type="hidden" name="change_password" value="1">
             <input type="password" name="current_password" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3" placeholder="Current password" required>
             <input type="password" name="new_password" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3" placeholder="New password" minlength="8" required>
             <input type="password" name="confirm_password" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3" placeholder="Confirm password" minlength="8" required>
@@ -544,6 +494,4 @@ $defaultRecipients = $accountantSettings['default_recipients'];
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'settings', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

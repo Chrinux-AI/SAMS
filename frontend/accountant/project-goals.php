@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * SAMS Accountant Project Goals Hub
@@ -86,7 +86,8 @@ $page_icon = 'flag';
 $page_subtitle = 'Plan blockchain adoption, fingerprint capture, session timeout policy, and accountant UX improvements.';
 $csrf = generate_csrf_token();
 
-ob_start();
+$activeTab = 'project-goals';
+require_once __DIR__ . '/partials/header.php';
 ?>
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-7 bg-surface-container-low border border-outline-variant/10 rounded-xl p-6 shadow-sm">
@@ -163,7 +164,7 @@ ob_start();
 
       <div class="pt-2 flex gap-3">
         <button type="submit" class="px-5 py-2.5 rounded-lg bg-primary text-on-primary font-semibold hover:opacity-90">Save Goal</button>
-        <a href="dashboard.php" class="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-on-surface-variant font-semibold hover:bg-surface-container-high">Back to Dashboard</a>
+        <a href="index.php?page=dashboard" class="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-on-surface-variant font-semibold hover:bg-surface-container-high">Back to Dashboard</a>
       </div>
     </form>
   </div>
@@ -204,6 +205,4 @@ ob_start();
   </div>
 </div>
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'reports', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/database.php';
+require_once dirname(__DIR__, 2) . '/includes/config.php';
+require_once dirname(__DIR__, 2) . '/includes/database.php';
 
 $users = db()->fetchAll("
     SELECT id, email, role, full_name, first_name, last_name, status, is_active, approved, email_verified
@@ -35,4 +35,3 @@ foreach ($users as $u) {
         isset($u['email_verified']) ? (string)$u['email_verified'] : '',
     ]) . "\n";
 }
-

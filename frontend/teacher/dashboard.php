@@ -54,10 +54,7 @@ $today_total = count($today_attendance);
 $today_rate = $today_total > 0 ? round((($today_present + $today_late) / $today_total) * 100, 1) : 0;
 
 // Recent messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$teacher_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$teacher_id, (int)$tenantId);
 
 // Recent assignments
 $recent_assignments = db()->fetchAll("

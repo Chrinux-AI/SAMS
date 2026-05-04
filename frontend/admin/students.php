@@ -77,6 +77,8 @@ $avg_attendance = $total_students > 0 ? round(array_sum($attendance_map) / $tota
     <script src="../assets/js/theme-loader.js"></script>
     <!-- UI Framework -->
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
 </head>
 

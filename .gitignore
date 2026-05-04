@@ -145,3 +145,64 @@ site/
 student-data/
 personal-info/
 gdpr-data/
+
+# Local browser automation and agent scratch artifacts
+.playwright-mcp/
+
+# Development credentials and session artifacts (NEVER COMMIT)
+tmp_*.txt
+temp_*.txt
+tmp_admin_*.txt
+tmp_parent_*.txt
+tmp_student_*.txt
+tmp_teacher_*.txt
+tmp_forum_*.txt
+tmp_bursar_*.txt
+tmp_librarian_*.txt
+tmp_transport_*.txt
+tmp_accountant_*.txt
+
+# UI audit and batch fix directories
+tmp_ui_audit/
+tmp_ui_audit_fix/
+tmp_ui_batch_*/
+tmp_ui_recheck_*/
+tmp_ui_verify/
+tmp_ui_verify_*/
+
+# Temporary repository and shell files
+temp_repos/
+temp_shell.txt
+*.shell
+
+# Agent and AI debugging artifacts
+.agent-debug/
+.copilot-debug/
+antigravity-debug/
+
+# Build and dev server artifacts
+.webpack-cache/
+.rollup-cache/
+
+# Generated test reports
+test-report.json
+coverage-report.json
+
+# Frontend theme cache
+frontend/.theme-cache/
+frontend/theme-debug.json
+
+# API documentation generated files
+docs/generated/
+api-docs.html
+.selenium/
+tmp_php_server_out.log
+tmp_php_server_err.log
+tmp_*auth*.txt
+tmp_*cookies*.txt
+tmp_ui_*/
+tmp_ui_batch_*/
+tmp_ui_recheck_*/
+tmp_ui_*.png
+tmp_ui_*.jpg
+tmp_ui_*.jpeg

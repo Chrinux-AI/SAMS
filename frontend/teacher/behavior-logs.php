@@ -8,7 +8,7 @@ session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
-require_once '../includes/database.php';
+require_once PROJECT_ROOT . '/backend/includes/merit-integration.php';
 require_teacher();
 
 $user_id = $_SESSION['user_id'];
@@ -28,10 +28,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notify_parent = isset($_POST['parent_notified']) ? 1 : 0;
 
     if ($student_id && $type && $description) {
-        db()->query("
+        $result = db()->query("
             INSERT INTO behavior_logs (student_id, teacher_id, type, severity, category, incident_description, action_taken, incident_date, incident_time, location, parent_notified)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ", [$student_id, $user_id, $type, $severity, $category, $description, $action, $date, $time, $location, $notify_parent]);
+
+        if ($result) {
+            $behaviorLogId = (int) db()->lastInsertId();
+            sams_sync_behavior_merit(
+                $behaviorLogId,
+                $student_id,
+                null,
+                $type,
+                $severity,
+                $user_id,
+                $date,
+                $description,
+                'teacher_behavior_log'
+            );
+        }
 
         $_SESSION['success_message'] = "Behavior log recorded successfully";
         header("Location: behavior-logs.php");

@@ -12,8 +12,6 @@ $success = '';
 $error = '';
 
 try {
-  $db = db();
-
   // Handle join team
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_team'])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
@@ -21,13 +19,11 @@ try {
     } else {
       $team_id = (int)($_POST['team_id'] ?? 0);
       if ($team_id > 0) {
-        $exists = $db->prepare("SELECT id FROM team_members WHERE team_id = :tid AND user_id = :uid");
-        $exists->execute([':tid' => $team_id, ':uid' => $user_id]);
-        if ($exists->fetch()) {
+        $exists = db()->fetchOne("SELECT id FROM team_members WHERE team_id = ? AND user_id = ?", [$team_id, $user_id]);
+        if ($exists) {
           $error = 'You are already a member of this team.';
         } else {
-          $stmt = $db->prepare("INSERT INTO team_members (team_id, user_id, role, joined_at) VALUES (:tid, :uid, 'member', NOW())");
-          $stmt->execute([':tid' => $team_id, ':uid' => $user_id]);
+          insert_flexible('team_members', ['team_id' => $team_id, 'user_id' => $user_id, 'role' => 'member', 'joined_at' => date('Y-m-d H:i:s')]);
           $success = 'Successfully joined the team!';
         }
       }
@@ -41,8 +37,7 @@ try {
     } else {
       $team_id = (int)($_POST['team_id'] ?? 0);
       if ($team_id > 0) {
-        $stmt = $db->prepare("DELETE FROM team_members WHERE team_id = :tid AND user_id = :uid");
-        $stmt->execute([':tid' => $team_id, ':uid' => $user_id]);
+        db()->query("DELETE FROM team_members WHERE team_id = ? AND user_id = ?", [$team_id, $user_id]);
         $success = 'You have left the team.';
       }
     }
@@ -50,26 +45,22 @@ try {
 
   // Get user's teams
   if (table_exists('teams') && table_exists('team_members')) {
-    $stmt = $db->prepare("
+    $teams = db()->fetchAll("
       SELECT t.*, tm.role as member_role, tm.joined_at as join_date,
              (SELECT COUNT(*) FROM team_members WHERE team_id = t.id) as member_count
       FROM teams t
       JOIN team_members tm ON t.id = tm.team_id
-      WHERE tm.user_id = :uid AND t.is_active = 1
+      WHERE tm.user_id = ? AND t.is_active = 1
       ORDER BY tm.joined_at DESC
-    ");
-    $stmt->execute([':uid' => $user_id]);
-    $teams = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    ", [$user_id]) ?: [];
 
     // Get all available teams
-    $stmt = $db->prepare("
+    $all_teams = db()->fetchAll("
       SELECT t.*, (SELECT COUNT(*) FROM team_members WHERE team_id = t.id) as member_count
       FROM teams t
-      WHERE t.is_active = 1 AND t.id NOT IN (SELECT team_id FROM team_members WHERE user_id = :uid)
+      WHERE t.is_active = 1 AND t.id NOT IN (SELECT team_id FROM team_members WHERE user_id = ?)
       ORDER BY t.name
-    ");
-    $stmt->execute([':uid' => $user_id]);
-    $all_teams = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    ", [$user_id]) ?: [];
   }
 } catch (Exception $e) {
   $teams = [];
@@ -87,6 +78,8 @@ $page_title = "Team Selection";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

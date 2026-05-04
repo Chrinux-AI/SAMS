@@ -12,7 +12,7 @@ $success = '';
 $error = '';
 
 try {
-  $db = db();
+  $db = db()->getConnection();
 
   // Handle join team
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_team'])) {
@@ -85,8 +85,12 @@ $page_title = "Team Selection";
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php echo $page_title; ?> - SAMS</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="../assets/css/sams-core.css" rel="stylesheet">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>
@@ -121,7 +125,7 @@ $page_title = "Team Selection";
 <body>
   <div class="app-layout">
     <?php include INCLUDES_PATH . '/sidebar-nav.php'; ?>
-    <main class="main-content">
+    <main class="cyber-main">
       <div class="cyber-header">
         <div class="header-left">
           <div class="page-icon-orb"><i class="fas fa-users"></i></div>

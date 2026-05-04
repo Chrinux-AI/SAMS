@@ -9,6 +9,7 @@ session_start();
 require_once '../includes/config.php';
 require_once '../includes/database.php';
 require_once '../includes/logger.php';
+require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -17,14 +18,49 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$action = $_POST['action'] ?? $_GET['action'] ?? '';
+$user_id = (int) $_SESSION['user_id'];
+$currentTenantId = current_tenant_id();
+if (!isset($_SESSION['tenant_id'])) {
+    set_user_tenant_session($user_id);
+    $currentTenantId = current_tenant_id();
+}
+if (!user_in_current_tenant($user_id) || !$currentTenantId) {
+    echo json_encode(['success' => false, 'message' => 'Tenant access denied']);
+    exit;
+}
+
+$currentRole = strtolower((string) ($_SESSION['role'] ?? $_SESSION['user_role'] ?? 'student'));
+$rawBody = file_get_contents('php://input');
+$payload = json_decode($rawBody ?: '', true);
+if (!is_array($payload)) {
+    $payload = [];
+}
+
+function notifications_request_value(string $key, $default = null)
+{
+    global $payload;
+
+    if (array_key_exists($key, $_POST)) {
+        return $_POST[$key];
+    }
+    if (array_key_exists($key, $payload)) {
+        return $payload[$key];
+    }
+    if (array_key_exists($key, $_GET)) {
+        return $_GET[$key];
+    }
+
+    return $default;
+}
+
+$action = (string)notifications_request_value('action', '');
 
 try {
     // Ensure notifications table exists
     db()->query("
         CREATE TABLE IF NOT EXISTS notifications (
             id INT PRIMARY KEY AUTO_INCREMENT,
+            tenant_id INT NULL,
             user_id INT NOT NULL,
             title VARCHAR(255),
             message TEXT NOT NULL,
@@ -34,10 +70,16 @@ try {
             created_at DATETIME NOT NULL,
             is_read TINYINT(1) DEFAULT 0,
             read_at DATETIME,
+            INDEX idx_tenant_user_read (tenant_id, user_id, is_read),
             INDEX idx_user_read (user_id, is_read),
             INDEX idx_created (created_at)
         )
     ");
+
+    $notificationTenantScoped = table_has_column('notifications', 'tenant_id');
+    $settingsTenantScoped = table_has_column('notification_settings', 'tenant_id');
+    $notificationTenantClause = $notificationTenantScoped ? ' AND tenant_id = ?' : '';
+    $notificationTenantParams = $notificationTenantScoped ? [$currentTenantId] : [];
 
     switch ($action) {
         case 'get_all':
@@ -46,8 +88,8 @@ try {
             $filter = $_GET['filter'] ?? 'all';
             $category = $_GET['category'] ?? 'all';
 
-            $sql = "SELECT * FROM notifications WHERE user_id = ?";
-            $params = [$user_id];
+            $sql = "SELECT * FROM notifications WHERE user_id = ?{$notificationTenantClause}";
+            $params = array_merge([$user_id], $notificationTenantParams);
 
             if ($filter === 'unread') {
                 $sql .= " AND is_read = 0";
@@ -71,24 +113,34 @@ try {
             $count = db()->fetchOne("
                 SELECT COUNT(*) as count
                 FROM notifications
-                WHERE user_id = ? AND is_read = 0
-            ", [$user_id])['count'];
+                WHERE user_id = ? AND is_read = 0{$notificationTenantClause}
+            ", array_merge([$user_id], $notificationTenantParams))['count'];
 
             echo json_encode(['success' => true, 'count' => (int)$count]);
             break;
 
         case 'mark_read':
-            $notif_id = $_POST['id'] ?? null;
+            $notif_id = notifications_request_value('id');
 
             if (!$notif_id) {
                 throw new Exception('Notification ID required');
             }
 
-            db()->update(
-                'notifications',
-                ['is_read' => 1, 'read_at' => date('Y-m-d H:i:s')],
-                ['id' => $notif_id, 'user_id' => $user_id]
-            );
+            if (table_has_column('notifications', 'tenant_id')) {
+                db()->update(
+                    'notifications',
+                    ['is_read' => 1, 'read_at' => date('Y-m-d H:i:s')],
+                    'id = ? AND user_id = ? AND tenant_id = ?',
+                    [$notif_id, $user_id, $currentTenantId]
+                );
+            } else {
+                db()->update(
+                    'notifications',
+                    ['is_read' => 1, 'read_at' => date('Y-m-d H:i:s')],
+                    'id = ? AND user_id = ?',
+                    [$notif_id, $user_id]
+                );
+            }
 
             echo json_encode(['success' => true, 'message' => 'Marked as read']);
             break;
@@ -97,48 +149,56 @@ try {
             db()->query("
                 UPDATE notifications
                 SET is_read = 1, read_at = NOW()
-                WHERE user_id = ? AND is_read = 0
-            ", [$user_id]);
+                WHERE user_id = ? AND is_read = 0{$notificationTenantClause}
+            ", array_merge([$user_id], $notificationTenantParams));
 
             echo json_encode(['success' => true, 'message' => 'All notifications marked as read']);
             break;
 
         case 'delete':
-            $notif_id = $_POST['id'] ?? null;
+            $notif_id = notifications_request_value('id');
 
             if (!$notif_id) {
                 throw new Exception('Notification ID required');
             }
 
-            db()->delete('notifications', ['id' => $notif_id, 'user_id' => $user_id]);
+            if (table_has_column('notifications', 'tenant_id')) {
+                db()->delete('notifications', ['id' => $notif_id, 'user_id' => $user_id, 'tenant_id' => $currentTenantId]);
+            } else {
+                db()->delete('notifications', ['id' => $notif_id, 'user_id' => $user_id]);
+            }
 
             echo json_encode(['success' => true, 'message' => 'Notification deleted']);
             break;
 
         case 'clear_all':
-            db()->query("DELETE FROM notifications WHERE user_id = ?", [$user_id]);
+            db()->query("DELETE FROM notifications WHERE user_id = ?{$notificationTenantClause}", array_merge([$user_id], $notificationTenantParams));
 
             echo json_encode(['success' => true, 'message' => 'All notifications cleared']);
             break;
 
         case 'create':
-            // Only for system/admin use
-            if ($_SESSION['role'] !== 'admin') {
+            if (!notifications_can_manage($currentRole)) {
                 throw new Exception('Unauthorized');
             }
 
-            $target_user_id = $_POST['user_id'] ?? null;
-            $title = trim($_POST['title'] ?? '');
-            $message = trim($_POST['message'] ?? '');
-            $icon = $_POST['icon'] ?? 'bell';
-            $category = $_POST['category'] ?? 'general';
-            $link = $_POST['link'] ?? null;
+            $target_user_id = (int)notifications_request_value('user_id', 0);
+            $title = trim((string)notifications_request_value('title', ''));
+            $message = trim((string)notifications_request_value('message', ''));
+            $icon = (string)notifications_request_value('icon', 'bell');
+            $category = (string)notifications_request_value('category', 'general');
+            $link = notifications_request_value('link');
 
             if (!$target_user_id || !$message) {
                 throw new Exception('User ID and message required');
             }
 
-            $id = db()->insert('notifications', [
+            if (!notifications_user_in_tenant($target_user_id, $currentTenantId)) {
+                throw new Exception('Target user is not available in this tenant');
+            }
+
+            $id = insert_flexible('notifications', [
+                'tenant_id' => $currentTenantId,
                 'user_id' => $target_user_id,
                 'title' => $title,
                 'message' => $message,
@@ -157,24 +217,34 @@ try {
 
         case 'broadcast':
             // Admin only - broadcast to all users of a role
-            if ($_SESSION['role'] !== 'admin') {
+            if (!notifications_can_manage($currentRole)) {
                 throw new Exception('Unauthorized');
             }
 
-            $target_role = $_POST['target_role'] ?? null;
-            $title = trim($_POST['title'] ?? '');
-            $message = trim($_POST['message'] ?? '');
-            $icon = $_POST['icon'] ?? 'bullhorn';
-            $category = $_POST['category'] ?? 'announcement';
+            $target_role = notifications_normalize_role((string)notifications_request_value('target_role', ''));
+            $title = trim((string)notifications_request_value('title', ''));
+            $message = trim((string)notifications_request_value('message', ''));
+            $icon = (string)notifications_request_value('icon', 'bullhorn');
+            $category = (string)notifications_request_value('category', 'announcement');
 
             if (!$target_role || !$message) {
                 throw new Exception('Target role and message required');
             }
 
-            $users = db()->fetchAll("SELECT id FROM users WHERE role = ? AND status = 'active'", [$target_role]);
+            $usersSql = "SELECT id FROM users WHERE LOWER(REPLACE(role, '-', '_')) = ? AND status = 'active'";
+            $usersParams = [$target_role];
+            if (table_has_column('users', 'tenant_id')) {
+                $usersSql .= " AND tenant_id = ?";
+                $usersParams[] = $currentTenantId;
+            } elseif (table_has_column('users', 'school_id')) {
+                $usersSql .= " AND school_id = ?";
+                $usersParams[] = $currentTenantId;
+            }
+            $users = db()->fetchAll($usersSql, $usersParams);
 
             foreach ($users as $user) {
-                db()->insert('notifications', [
+                insert_flexible('notifications', [
+                    'tenant_id' => $currentTenantId,
                     'user_id' => $user['id'],
                     'title' => $title,
                     'message' => $message,
@@ -190,7 +260,7 @@ try {
 
         case 'save_settings':
             // Save user notification preferences
-            $settings = $_POST['settings'] ?? [];
+            $settings = notifications_request_value('settings', []);
 
             // Create settings table if not exists
             db()->query("
@@ -220,20 +290,35 @@ try {
             $settings['updated_at'] = date('Y-m-d H:i:s');
 
             // Insert or update
-            $existing = db()->fetchOne("SELECT id FROM notification_settings WHERE user_id = ?", [$user_id]);
+            $settingsWhere = 'user_id = ?';
+            $settingsParams = [$user_id];
+            if ($settingsTenantScoped) {
+                $settingsWhere .= ' AND tenant_id = ?';
+                $settingsParams[] = $currentTenantId;
+            }
+            $existing = db()->fetchOne("SELECT id FROM notification_settings WHERE {$settingsWhere}", $settingsParams);
 
             if ($existing) {
-                db()->update('notification_settings', $settings, ['user_id' => $user_id]);
+                update_flexible('notification_settings', $settings, $settingsWhere, $settingsParams);
             } else {
                 $settings['user_id'] = $user_id;
-                db()->insert('notification_settings', $settings);
+                if ($settingsTenantScoped) {
+                    $settings['tenant_id'] = $currentTenantId;
+                }
+                insert_flexible('notification_settings', $settings);
             }
 
             echo json_encode(['success' => true, 'message' => 'Settings saved']);
             break;
 
         case 'get_settings':
-            $settings = db()->fetchOne("SELECT * FROM notification_settings WHERE user_id = ?", [$user_id]);
+            $settingsSql = "SELECT * FROM notification_settings WHERE user_id = ?";
+            $settingsParams = [$user_id];
+            if ($settingsTenantScoped) {
+                $settingsSql .= " AND tenant_id = ?";
+                $settingsParams[] = $currentTenantId;
+            }
+            $settings = db()->fetchOne($settingsSql, $settingsParams);
 
             if (!$settings) {
                 // Return defaults
@@ -256,20 +341,21 @@ try {
             break;
 
         case 'get_stats':
+            $statsParams = array_merge([$user_id], $notificationTenantParams);
             $stats = [
-                'total' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ?", [$user_id])['c'],
-                'unread' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND is_read = 0", [$user_id])['c'],
-                'today' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND DATE(created_at) = CURDATE()", [$user_id])['c'],
-                'this_week' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND YEARWEEK(created_at) = YEARWEEK(NOW())", [$user_id])['c'],
+                'total' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ?{$notificationTenantClause}", $statsParams)['c'],
+                'unread' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND is_read = 0{$notificationTenantClause}", $statsParams)['c'],
+                'today' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND DATE(created_at) = CURDATE(){$notificationTenantClause}", $statsParams)['c'],
+                'this_week' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND YEARWEEK(created_at) = YEARWEEK(NOW()){$notificationTenantClause}", $statsParams)['c'],
                 'by_category' => []
             ];
 
             $categories = db()->fetchAll("
                 SELECT category, COUNT(*) as count
                 FROM notifications
-                WHERE user_id = ?
+                WHERE user_id = ?{$notificationTenantClause}
                 GROUP BY category
-            ", [$user_id]);
+            ", $statsParams);
 
             foreach ($categories as $cat) {
                 $stats['by_category'][$cat['category'] ?? 'general'] = (int)$cat['count'];
@@ -292,7 +378,13 @@ try {
 function sendPushNotification($user_id, $title, $message)
 {
     // Check if user has push enabled
-    $settings = db()->fetchOne("SELECT push_enabled FROM notification_settings WHERE user_id = ?", [$user_id]);
+    $settingsSql = "SELECT push_enabled FROM notification_settings WHERE user_id = ?";
+    $settingsParams = [$user_id];
+    if (table_has_column('notification_settings', 'tenant_id')) {
+        $settingsSql .= " AND tenant_id = ?";
+        $settingsParams[] = current_tenant_id();
+    }
+    $settings = db()->fetchOne($settingsSql, $settingsParams);
 
     if (!$settings || !$settings['push_enabled']) {
         return;
@@ -305,4 +397,45 @@ function sendPushNotification($user_id, $title, $message)
     // - Web Push API for browser notifications
 
     Logger::info('Push notification queued', ['user_id' => $user_id, 'title' => $title]);
+}
+
+function notifications_normalize_role(string $role): string
+{
+    return str_replace('-', '_', strtolower(trim($role)));
+}
+
+function notifications_can_manage(string $role): bool
+{
+    return in_array(
+        notifications_normalize_role($role),
+        ['admin', 'super_admin', 'superadmin', 'owner', 'principal', 'vice_principal', 'admin_officer'],
+        true
+    );
+}
+
+function notifications_user_in_tenant(int $targetUserId, int $tenantId): bool
+{
+    if ($targetUserId <= 0 || $tenantId <= 0) {
+        return false;
+    }
+
+    if (table_exists('users')) {
+        $userSql = "SELECT id FROM users WHERE id = ? AND status = 'active'";
+        $userParams = [$targetUserId];
+
+        if (table_has_column('users', 'tenant_id')) {
+            $userSql .= " AND tenant_id = ?";
+            $userParams[] = $tenantId;
+        } elseif (table_has_column('users', 'school_id')) {
+            $userSql .= " AND school_id = ?";
+            $userParams[] = $tenantId;
+        }
+
+        $user = db()->fetchOne($userSql . " LIMIT 1", $userParams);
+        if ($user) {
+            return true;
+        }
+    }
+
+    return false;
 }

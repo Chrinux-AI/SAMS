@@ -10,6 +10,23 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
+if (!function_exists('sidebar_nav_emit_core_assets')) {
+  function sidebar_nav_emit_core_assets(): void
+  {
+    static $emitted = false;
+    if ($emitted) {
+      return;
+    }
+
+    $emitted = true;
+    $coreCss = function_exists('site_url') ? site_url('assets/css/sams-core.css') : '/attendance/assets/css/sams-core.css';
+    echo '<link rel="stylesheet" href="' . htmlspecialchars($coreCss, ENT_QUOTES, 'UTF-8') . '">';
+    echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">';
+  }
+}
+
+sidebar_nav_emit_core_assets();
+
 $current_page = basename($_SERVER['PHP_SELF']);
 $current_dir = basename(dirname($_SERVER['PHP_SELF']));
 $in_subdir = !in_array($current_dir, ['admin', 'owner', 'principal', 'staff', 'nurse', 'teacher', 'student', 'parent', 'librarian', 'bursar', 'accountant', 'transport', 'forum-moderator', 'general', 'chatbots', 'developer', 'attendance']);
@@ -38,6 +55,81 @@ $contains = function ($haystack, $needle) {
   return $needle === '' || strpos($haystack, $needle) !== false;
 };
 
+if (!function_exists('sidebar_nav_unread_message_count')) {
+  function sidebar_nav_unread_message_count(int $userId, int $tenantId): int
+  {
+    if (function_exists('get_unread_message_count')) {
+      return get_unread_message_count($userId, $tenantId);
+    }
+
+    $tenantId = $tenantId > 0 ? $tenantId : 0;
+
+    if (table_exists('comm_messages') && table_exists('comm_participants')) {
+      $messageTenantClause = table_has_column('comm_messages', 'tenant_id') ? ' AND m.tenant_id = ?' : '';
+      $participantTenantClause = table_has_column('comm_participants', 'tenant_id') ? ' AND cp.tenant_id = ?' : '';
+      $readTenantClause = table_has_column('comm_reads', 'tenant_id') ? ' AND cr.tenant_id = ?' : '';
+
+      $params = [$userId, $userId, $userId];
+      if ($readTenantClause !== '') {
+        $params[] = $tenantId;
+      }
+      if ($messageTenantClause !== '') {
+        $params[] = $tenantId;
+      }
+      if ($participantTenantClause !== '') {
+        $params[] = $tenantId;
+      }
+
+      $row = db()->fetchOne("
+              SELECT COUNT(*) as count
+              FROM comm_messages m
+              JOIN comm_participants cp ON m.conversation_id = cp.conversation_id
+              LEFT JOIN comm_reads cr ON m.id = cr.message_id AND cr.user_id = ?{$readTenantClause}
+              WHERE cp.user_id = ? AND m.sender_id != ?{$messageTenantClause}{$participantTenantClause}
+                AND cr.id IS NULL
+          ", $params);
+
+      return (int)($row['count'] ?? 0);
+    }
+
+    if (table_exists('conversation_messages') && table_exists('conversation_participants')) {
+      $messageTenantClause = table_has_column('conversation_messages', 'tenant_id') ? ' AND cm.tenant_id = ?' : '';
+      $participantTenantClause = table_has_column('conversation_participants', 'tenant_id') ? ' AND cp.tenant_id = ?' : '';
+      $hasLastReadAt = table_has_column('conversation_participants', 'last_read_at');
+
+      $params = [$userId, $userId];
+      if ($messageTenantClause !== '') {
+        $params[] = $tenantId;
+      }
+      if ($participantTenantClause !== '') {
+        $params[] = $tenantId;
+      }
+
+      $query = $hasLastReadAt
+        ? "
+              SELECT COUNT(*) as count
+              FROM conversation_messages cm
+              JOIN conversation_participants cp ON cm.conversation_id = cp.conversation_id
+              WHERE cp.user_id = ? AND cm.sender_id != ?
+                AND (cp.last_read_at IS NULL OR cm.created_at > cp.last_read_at)
+                {$messageTenantClause}{$participantTenantClause}
+          "
+        : "
+              SELECT COUNT(*) as count
+              FROM conversation_messages cm
+              JOIN conversation_participants cp ON cm.conversation_id = cp.conversation_id
+              WHERE cp.user_id = ? AND cm.sender_id != ?
+                {$messageTenantClause}{$participantTenantClause}
+          ";
+
+      $row = db()->fetchOne($query, $params);
+      return (int)($row['count'] ?? 0);
+    }
+
+    return 0;
+  }
+}
+
 // Get user profile picture
 $user_avatar_url = '';
 if ($user_id > 0) {
@@ -54,13 +146,8 @@ if ($user_id > 0) {
 $unread_count = 0;
 if ($user_id > 0) {
   try {
-    $result = db()->fetchOne("
-            SELECT COUNT(*) as count FROM comm_messages m
-            JOIN comm_participants cp ON m.conversation_id = cp.conversation_id
-            LEFT JOIN comm_reads cr ON m.id = cr.message_id AND cr.user_id = ?
-            WHERE cp.user_id = ? AND m.sender_id != ? AND cr.id IS NULL
-        ", [$user_id, $user_id, $user_id]);
-    $unread_count = $result['count'] ?? 0;
+    $tenant_id = function_exists('current_tenant_id') ? (int)current_tenant_id() : (int)($_SESSION['tenant_id'] ?? 0);
+    $unread_count = sidebar_nav_unread_message_count($user_id, $tenant_id);
   } catch (Exception $e) {
     $unread_count = 0;
   }
@@ -104,8 +191,12 @@ if ($user_role === 'admin') {
     'System' => [
       'users.php' => ['icon' => 'manage_accounts', 'label' => 'Users'],
       'registrations.php' => ['icon' => 'person_add', 'label' => 'Registrations'],
+      'invites.php' => ['icon' => 'mail', 'label' => 'Invites'],
       'approve-users.php' => ['icon' => 'how_to_reg', 'label' => 'Approvals'],
       'manage-ids.php' => ['icon' => 'badge', 'label' => 'Manage IDs'],
+      'advanced-sams-setup.php' => ['icon' => 'tune', 'label' => 'Advanced SAMS'],
+      'merit-rules.php' => ['icon' => 'rule', 'label' => 'Merit Rules'],
+      'merit-overview.php' => ['icon' => 'leaderboard', 'label' => 'Merit Board'],
       'system-health.php' => ['icon' => 'health_and_safety', 'label' => 'System Health'],
       'audit-logs.php' => ['icon' => 'description', 'label' => 'Audit Logs'],
       'backup-export.php' => ['icon' => 'cloud_upload', 'label' => 'Backup & Export'],
@@ -282,6 +373,7 @@ if ($user_role === 'admin') {
     'Account' => [
       'profile.php' => ['icon' => 'person', 'label' => 'Profile'],
       'id-card.php' => ['icon' => 'badge', 'label' => 'ID Card'],
+      'wallet.php' => ['icon' => 'account_balance_wallet', 'label' => 'Private Points'],
       'settings.php' => ['icon' => 'settings', 'label' => 'Settings'],
     ],
   ];
@@ -297,6 +389,7 @@ if ($user_role === 'admin') {
     'Academic' => [
       'grades.php' => ['icon' => 'bar_chart', 'label' => 'Grades'],
       'fees.php' => ['icon' => 'account_balance_wallet', 'label' => 'Fees'],
+      'wallet.php' => ['icon' => 'savings', 'label' => 'Wallets'],
       'events.php' => ['icon' => 'event', 'label' => 'Events'],
       'lms-overview.php' => ['icon' => 'school', 'label' => 'LMS Overview'],
     ],
@@ -378,6 +471,7 @@ if ($user_role === 'admin') {
     ],
     'Finance' => [
       'ledger.php' => ['icon' => 'menu_book', 'label' => 'General Ledger'],
+      'wallets.php' => ['icon' => 'account_balance_wallet', 'label' => 'Private Points'],
       'expenses.php' => ['icon' => 'receipt', 'label' => 'Expenses'],
       'income.php' => ['icon' => 'savings', 'label' => 'Income'],
       'payroll.php' => ['icon' => 'account_balance', 'label' => 'Payroll'],
@@ -488,7 +582,7 @@ if ($user_role === 'admin') {
 
     <!-- Logout -->
     <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #e2e8f0;">
-      <a href="<?php echo $in_subdir ? '../../logout.php' : '../logout.php'; ?>" class="nav-item">
+      <a href="<?php echo rtrim(APP_URL, '/') . '/logout.php'; ?>" class="nav-item">
         <span class="nav-icon material-symbols-outlined">logout</span>
         <span>Logout</span>
       </a>

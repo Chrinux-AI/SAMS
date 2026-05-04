@@ -117,6 +117,8 @@ $csrf = generate_csrf_token();
   <title>AI Predictive Analytics - <?php echo APP_NAME; ?></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/professional-ui.css">
+    <?php include '../../includes/sams-head-bootstrap.php'; ?>
+
   <link rel="stylesheet" href="../../assets/css/sidebar-nav.css">
   <style>
     .predictive-header {

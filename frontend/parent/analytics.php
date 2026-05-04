@@ -12,6 +12,7 @@ require_parent();
 
 $parent_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenantId = current_tenant_id();
 
 // Get time period (default: last 90 days)
 $days = isset($_GET['days']) ? intval($_GET['days']) : 90;
@@ -19,26 +20,13 @@ $start_date = date('Y-m-d', strtotime("-$days days"));
 $end_date = date('Y-m-d');
 
 // Get all linked children with comprehensive stats
-$children = db()->fetchAll("
-    SELECT s.*,
-           CONCAT(u.first_name, ' ', u.last_name) as child_name,
-           u.first_name, u.last_name,
-           (SELECT COUNT(*) FROM attendance_records ar
-            WHERE ar.student_id = s.id AND ar.status = 'present'
-            AND DATE(ar.check_in_time) >= ?) as present_count,
-           (SELECT COUNT(*) FROM attendance_records ar
-            WHERE ar.student_id = s.id
-            AND DATE(ar.check_in_time) >= ?) as total_attendance,
-           (SELECT AVG(g.points_earned / g.max_points * 100)
-            FROM grades g
-            WHERE g.student_id = s.id
-            AND g.grade_date >= ?) as avg_grade
-    FROM parent_student_links psl
-    JOIN students s ON psl.student_id = s.user_id
-    JOIN users u ON s.user_id = u.id
-    WHERE psl.parent_id = ? AND u.status = 'active'
-    ORDER BY child_name
-", [$start_date, $start_date, $start_date, $parent_id]);
+$children = get_parent_linked_children((int)$parent_id, (int)$tenantId);
+$attendanceDateField = table_exists('attendance_records')
+    ? (table_has_column('attendance_records', 'check_in_time') ? 'check_in_time' : (table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : null))
+    : null;
+$gradeDateField = table_exists('grades')
+    ? (table_has_column('grades', 'grade_date') ? 'grade_date' : (table_has_column('grades', 'created_at') ? 'created_at' : null))
+    : null;
 
 // Calculate family statistics
 $family_stats = [
@@ -50,11 +38,44 @@ $family_stats = [
 ];
 
 $correlation_data = [];
-foreach ($children as $child) {
-    $attendance_rate = $child['total_attendance'] > 0
-        ? ($child['present_count'] / $child['total_attendance'] * 100)
-        : 0;
-    $grade = $child['avg_grade'] ?? 0;
+foreach ($children as &$child) {
+    $studentIdentifiers = array_values(array_unique(array_filter([
+        (int)($child['user_id'] ?? 0),
+        (int)($child['student_profile_id'] ?? 0),
+    ])));
+    $presentCount = 0;
+    $totalAttendance = 0;
+    $grade = 0.0;
+
+    if (!empty($studentIdentifiers) && $attendanceDateField !== null) {
+        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+        $presentCount = (int)(db()->fetchOne("
+            SELECT COUNT(*) AS count
+            FROM attendance_records ar
+            WHERE ar.student_id IN ({$placeholders}) AND ar.status = 'present'
+              AND DATE(ar.{$attendanceDateField}) >= ?
+        ", array_merge($studentIdentifiers, [$start_date]))['count'] ?? 0);
+        $totalAttendance = (int)(db()->fetchOne("
+            SELECT COUNT(*) AS count
+            FROM attendance_records ar
+            WHERE ar.student_id IN ({$placeholders}) AND DATE(ar.{$attendanceDateField}) >= ?
+        ", array_merge($studentIdentifiers, [$start_date]))['count'] ?? 0);
+    }
+
+    if (!empty($studentIdentifiers) && $gradeDateField !== null && table_has_column('grades', 'points_earned') && table_has_column('grades', 'max_points')) {
+        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+        $grade = (float)(db()->fetchOne("
+            SELECT AVG(g.points_earned / NULLIF(g.max_points, 0) * 100) AS avg_grade
+            FROM grades g
+            WHERE g.student_id IN ({$placeholders}) AND DATE(g.{$gradeDateField}) >= ?
+        ", array_merge($studentIdentifiers, [$start_date]))['avg_grade'] ?? 0);
+    }
+
+    $child['present_count'] = $presentCount;
+    $child['total_attendance'] = $totalAttendance;
+    $child['avg_grade'] = $grade;
+
+    $attendance_rate = $totalAttendance > 0 ? ($presentCount / $totalAttendance * 100) : 0;
 
     $child['attendance_rate'] = $attendance_rate;
     $child['avg_grade'] = $grade;
@@ -79,6 +100,7 @@ foreach ($children as $child) {
         'grade' => round($grade, 1)
     ];
 }
+unset($child);
 
 if ($family_stats['total_children'] > 0) {
     $family_stats['avg_attendance'] /= $family_stats['total_children'];
@@ -87,32 +109,52 @@ if ($family_stats['total_children'] > 0) {
 
 // Get trend data (last 8 weeks)
 $trend_data = [];
+$familyIdentifiers = [];
+foreach ($children as $child) {
+    foreach ([(int)($child['user_id'] ?? 0), (int)($child['student_profile_id'] ?? 0)] as $identifier) {
+        if ($identifier > 0 && !in_array($identifier, $familyIdentifiers, true)) {
+            $familyIdentifiers[] = $identifier;
+        }
+    }
+}
 for ($i = 7; $i >= 0; $i--) {
     $week_start = date('Y-m-d', strtotime("-$i weeks"));
     $week_end = date('Y-m-d', strtotime("-$i weeks + 6 days"));
 
-    $week_stats = db()->fetchOne("
-        SELECT
-            COUNT(CASE WHEN ar.status = 'present' THEN 1 END) as present,
-            COUNT(*) as total,
-            AVG(g.points_earned / g.max_points * 100) as avg_grade
-        FROM parent_student_links psl
-        JOIN students s ON psl.student_id = s.user_id
-        LEFT JOIN attendance_records ar ON ar.student_id = s.id
-            AND DATE(ar.check_in_time) BETWEEN ? AND ?
-        LEFT JOIN grades g ON g.student_id = s.id
-            AND g.grade_date BETWEEN ? AND ?
-        WHERE psl.parent_id = ?
-    ", [$week_start, $week_end, $week_start, $week_end, $parent_id]);
+    $present = 0;
+    $total = 0;
+    $avgGrade = 0.0;
 
-    $attendance_rate = $week_stats['total'] > 0
-        ? ($week_stats['present'] / $week_stats['total'] * 100)
-        : 0;
+    if (!empty($familyIdentifiers) && $attendanceDateField !== null) {
+        $placeholders = implode(',', array_fill(0, count($familyIdentifiers), '?'));
+        $present = (int)(db()->fetchOne("
+            SELECT COUNT(*) AS count
+            FROM attendance_records ar
+            WHERE ar.student_id IN ({$placeholders}) AND ar.status = 'present'
+              AND DATE(ar.{$attendanceDateField}) BETWEEN ? AND ?
+        ", array_merge($familyIdentifiers, [$week_start, $week_end]))['count'] ?? 0);
+        $total = (int)(db()->fetchOne("
+            SELECT COUNT(*) AS count
+            FROM attendance_records ar
+            WHERE ar.student_id IN ({$placeholders}) AND DATE(ar.{$attendanceDateField}) BETWEEN ? AND ?
+        ", array_merge($familyIdentifiers, [$week_start, $week_end]))['count'] ?? 0);
+    }
+
+    if (!empty($familyIdentifiers) && $gradeDateField !== null && table_has_column('grades', 'points_earned') && table_has_column('grades', 'max_points')) {
+        $placeholders = implode(',', array_fill(0, count($familyIdentifiers), '?'));
+        $avgGrade = (float)(db()->fetchOne("
+            SELECT AVG(g.points_earned / NULLIF(g.max_points, 0) * 100) AS avg_grade
+            FROM grades g
+            WHERE g.student_id IN ({$placeholders}) AND DATE(g.{$gradeDateField}) BETWEEN ? AND ?
+        ", array_merge($familyIdentifiers, [$week_start, $week_end]))['avg_grade'] ?? 0);
+    }
+
+    $attendance_rate = $total > 0 ? ($present / $total * 100) : 0;
 
     $trend_data[] = [
         'week' => date('M d', strtotime($week_start)),
         'attendance' => round($attendance_rate, 1),
-        'grade' => round($week_stats['avg_grade'] ?? 0, 1)
+        'grade' => round($avgGrade, 1)
     ];
 }
 
@@ -166,14 +208,17 @@ $page_icon = 'chart-line';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -193,7 +238,7 @@ $page_icon = 'chart-line';
                 </div>
             </header>
 
-            <div class="app-layout">
+            <div style="display:grid; gap:24px;">
                 <!-- Family Statistics -->
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px;">
                     <div class="stat-orb primary">
@@ -244,7 +289,7 @@ $page_icon = 'chart-line';
                                     </div>
                                     <div>
                                         <h4 style="color:<?php echo $rec['color']; ?>;margin-bottom:8px;font-size:1.1rem;"><?php echo $rec['title']; ?></h4>
-                                        <p style="color:rgba(255,255,255,0.7);line-height:1.6;margin:0;"><?php echo $rec['message']; ?></p>
+                                        <p style="color:#475569;line-height:1.6;margin:0;"><?php echo $rec['message']; ?></p>
                                     </div>
                                 </div>
                             </div>

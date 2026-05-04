@@ -177,6 +177,8 @@ $recent = db()->fetchAll("
     <title>Registration Management - <?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/professional-ui.css">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <style>
         .toggle-switch {
             position: relative;

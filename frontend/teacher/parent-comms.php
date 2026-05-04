@@ -11,10 +11,145 @@ require_once '../includes/functions.php';
 require_once '../includes/database.php';
 require_teacher('../login.php');
 
-$teacher_id = $_SESSION['assigned_id'];
+$teacher_user_id = (int)($_SESSION['user_id'] ?? 0);
 $full_name = $_SESSION['full_name'];
 $message = '';
 $message_type = '';
+$currentTenantId = current_tenant_id();
+
+if (!isset($_SESSION['tenant_id'])) {
+    set_user_tenant_session($teacher_user_id);
+    $currentTenantId = current_tenant_id();
+}
+
+if ($teacher_user_id <= 0 || !$currentTenantId || !user_in_current_tenant($teacher_user_id)) {
+    http_response_code(403);
+    exit('Tenant access denied');
+}
+
+function parent_comms_scope(string $table, string $alias, int $tenantId): array
+{
+    $qualified = $alias !== '' ? $alias . '.' : '';
+    if (table_has_column($table, 'tenant_id')) {
+        return ['sql' => " AND {$qualified}tenant_id = ?", 'params' => [$tenantId]];
+    }
+    if (table_has_column($table, 'school_id')) {
+        return ['sql' => " AND {$qualified}school_id = ?", 'params' => [$tenantId]];
+    }
+    return ['sql' => '', 'params' => []];
+}
+
+function parent_comms_payload(string $table, int $tenantId): array
+{
+    if (table_has_column($table, 'tenant_id')) {
+        return ['tenant_id' => $tenantId];
+    }
+    if (table_has_column($table, 'school_id')) {
+        return ['school_id' => $tenantId];
+    }
+    return [];
+}
+
+function parent_comms_teacher_profile_id(int $teacherUserId, int $tenantId): int
+{
+    if ($teacherUserId <= 0) {
+        return 0;
+    }
+
+    $teacherScope = parent_comms_scope('teachers', 't', $tenantId);
+    $teacher = db()->fetchOne(
+        "SELECT t.id
+         FROM teachers t
+         WHERE t.user_id = ?{$teacherScope['sql']}
+         LIMIT 1",
+        array_merge([$teacherUserId], $teacherScope['params'])
+    );
+
+    return (int)($teacher['id'] ?? 0);
+}
+
+function parent_comms_teacher_match(string $column, int $teacherUserId, int $teacherProfileId): array
+{
+    $teacherIds = array_values(array_unique(array_filter([$teacherUserId, $teacherProfileId], static fn($id): bool => $id > 0)));
+    if ($teacherIds === []) {
+        return ['sql' => '1 = 0', 'params' => []];
+    }
+
+    $placeholders = implode(', ', array_fill(0, count($teacherIds), '?'));
+
+    return ['sql' => "{$column} IN ({$placeholders})", 'params' => $teacherIds];
+}
+
+function parent_comms_attendance_table(): string
+{
+    if (table_exists('attendance_records')) {
+        return 'attendance_records';
+    }
+    if (table_exists('attendance')) {
+        return 'attendance';
+    }
+
+    return 'attendance_records';
+}
+
+function parent_comms_attendance_datetime_field(string $table): string
+{
+    if (table_has_column($table, 'check_in_time')) {
+        return 'check_in_time';
+    }
+    if (table_has_column($table, 'attendance_date')) {
+        return 'attendance_date';
+    }
+    if (table_has_column($table, 'date')) {
+        return 'date';
+    }
+
+    return 'attendance_date';
+}
+
+function parent_comms_teacher_student_row(int $studentId, int $teacherUserId, int $teacherProfileId, int $tenantId): ?array
+{
+    if ($studentId <= 0 || $teacherUserId <= 0) {
+        return null;
+    }
+
+    $teacherMatch = parent_comms_teacher_match('c.class_teacher_id', $teacherUserId, $teacherProfileId);
+    $classScope = parent_comms_scope('classes', 'c', $tenantId);
+    $studentScope = parent_comms_scope('students', 's', $tenantId);
+    $studentUserScope = parent_comms_scope('users', 'su', $tenantId);
+    $parentScope = parent_comms_scope('parents', 'p', $tenantId);
+    $parentUserScope = parent_comms_scope('users', 'pu', $tenantId);
+
+    $student = db()->fetchOne(
+        "SELECT DISTINCT s.*, CONCAT(su.first_name, ' ', su.last_name) AS student_name,
+                p.id AS parent_id, pu.id AS parent_user_id,
+                CONCAT(pu.first_name, ' ', pu.last_name) AS parent_name,
+                pu.email AS parent_email
+         FROM students s
+         JOIN users su ON s.user_id = su.id
+         JOIN class_enrollments ce ON ce.student_id = s.id OR ce.student_id = s.user_id
+         JOIN classes c ON ce.class_id = c.id
+         LEFT JOIN parent_student ps ON s.id = ps.student_id
+         LEFT JOIN parents p ON ps.parent_id = p.id
+         LEFT JOIN users pu ON p.user_id = pu.id
+         WHERE s.id = ? AND {$teacherMatch['sql']}{$classScope['sql']}{$studentScope['sql']}{$studentUserScope['sql']}{$parentScope['sql']}{$parentUserScope['sql']}
+         LIMIT 1",
+        array_merge(
+            [$studentId],
+            $teacherMatch['params'],
+            $classScope['params'],
+            $studentScope['params'],
+            $studentUserScope['params'],
+            $parentScope['params'],
+            $parentUserScope['params']
+        )
+    );
+
+    return $student ?: null;
+}
+
+$teacher_profile_id = parent_comms_teacher_profile_id($teacher_user_id, $currentTenantId);
+$teacher_match = parent_comms_teacher_match('c.class_teacher_id', $teacher_user_id, $teacher_profile_id);
 
 // Handle sending progress report
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_report'])) {
@@ -24,34 +159,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_report'])) {
     $include_attendance = isset($_POST['include_attendance']);
     $include_grades = isset($_POST['include_grades']);
 
-    // Get student and parent info
-    $student = db()->fetchOne("
-        SELECT s.*, CONCAT(u.first_name, ' ', u.last_name) as student_name,
-               p.id as parent_id, pu.id as parent_user_id,
-               CONCAT(pu.first_name, ' ', pu.last_name) as parent_name,
-               pu.email as parent_email
-        FROM students s
-        JOIN users u ON s.user_id = u.id
-        LEFT JOIN parent_student ps ON s.id = ps.student_id
-        LEFT JOIN parents p ON ps.parent_id = p.id
-        LEFT JOIN users pu ON p.user_id = pu.id
-        WHERE s.id = ?
-    ", [$student_id]);
+    $student = parent_comms_teacher_student_row($student_id, $teacher_user_id, $teacher_profile_id, $currentTenantId);
 
     if ($student && $student['parent_user_id']) {
         $report_content = $message_body . "\n\n";
 
-        // Add attendance data if requested
+        // Add attendance data if requested (tenant-scoped)
         if ($include_attendance) {
+            $attendanceTable = parent_comms_attendance_table();
+            $attendance_scope = parent_comms_scope($attendanceTable, 'ar', $currentTenantId);
+            $attendanceDateField = parent_comms_attendance_datetime_field($attendanceTable);
+
             $attendance_stats = db()->fetchOne("
                 SELECT
                     COUNT(*) as total_days,
-                    SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) as present,
-                    SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as late,
-                    SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as absent
-                FROM attendance_records
-                WHERE student_id = ? AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            ", [$student_id]);
+                    SUM(CASE WHEN ar.status = 'present' THEN 1 ELSE 0 END) as present,
+                    SUM(CASE WHEN ar.status = 'late' THEN 1 ELSE 0 END) as late,
+                    SUM(CASE WHEN ar.status = 'absent' THEN 1 ELSE 0 END) as absent
+                FROM {$attendanceTable} ar
+                WHERE (ar.student_id = ? OR ar.student_id = ?)
+                  AND DATE(ar.{$attendanceDateField}) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY){$attendance_scope['sql']}
+            ", array_merge([$student_id, (int)$student['user_id']], $attendance_scope['params']));
 
             $attendance_rate = $attendance_stats['total_days'] > 0
                 ? round((($attendance_stats['present'] + $attendance_stats['late']) / $attendance_stats['total_days']) * 100, 1)
@@ -66,14 +194,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_report'])) {
 
         // Add grades data if requested
         if ($include_grades) {
+            $grades_scope = parent_comms_scope('assignment_submissions', 'asub', $currentTenantId);
+            $assign_scope = parent_comms_scope('assignments', 'a', $currentTenantId);
+
             $grades = db()->fetchAll("
                 SELECT a.title, asub.grade, a.max_points
                 FROM assignment_submissions asub
                 JOIN assignments a ON asub.assignment_id = a.id
-                WHERE asub.student_id = ? AND asub.grade IS NOT NULL
+                WHERE (asub.student_id = ? OR asub.student_id = ?)
+                  AND asub.grade IS NOT NULL{$grades_scope['sql']}{$assign_scope['sql']}
                 ORDER BY asub.submitted_at DESC
                 LIMIT 5
-            ", [$student_id]);
+            ", array_merge([$student_id, (int)$student['user_id']], $grades_scope['params'], $assign_scope['params']));
 
             if (!empty($grades)) {
                 $report_content .= "=== RECENT GRADES ===\n";
@@ -85,19 +217,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_report'])) {
             }
         }
 
-        // Send message
-        $message_id = db()->insert('messages', [
-            'sender_id' => $_SESSION['user_id'],
+        // Send message (tenant-scoped)
+        $message_id = insert_flexible('messages', array_merge([
+            'sender_id' => $teacher_user_id,
             'subject' => $subject,
             'message' => $report_content,
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ], parent_comms_payload('messages', $currentTenantId)));
 
-        db()->insert('message_recipients', [
+        insert_flexible('message_recipients', array_merge([
             'message_id' => $message_id,
-            'recipient_id' => $student['parent_user_id'],
+            'recipient_id' => (int)$student['parent_user_id'],
             'is_read' => 0
-        ]);
+        ], parent_comms_payload('message_recipients', $currentTenantId)));
 
         // Send email notification
         send_email(
@@ -107,12 +239,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_report'])) {
             "From: " . APP_NAME . " <noreply@attendance.com>"
         );
 
-        log_activity($_SESSION['user_id'], 'send_report', 'messages', $message_id, "Sent progress report for {$student['student_name']}");
+        log_activity($teacher_user_id, 'send_report', 'messages', $message_id, "Sent progress report for {$student['student_name']}");
 
         $message = 'Progress report sent successfully to ' . $student['parent_name'] . '!';
         $message_type = 'success';
     } else {
-        $message = 'Parent information not found for this student!';
+        $message = 'This student is not in your active roster or has no parent linked.';
         $message_type = 'error';
     }
 }
@@ -125,16 +257,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_meeting'])) {
     $meeting_time = sanitize($_POST['meeting_time']);
     $purpose = sanitize($_POST['purpose']);
 
-    $parent = db()->fetchOne("
-        SELECT p.*, u.id as user_id, CONCAT(u.first_name, ' ', u.last_name) as name, u.email
-        FROM parents p
-        JOIN users u ON p.user_id = u.id
-        WHERE p.id = ?
-    ", [$parent_id]);
+    $student = parent_comms_teacher_student_row($student_id, $teacher_user_id, $teacher_profile_id, $currentTenantId);
+    $parent = ($student && (int)($student['parent_id'] ?? 0) === $parent_id) ? [
+        'id' => (int)$student['parent_id'],
+        'user_id' => (int)$student['parent_user_id'],
+        'name' => (string)$student['parent_name'],
+        'email' => (string)$student['parent_email'],
+    ] : null;
 
     if ($parent) {
-        $meeting_id = db()->insert('parent_meetings', [
-            'teacher_id' => $teacher_id,
+        $meeting_payload = array_merge([
+            'teacher_id' => $teacher_user_id,
             'parent_id' => $parent_id,
             'student_id' => $student_id,
             'meeting_date' => $meeting_date,
@@ -142,7 +275,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_meeting'])) {
             'purpose' => $purpose,
             'status' => 'pending',
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ], parent_comms_payload('parent_meetings', $currentTenantId));
+
+        $meeting_id = insert_flexible('parent_meetings', $meeting_payload);
 
         // Send notification
         $subject = "Meeting Request from Teacher";
@@ -154,43 +289,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_meeting'])) {
         $body .= "Please log in to respond to this meeting request.\n\n";
         $body .= "Best regards,\n{$full_name}";
 
-        $msg_id = db()->insert('messages', [
-            'sender_id' => $_SESSION['user_id'],
+        $msg_id = insert_flexible('messages', array_merge([
+            'sender_id' => $teacher_user_id,
             'subject' => $subject,
             'message' => $body,
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ], parent_comms_payload('messages', $currentTenantId)));
 
-        db()->insert('message_recipients', [
+        insert_flexible('message_recipients', array_merge([
             'message_id' => $msg_id,
-            'recipient_id' => $parent['user_id'],
+            'recipient_id' => (int)$parent['user_id'],
             'is_read' => 0
-        ]);
+        ], parent_comms_payload('message_recipients', $currentTenantId)));
 
         send_email($parent['email'], $subject, $body);
 
         $message = 'Meeting request sent successfully!';
         $message_type = 'success';
+    } else {
+        $message = 'Selected parent/student pair is not available in your active roster.';
+        $message_type = 'error';
     }
 }
 
-// Get teacher's students with parent information
+$class_scope = parent_comms_scope('classes', 'c', $currentTenantId);
+$student_scope = parent_comms_scope('students', 's', $currentTenantId);
+$student_user_scope = parent_comms_scope('users', 'su', $currentTenantId);
+$parent_scope = parent_comms_scope('parents', 'p', $currentTenantId);
+$parent_user_scope = parent_comms_scope('users', 'pu', $currentTenantId);
+
 $students = db()->fetchAll("
     SELECT DISTINCT s.*, CONCAT(su.first_name, ' ', su.last_name) as student_name,
            p.id as parent_id, CONCAT(pu.first_name, ' ', pu.last_name) as parent_name,
            pu.email as parent_email, pu.id as parent_user_id
     FROM students s
     JOIN users su ON s.user_id = su.id
-    JOIN class_enrollments ce ON s.id = ce.student_id
+    JOIN class_enrollments ce ON ce.student_id = s.id OR ce.student_id = s.user_id
     JOIN classes c ON ce.class_id = c.id
     LEFT JOIN parent_student ps ON s.id = ps.student_id
     LEFT JOIN parents p ON ps.parent_id = p.id
     LEFT JOIN users pu ON p.user_id = pu.id
-    WHERE c.class_teacher_id = ?
+    WHERE {$teacher_match['sql']}{$class_scope['sql']}{$student_scope['sql']}{$student_user_scope['sql']}{$parent_scope['sql']}{$parent_user_scope['sql']}
     ORDER BY student_name
-", [$teacher_id]);
+", array_merge(
+    $teacher_match['params'],
+    $class_scope['params'],
+    $student_scope['params'],
+    $student_user_scope['params'],
+    $parent_scope['params'],
+    $parent_user_scope['params']
+));
 
-// Get recent communications
+// Get recent communications (tenant-scoped)
+$msg_scope = parent_comms_scope('messages', 'm', $currentTenantId);
+$msg_rec_scope = parent_comms_scope('message_recipients', 'mr', $currentTenantId);
+$user_scope = parent_comms_scope('users', 'u', $currentTenantId);
+$parent_scope_comm = parent_comms_scope('parents', 'p', $currentTenantId);
+$student_scope_comm = parent_comms_scope('students', 's', $currentTenantId);
+
 $recent_communications = db()->fetchAll("
     SELECT m.*, mr.is_read, mr.read_at,
            CONCAT(u.first_name, ' ', u.last_name) as recipient_name,
@@ -201,12 +357,26 @@ $recent_communications = db()->fetchAll("
     LEFT JOIN parents p ON u.id = p.user_id
     LEFT JOIN parent_student ps ON p.id = ps.parent_id
     LEFT JOIN students s ON ps.student_id = s.id
-    WHERE m.sender_id = ? AND u.role = 'parent'
+    WHERE m.sender_id = ?" . $msg_scope['sql'] . $msg_rec_scope['sql'] . $user_scope['sql'] . $parent_scope_comm['sql'] . $student_scope_comm['sql'] . "
+      AND u.role = 'parent'
     ORDER BY m.created_at DESC
     LIMIT 10
-", [$_SESSION['user_id']]);
+", array_merge(
+    [$teacher_user_id],
+    $msg_scope['params'],
+    $msg_rec_scope['params'],
+    $user_scope['params'],
+    $parent_scope_comm['params'],
+    $student_scope_comm['params']
+));
 
-// Get upcoming meetings
+// Get upcoming meetings (tenant-scoped)
+$meeting_scope = parent_comms_scope('parent_meetings', 'pm', $currentTenantId);
+$parent_scope_mtg = parent_comms_scope('parents', 'p', $currentTenantId);
+$parent_user_scope_mtg = parent_comms_scope('users', 'pu', $currentTenantId);
+$student_scope_mtg = parent_comms_scope('students', 's', $currentTenantId);
+$student_user_scope_mtg = parent_comms_scope('users', 'su', $currentTenantId);
+
 $upcoming_meetings = db()->fetchAll("
     SELECT pm.*, CONCAT(pu.first_name, ' ', pu.last_name) as parent_name,
            CONCAT(su.first_name, ' ', su.last_name) as student_name
@@ -215,9 +385,17 @@ $upcoming_meetings = db()->fetchAll("
     JOIN users pu ON p.user_id = pu.id
     JOIN students s ON pm.student_id = s.id
     JOIN users su ON s.user_id = su.id
-    WHERE pm.teacher_id = ? AND pm.meeting_date >= CURDATE()
+    WHERE pm.teacher_id = ?" . $meeting_scope['sql'] . $parent_scope_mtg['sql'] . $parent_user_scope_mtg['sql'] . $student_scope_mtg['sql'] . $student_user_scope_mtg['sql'] . "
+      AND pm.meeting_date >= CURDATE()
     ORDER BY pm.meeting_date, pm.meeting_time
-", [$teacher_id]);
+", array_merge(
+    [$teacher_user_id],
+    $meeting_scope['params'],
+    $parent_scope_mtg['params'],
+    $parent_user_scope_mtg['params'],
+    $student_scope_mtg['params'],
+    $student_user_scope_mtg['params']
+));
 
 $page_title = 'Parent Communication';
 $page_icon = 'users';
@@ -236,6 +414,7 @@ $page_icon = 'users';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
 
     <style>
         .communication-card {
@@ -283,7 +462,6 @@ $page_icon = 'users';
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>

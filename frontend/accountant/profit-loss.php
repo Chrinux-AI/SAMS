@@ -15,6 +15,29 @@ if (!has_role('accountant') && !has_role('admin')) {
 
 $tenantId = $_SESSION['tenant_id'] ?? 1;
 
+function accountant_ledger_window_total(int $tenantId, string $category, string $normalType, int $interval): float
+{
+    if (!table_exists('ledger_entries')) {
+        return 0.0;
+    }
+
+    $categoryColumn = table_has_column('ledger_entries', 'category')
+        ? 'category'
+        : (table_has_column('ledger_entries', 'account_name') ? 'account_name' : '');
+    if ($categoryColumn === '') {
+        return 0.0;
+    }
+
+    $row = db()->fetchOne(
+        "SELECT COALESCE(SUM(CASE WHEN type = ? THEN amount ELSE -amount END), 0) AS total
+         FROM ledger_entries
+         WHERE tenant_id = ? AND {$categoryColumn} = ? AND entry_date >= DATE_SUB(CURDATE(), INTERVAL {$interval} DAY)",
+        [$normalType, $tenantId, $category]
+    );
+
+    return (float)($row['total'] ?? 0);
+}
+
 $period = $_GET['period'] ?? 'month';
 $validPeriods = ['month', 'quarter', 'year'];
 if (!in_array($period, $validPeriods, true)) {
@@ -26,7 +49,8 @@ $interval = $intervalMap[$period];
 
 $feeRevenue = 0.0;
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(amount),0) AS total FROM fee_payments WHERE tenant_id = ? AND payment_date >= DATE_SUB(CURDATE(), INTERVAL $interval DAY)", [$tenantId]);
+    $paymentAmountField = table_has_column('fee_payments', 'amount_paid') ? 'amount_paid' : 'amount';
+    $row = db()->fetchOne("SELECT COALESCE(SUM({$paymentAmountField}),0) AS total FROM fee_payments WHERE tenant_id = ? AND payment_date >= DATE_SUB(CURDATE(), INTERVAL $interval DAY)", [$tenantId]);
     $feeRevenue = (float)($row['total'] ?? 0);
 } catch (Throwable $e) {
     $feeRevenue = 0.0;
@@ -34,8 +58,7 @@ try {
 
 $ledgerRevenue = 0.0;
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(credit),0) AS total FROM ledger_entries WHERE tenant_id = ? AND account = 'revenue' AND entry_date >= DATE_SUB(CURDATE(), INTERVAL $interval DAY)", [$tenantId]);
-    $ledgerRevenue = (float)($row['total'] ?? 0);
+    $ledgerRevenue = accountant_ledger_window_total($tenantId, 'income', 'credit', $interval);
 } catch (Throwable $e) {
     $ledgerRevenue = 0.0;
 }
@@ -50,8 +73,7 @@ try {
 
 $ledgerExpenses = 0.0;
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(debit),0) AS total FROM ledger_entries WHERE tenant_id = ? AND account = 'expenses' AND entry_date >= DATE_SUB(CURDATE(), INTERVAL $interval DAY)", [$tenantId]);
-    $ledgerExpenses = (float)($row['total'] ?? 0);
+    $ledgerExpenses = accountant_ledger_window_total($tenantId, 'expense', 'debit', $interval);
 } catch (Throwable $e) {
     $ledgerExpenses = 0.0;
 }
@@ -62,7 +84,8 @@ $netIncome = $totalRevenue - $totalExpenses;
 
 $expenseBreakdown = [];
 try {
-    $expenseBreakdown = db()->fetchAll("SELECT category, SUM(amount) AS total FROM expenses WHERE tenant_id = ? AND expense_date >= DATE_SUB(CURDATE(), INTERVAL $interval DAY) GROUP BY category ORDER BY total DESC", [$tenantId]) ?: [];
+    $expenseCategoryField = table_has_column('expenses', 'expense_category') ? 'expense_category' : 'category';
+    $expenseBreakdown = db()->fetchAll("SELECT {$expenseCategoryField} AS category, SUM(amount) AS total FROM expenses WHERE tenant_id = ? AND expense_date >= DATE_SUB(CURDATE(), INTERVAL $interval DAY) GROUP BY {$expenseCategoryField} ORDER BY total DESC", [$tenantId]) ?: [];
 } catch (Throwable $e) {
     $expenseBreakdown = [];
 }
@@ -71,7 +94,8 @@ $page_title = 'Profit & Loss Statement';
 $page_icon = 'monitoring';
 $page_subtitle = 'Income versus expenses for the selected reporting period.';
 
-ob_start();
+$activeTab = 'profit-loss';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <div class="flex flex-wrap gap-2 mb-6">
@@ -85,15 +109,15 @@ ob_start();
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm text-center">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Total Revenue</p>
-        <p class="text-3xl font-extrabold text-secondary">$<?php echo number_format($totalRevenue, 2); ?></p>
+        <p class="text-3xl font-extrabold text-secondary"><?php echo accountant_currency($totalRevenue); ?></p>
     </div>
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm text-center">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Total Expenses</p>
-        <p class="text-3xl font-extrabold text-error">$<?php echo number_format($totalExpenses, 2); ?></p>
+        <p class="text-3xl font-extrabold text-error"><?php echo accountant_currency($totalExpenses); ?></p>
     </div>
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm text-center">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2"><?php echo $netIncome >= 0 ? 'Net Profit' : 'Net Loss'; ?></p>
-        <p class="text-3xl font-extrabold <?php echo $netIncome >= 0 ? 'text-secondary' : 'text-error'; ?>">$<?php echo number_format(abs($netIncome), 2); ?></p>
+        <p class="text-3xl font-extrabold <?php echo $netIncome >= 0 ? 'text-secondary' : 'text-error'; ?>"><?php echo accountant_currency(abs($netIncome)); ?></p>
     </div>
 </div>
 
@@ -121,15 +145,15 @@ ob_start();
             <tbody class="divide-y divide-surface-container-low">
                 <tr>
                     <td class="px-4 py-3 text-outline">Fee Collections</td>
-                    <td class="px-4 py-3 text-right">$<?php echo number_format($feeRevenue, 2); ?></td>
+                    <td class="px-4 py-3 text-right"><?php echo accountant_currency($feeRevenue); ?></td>
                 </tr>
                 <tr>
                     <td class="px-4 py-3 text-outline">Other Revenue (Ledger)</td>
-                    <td class="px-4 py-3 text-right">$<?php echo number_format($ledgerRevenue, 2); ?></td>
+                    <td class="px-4 py-3 text-right"><?php echo accountant_currency($ledgerRevenue); ?></td>
                 </tr>
                 <tr>
                     <td class="px-4 py-3 font-bold">Total Revenue</td>
-                    <td class="px-4 py-3 text-right font-bold text-secondary">$<?php echo number_format($totalRevenue, 2); ?></td>
+                    <td class="px-4 py-3 text-right font-bold text-secondary"><?php echo accountant_currency($totalRevenue); ?></td>
                 </tr>
             </tbody>
         </table>
@@ -149,13 +173,13 @@ ob_start();
                     <?php foreach ($expenseBreakdown as $entry): ?>
                         <tr>
                             <td class="px-4 py-3"><?php echo ucfirst(htmlspecialchars((string)($entry['category'] ?? 'uncategorized'))); ?></td>
-                            <td class="px-4 py-3 text-right">$<?php echo number_format((float)($entry['total'] ?? 0), 2); ?></td>
+                            <td class="px-4 py-3 text-right"><?php echo accountant_currency((float)($entry['total'] ?? 0)); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <tr>
                     <td class="px-4 py-3 font-bold">Total Expenses</td>
-                    <td class="px-4 py-3 text-right font-bold text-error">$<?php echo number_format($totalExpenses, 2); ?></td>
+                    <td class="px-4 py-3 text-right font-bold text-error"><?php echo accountant_currency($totalExpenses); ?></td>
                 </tr>
             </tbody>
         </table>
@@ -163,6 +187,4 @@ ob_start();
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'reports', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

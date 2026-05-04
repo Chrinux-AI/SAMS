@@ -77,6 +77,28 @@ function base_url($path = '')
 }
 
 /**
+ * Site-wide absolute URL builder.
+ * Produces domain-anchored links based on APP_URL and preserves query strings.
+ * Example: site_url('admin/index.php?page=profile_settings') => https://host/base/admin/index.php?page=profile_settings
+ */
+function site_url($path = '')
+{
+    $base = rtrim(APP_URL, '/');
+    $path = trim((string)$path);
+    if ($path === '') {
+        return $base . '/';
+    }
+
+    // If already an absolute URL, return as-is
+    if (preg_match('#^https?://#i', $path)) {
+        return $path;
+    }
+
+    // Preserve query string when path contains ?
+    return $base . '/' . ltrim($path, '/');
+}
+
+/**
  * Get API URL for backend API calls
  */
 function api_url($endpoint = '')
@@ -87,6 +109,25 @@ function api_url($endpoint = '')
         return $base . '/' . $endpoint;
     }
     return $base;
+}
+
+/**
+ * Normalize any login redirect to the real root login page.
+ */
+function auth_login_url($redirect_url = '')
+{
+    $rootLogin = rtrim(APP_URL, '/') . '/login.php';
+    $redirect_url = trim((string)$redirect_url);
+
+    if ($redirect_url === '') {
+        return $rootLogin;
+    }
+
+    if (strpos($redirect_url, 'login.php') !== false) {
+        return $rootLogin;
+    }
+
+    return $redirect_url;
 }
 
 /**
@@ -317,6 +358,7 @@ function set_user_tenant_session($user_id)
 {
     $tenant_id = resolve_user_tenant_id($user_id);
     $_SESSION['tenant_id'] = $tenant_id;
+    $_SESSION['school_id'] = $tenant_id;
     $_SESSION['tenant_name'] = resolve_tenant_name($tenant_id);
     return $tenant_id;
 }
@@ -378,7 +420,41 @@ function user_in_current_tenant($user_id)
             "SELECT id FROM tenant_users WHERE user_id = ? AND tenant_id = ? AND is_active = 1 LIMIT 1",
             [$user_id, $tenant_id]
         );
-        return (bool)$row;
+        if ($row) {
+            return true;
+        }
+    }
+
+    if (table_exists('users')) {
+        $user = db()->fetchOne(
+            "SELECT tenant_id, school_id FROM users WHERE id = ? LIMIT 1",
+            [$user_id]
+        );
+        if ($user) {
+            $candidateTenantIds = array_filter([
+                (int)($user['tenant_id'] ?? 0),
+                (int)($user['school_id'] ?? 0)
+            ]);
+            if (in_array($tenant_id, $candidateTenantIds, true)) {
+                return true;
+            }
+        }
+    }
+
+    if (table_exists('students')) {
+        $student = db()->fetchOne(
+            "SELECT tenant_id, school_id FROM students WHERE user_id = ? LIMIT 1",
+            [$user_id]
+        );
+        if ($student) {
+            $candidateTenantIds = array_filter([
+                (int)($student['tenant_id'] ?? 0),
+                (int)($student['school_id'] ?? 0)
+            ]);
+            if (in_array($tenant_id, $candidateTenantIds, true)) {
+                return true;
+            }
+        }
     }
 
     return true;
@@ -398,6 +474,7 @@ function enforce_tenant_access($redirect_url = '../login.php')
     }
 
     if (!user_in_current_tenant((int)$_SESSION['user_id'])) {
+        error_log('Tenant access denied for user ' . (int)$_SESSION['user_id'] . ' in tenant ' . (int)($_SESSION['tenant_id'] ?? 0));
         session_destroy();
         redirect($redirect_url, 'Tenant access denied. Please login again.', 'error');
     }
@@ -408,6 +485,7 @@ function enforce_tenant_access($redirect_url = '../login.php')
  */
 function require_login($redirect_url = '../login.php')
 {
+    $redirect_url = auth_login_url($redirect_url);
     if (!is_logged_in()) {
         redirect($redirect_url, 'Please login to access this page', 'error');
     }
@@ -427,6 +505,7 @@ function check_login($redirect_url = '../login.php')
  */
 function require_admin($redirect_url = '../login.php')
 {
+    $redirect_url = auth_login_url($redirect_url);
     // Ensure session is started
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -469,6 +548,7 @@ function require_admin($redirect_url = '../login.php')
  */
 function require_role($role, $redirect_url = '../login.php')
 {
+    $redirect_url = auth_login_url($redirect_url);
     if (!is_logged_in()) {
         redirect($redirect_url, 'Please login to access this page', 'error');
     }
@@ -483,6 +563,7 @@ function require_role($role, $redirect_url = '../login.php')
  */
 function require_teacher($redirect_url = '../login.php')
 {
+    $redirect_url = auth_login_url($redirect_url);
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -510,6 +591,7 @@ function require_teacher($redirect_url = '../login.php')
  */
 function require_student($redirect_url = '../login.php')
 {
+    $redirect_url = auth_login_url($redirect_url);
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -537,6 +619,7 @@ function require_student($redirect_url = '../login.php')
  */
 function require_parent($redirect_url = '../login.php')
 {
+    $redirect_url = auth_login_url($redirect_url);
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -567,28 +650,30 @@ function get_role_dashboard_path($role)
 {
     $role = strtolower(trim((string)$role));
     $map = [
-        'admin' => 'admin/dashboard.php',
-        'superadmin' => 'admin/dashboard.php',
-        'super_admin' => 'admin/dashboard.php',
-        'owner' => 'owner/dashboard.php',
-        'principal' => 'principal/dashboard.php',
-        'vice_principal' => 'principal/dashboard.php',
-        'admin_officer' => 'admin/dashboard.php',
-        'teacher' => 'teacher/dashboard.php',
-        'class_teacher' => 'teacher/dashboard.php',
-        'subject_coordinator' => 'teacher/dashboard.php',
-        'student' => 'student/dashboard.php',
-        'parent' => 'parent/dashboard.php',
-        'librarian' => 'librarian/dashboard.php',
-        'bursar' => 'bursar/dashboard.php',
-        'accountant' => 'accountant/dashboard.php',
-        'transport' => 'transport/dashboard.php',
-        'forum_moderator' => 'forum-moderator/dashboard.php',
-        'counselor' => 'student/dashboard.php',
-        'nurse' => 'nurse/dashboard.php',
-        'staff' => 'staff/dashboard.php',
+        'admin' => 'frontend/admin/dashboard.php',
+        'superadmin' => 'frontend/admin/dashboard.php',
+        'super_admin' => 'frontend/admin/dashboard.php',
+        'owner' => 'frontend/owner/dashboard.php',
+        'principal' => 'frontend/principal/dashboard.php',
+        'vice_principal' => 'frontend/principal/dashboard.php',
+        'admin_officer' => 'frontend/admin/dashboard.php',
+        'teacher' => 'frontend/teacher/dashboard.php',
+        'class_teacher' => 'frontend/teacher/dashboard.php',
+        'subject_coordinator' => 'frontend/teacher/dashboard.php',
+        'student' => 'frontend/student/dashboard.php',
+        'parent' => 'frontend/parent/dashboard.php',
+        'librarian' => 'frontend/librarian/dashboard.php',
+        'bursar' => 'frontend/bursar/dashboard.php',
+        'accountant' => 'frontend/accountant/index.php?page=dashboard',
+        'transport' => 'frontend/transport/dashboard.php',
+        'forum_moderator' => 'frontend/forum-moderator/dashboard.php',
+        'counselor' => 'frontend/student/dashboard.php',
+        'nurse' => 'frontend/nurse/dashboard.php',
+        'staff' => 'frontend/staff/dashboard.php',
     ];
-    return base_url($map[$role] ?? 'login.php');
+    $candidate = $map[$role] ?? 'login.php';
+    // Return an absolute, domain-anchored URL for all role routes
+    return site_url($candidate);
 }
 
 /**
@@ -611,6 +696,15 @@ function validate_post_csrf_if_present()
  */
 function redirect($url, $message = '', $type = 'info')
 {
+    // If target is empty or explicitly points to login, normalize to canonical login URL
+    if ($url === '' || strpos((string)$url, 'login.php') !== false) {
+        $url = auth_login_url($url);
+    } else {
+        // Convert relative (non-absolute) URLs to site-anchored absolute URLs
+        if (!preg_match('#^https?://#i', $url)) {
+            $url = site_url($url);
+        }
+    }
     if ($message) {
         $_SESSION['flash_message'] = $message;
         $_SESSION['flash_type'] = $type;
@@ -810,6 +904,15 @@ function send_notification($user_id, $title, $message, $type = 'info', $channels
         'status' => 'pending',
         'created_at' => date('Y-m-d H:i:s')
     ];
+
+    if (function_exists('current_tenant_id') && function_exists('table_has_column')) {
+        $tenantId = (int)current_tenant_id();
+        if ($tenantId > 0 && table_has_column('notifications', 'tenant_id')) {
+            $data['tenant_id'] = $tenantId;
+        } elseif ($tenantId > 0 && table_has_column('notifications', 'school_id')) {
+            $data['school_id'] = $tenantId;
+        }
+    }
 
     return db()->insert('notifications', $data);
 }
@@ -1245,7 +1348,6 @@ function send_registration_notification($user_id, $email, $name, $role)
     $admin_subject = "New Registration - Pending Approval";
     $admin_message = "
         <h2>🔔 New User Registration</h2>
-        <div class='info-box'>
             <strong>Registration Details:</strong><br>
             Name: $name<br>
             Email: $email<br>
@@ -1720,4 +1822,283 @@ function getStatusBadge($status)
     ];
 
     return $badges[strtolower($status)] ?? '<span class="badge badge-secondary">' . ucfirst($status) . '</span>';
+}
+
+/**
+ * Get unread message count using the active communication schema.
+ */
+function get_unread_message_count(int $userId, ?int $tenantId = null): int
+{
+    if ($userId <= 0) {
+        return 0;
+    }
+
+    $tenantId = $tenantId ?? current_tenant_id();
+    $tenantId = $tenantId > 0 ? $tenantId : 0;
+
+    if (table_exists('comm_messages') && table_exists('comm_participants')) {
+        $messageTenantClause = table_has_column('comm_messages', 'tenant_id') ? ' AND m.tenant_id = ?' : '';
+        $participantTenantClause = table_has_column('comm_participants', 'tenant_id') ? ' AND cp.tenant_id = ?' : '';
+        $readTenantClause = table_has_column('comm_reads', 'tenant_id') ? ' AND cr.tenant_id = ?' : '';
+
+        $params = [$userId, $userId, $userId];
+        if ($readTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        if ($messageTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        if ($participantTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+
+        $row = db()->fetchOne("
+            SELECT COUNT(*) as count
+            FROM comm_messages m
+            JOIN comm_participants cp ON m.conversation_id = cp.conversation_id
+            LEFT JOIN comm_reads cr ON m.id = cr.message_id AND cr.user_id = ?{$readTenantClause}
+            WHERE cp.user_id = ? AND m.sender_id != ?{$messageTenantClause}{$participantTenantClause}
+              AND cr.id IS NULL
+        ", $params);
+
+        return (int)($row['count'] ?? 0);
+    }
+
+    if (table_exists('conversation_messages') && table_exists('conversation_participants')) {
+        $messageTenantClause = table_has_column('conversation_messages', 'tenant_id') ? ' AND cm.tenant_id = ?' : '';
+        $participantTenantClause = table_has_column('conversation_participants', 'tenant_id') ? ' AND cp.tenant_id = ?' : '';
+        $hasLastReadAt = table_has_column('conversation_participants', 'last_read_at');
+
+        $params = [$userId, $userId];
+        if ($messageTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        if ($participantTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+
+        $query = $hasLastReadAt
+            ? "
+                SELECT COUNT(*) as count
+                FROM conversation_messages cm
+                JOIN conversation_participants cp ON cm.conversation_id = cp.conversation_id
+                WHERE cp.user_id = ? AND cm.sender_id != ?
+                  AND (cp.last_read_at IS NULL OR cm.created_at > cp.last_read_at)
+                  {$messageTenantClause}{$participantTenantClause}
+            "
+            : "
+                SELECT COUNT(*) as count
+                FROM conversation_messages cm
+                JOIN conversation_participants cp ON cm.conversation_id = cp.conversation_id
+                WHERE cp.user_id = ? AND cm.sender_id != ?{$messageTenantClause}{$participantTenantClause}
+            ";
+
+        $row = db()->fetchOne($query, $params);
+        return (int)($row['count'] ?? 0);
+    }
+
+    if (table_exists('message_recipients')) {
+        $recipientTenantClause = '';
+        if (table_has_column('message_recipients', 'tenant_id')) {
+            $recipientTenantClause = ' AND tenant_id = ?';
+        } elseif (table_has_column('message_recipients', 'recipient_tenant_id')) {
+            $recipientTenantClause = ' AND recipient_tenant_id = ?';
+        }
+
+        $params = [$userId];
+        if ($recipientTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+
+        $row = db()->fetchOne("
+            SELECT COUNT(*) as count
+            FROM message_recipients
+            WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL{$recipientTenantClause}
+        ", $params);
+
+        return (int)($row['count'] ?? 0);
+    }
+
+    return 0;
+}
+
+/**
+ * Get recent received communications using the active communication schema.
+ */
+function get_recent_received_communications(int $userId, ?int $tenantId = null, int $limit = 5): array
+{
+    if ($userId <= 0) {
+        return [];
+    }
+
+    $tenantId = $tenantId ?? current_tenant_id();
+    $tenantId = $tenantId > 0 ? $tenantId : 0;
+    $limit = max(1, min($limit, 20));
+
+    if (table_exists('comm_messages') && table_exists('comm_participants')) {
+        $messageTenantClause = table_has_column('comm_messages', 'tenant_id') ? ' AND m.tenant_id = ?' : '';
+        $participantTenantClause = table_has_column('comm_participants', 'tenant_id') ? ' AND cp.tenant_id = ?' : '';
+        $readTenantClause = table_has_column('comm_reads', 'tenant_id') ? ' AND cr.tenant_id = ?' : '';
+        $messagePreviewField = table_has_column('comm_messages', 'message_text')
+            ? 'm.message_text'
+            : (table_has_column('comm_messages', 'body') ? 'm.body' : "''");
+
+        $params = [$userId, $userId, $userId];
+        if ($readTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        if ($messageTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        if ($participantTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        $params[] = $limit;
+
+        return db()->fetchAll("
+            SELECT
+                m.id,
+                m.conversation_id,
+                m.created_at,
+                LEFT({$messagePreviewField}, 120) AS subject,
+                u.first_name AS sender_first,
+                u.last_name AS sender_last,
+                CASE WHEN cr.id IS NULL THEN 0 ELSE 1 END AS is_read,
+                cr.read_at
+            FROM comm_messages m
+            JOIN comm_participants cp ON m.conversation_id = cp.conversation_id
+            JOIN users u ON m.sender_id = u.id
+            LEFT JOIN comm_reads cr ON m.id = cr.message_id AND cr.user_id = ?{$readTenantClause}
+            WHERE cp.user_id = ? AND m.sender_id != ?{$messageTenantClause}{$participantTenantClause}
+            ORDER BY m.created_at DESC
+            LIMIT ?
+        ", $params) ?: [];
+    }
+
+    if (table_exists('messages') && table_exists('message_recipients')) {
+        $recipientTenantClause = '';
+        if (table_has_column('message_recipients', 'tenant_id')) {
+            $recipientTenantClause = ' AND mr.tenant_id = ?';
+        } elseif (table_has_column('message_recipients', 'recipient_tenant_id')) {
+            $recipientTenantClause = ' AND mr.recipient_tenant_id = ?';
+        }
+        $messageTenantClause = table_has_column('messages', 'tenant_id') ? ' AND m.tenant_id = ?' : '';
+
+        $params = [$userId];
+        if ($recipientTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        if ($messageTenantClause !== '') {
+            $params[] = $tenantId;
+        }
+        $params[] = $limit;
+
+        return db()->fetchAll("
+            SELECT
+                m.*,
+                u.first_name AS sender_first,
+                u.last_name AS sender_last,
+                mr.is_read,
+                mr.read_at
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            JOIN message_recipients mr ON m.id = mr.message_id
+            WHERE mr.recipient_id = ?{$recipientTenantClause}{$messageTenantClause}
+            ORDER BY m.created_at DESC
+            LIMIT ?
+        ", $params) ?: [];
+    }
+
+    return [];
+}
+
+/**
+ * Get children linked to a parent account with tenant-aware fallback support.
+ */
+function get_parent_linked_children(int $parentId, ?int $tenantId = null): array
+{
+    if ($parentId <= 0) {
+        return [];
+    }
+
+    $tenantId = $tenantId ?? current_tenant_id();
+    $tenantId = $tenantId > 0 ? $tenantId : 0;
+
+    $emailSelect = table_has_column('users', 'email') ? 'u.email' : 'NULL AS email';
+    $userStatusClause = table_has_column('users', 'status') ? " AND u.status = 'active'" : '';
+    $userTenantClause = '';
+    $userTenantParams = [];
+    if ($tenantId > 0) {
+        if (table_has_column('users', 'tenant_id')) {
+            $userTenantClause = ' AND u.tenant_id = ?';
+            $userTenantParams[] = $tenantId;
+        } elseif (table_has_column('users', 'school_id')) {
+            $userTenantClause = ' AND u.school_id = ?';
+            $userTenantParams[] = $tenantId;
+        }
+    }
+
+    $classJoin = (table_exists('classes') && table_has_column('students', 'class_id'))
+        ? ' LEFT JOIN classes c ON s.class_id = c.id'
+        : '';
+    $gradeLevelSelect = ($classJoin !== '' && table_has_column('classes', 'grade_level'))
+        ? 'c.grade_level'
+        : 'NULL AS grade_level';
+    $classNameSelect = ($classJoin !== '' && table_has_column('classes', 'class_name'))
+        ? 'c.class_name'
+        : 'NULL AS class_name';
+    $classCountExpr = '0 AS class_count';
+    if (table_exists('class_enrollments') && table_has_column('class_enrollments', 'student_id') && table_has_column('class_enrollments', 'class_id')) {
+        $classCountExpr = '(SELECT COUNT(DISTINCT ce.class_id) FROM class_enrollments ce WHERE ce.student_id IN (s.user_id, s.id)) AS class_count';
+    }
+
+    $select = "
+        SELECT
+            u.id,
+            u.id AS user_id,
+            s.id AS student_profile_id,
+            CONCAT(u.first_name, ' ', u.last_name) AS child_name,
+            u.first_name,
+            u.last_name,
+            {$emailSelect},
+            s.admission_number AS student_id,
+            {$gradeLevelSelect},
+            {$classNameSelect},
+            {$classCountExpr}
+        FROM users u
+        JOIN students s ON u.id = s.user_id{$classJoin}
+    ";
+
+    if (table_exists('parent_student_links')) {
+        return db()->fetchAll(
+            $select . "
+        JOIN parent_student_links psl ON s.user_id = psl.student_id
+        WHERE psl.parent_id = ?{$userStatusClause}{$userTenantClause}
+        ORDER BY u.first_name, u.last_name
+    ",
+            array_merge([$parentId], $userTenantParams)
+        ) ?: [];
+    }
+
+    if (table_has_column('users', 'parent_id')) {
+        return db()->fetchAll(
+            $select . "
+        WHERE u.parent_id = ? AND u.role = 'student'{$userStatusClause}{$userTenantClause}
+        ORDER BY u.first_name, u.last_name
+    ",
+            array_merge([$parentId], $userTenantParams)
+        ) ?: [];
+    }
+
+    return [];
+}
+
+/**
+ * Format an amount to the user preferred currency.
+ */
+function format_currency($amount)
+{
+    $c = $_SESSION['currency'] ?? 'USD';
+    $sym = ['USD' => '$', 'EUR' => '�', 'GBP' => '�', 'NGN' => '?', 'KES' => 'KSh'];
+    return ($sym[$c] ?? $c . ' ') . number_format((float)$amount, 2);
 }

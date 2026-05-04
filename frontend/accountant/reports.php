@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Accountant Financial Reports
@@ -55,54 +55,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export_csv'])) {
     if ($out !== false) {
       fputcsv($out, ['Date', 'Type', 'Description', 'Amount', 'Reference']);
       try {
-        $rows = [];
+        if (table_exists('financial_records')) {
+          $db = db();
+          $dateColumn = table_has_column('financial_records', 'record_date') ? 'record_date' : 'date';
+          $typeExpr = table_has_column('financial_records', 'record_type')
+            ? "CASE WHEN record_type IN ('income','expense') THEN record_type WHEN category IN ('income','expense') THEN category ELSE record_type END"
+            : "category";
+          $referenceColumn = table_has_column('financial_records', 'reference_number') ? 'reference_number' : 'reference';
+          $sql = "SELECT {$dateColumn} AS report_date, {$typeExpr} AS report_type, description, amount, {$referenceColumn} AS report_reference FROM financial_records
+                         WHERE (tenant_id = :tid OR tenant_id IS NULL)
+                         AND {$dateColumn} BETWEEN :sd AND :ed";
+          $params = [':tid' => $tenantId, ':sd' => $start_date, ':ed' => $end_date];
 
-        if ($type_filter === 'all' || $type_filter === 'income') {
-          if (table_exists('fee_payments')) {
-            $incomeRows = db()->fetchAll(
-              "SELECT DATE(payment_date) AS tx_date,
-                      'income' AS tx_type,
-                      CONCAT('Fee Payment', IF(reference_number IS NOT NULL AND reference_number <> '', CONCAT(' - ', reference_number), '')) AS tx_description,
-                      amount AS tx_amount,
-                      COALESCE(reference_number, CONCAT('PAY-', id)) AS tx_reference
-               FROM fee_payments
-               WHERE tenant_id = ?
-                 AND DATE(payment_date) BETWEEN ? AND ?",
-              [$tenantId, $start_date, $end_date]
-            ) ?: [];
-            $rows = array_merge($rows, $incomeRows);
+          if ($type_filter !== 'all') {
+            $sql .= " AND ({$typeExpr}) = :type";
+            $params[':type'] = $type_filter;
           }
-        }
 
-        if ($type_filter === 'all' || $type_filter === 'expense') {
-          if (table_exists('expenses')) {
-            $expenseRows = db()->fetchAll(
-              "SELECT DATE(expense_date) AS tx_date,
-                      'expense' AS tx_type,
-                      COALESCE(description, 'Expense') AS tx_description,
-                      amount AS tx_amount,
-                      COALESCE(receipt_number, CONCAT('EXP-', id)) AS tx_reference
-               FROM expenses
-               WHERE tenant_id = ?
-                 AND DATE(expense_date) BETWEEN ? AND ?",
-              [$tenantId, $start_date, $end_date]
-            ) ?: [];
-            $rows = array_merge($rows, $expenseRows);
+          $sql .= " ORDER BY {$dateColumn} DESC";
+          $stmt = $db->prepare(
+            $sql
+          );
+          $stmt->execute($params);
+
+          while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            fputcsv($out, [
+              $row['report_date'] ?? '',
+              $row['report_type'] ?? '',
+              $row['description'] ?? '',
+              $row['amount'] ?? 0,
+              $row['report_reference'] ?? ''
+            ]);
           }
-        }
-
-        usort($rows, static function (array $a, array $b): int {
-          return strcmp((string)($b['tx_date'] ?? ''), (string)($a['tx_date'] ?? ''));
-        });
-
-        foreach ($rows as $row) {
-          fputcsv($out, [
-            $row['tx_date'] ?? '',
-            $row['tx_type'] ?? '',
-            $row['tx_description'] ?? '',
-            $row['tx_amount'] ?? 0,
-            $row['tx_reference'] ?? ''
-          ]);
         }
       } catch (Throwable $e) {
         // Fail silently for export stream to avoid partial HTML in CSV.
@@ -118,54 +102,40 @@ $total_income = 0.0;
 $total_expenses = 0.0;
 
 try {
-  $rows = [];
+  if (table_exists('financial_records')) {
+    $db = db();
+    $dateColumn = table_has_column('financial_records', 'record_date') ? 'record_date' : 'date';
+    $typeExpr = table_has_column('financial_records', 'record_type')
+      ? "CASE WHEN record_type IN ('income','expense') THEN record_type WHEN category IN ('income','expense') THEN category ELSE record_type END"
+      : "category";
+    $referenceColumn = table_has_column('financial_records', 'reference_number') ? 'reference_number' : 'reference';
+    $sql = "SELECT {$dateColumn} AS date, {$typeExpr} AS type, description, amount, {$referenceColumn} AS reference FROM financial_records
+             WHERE (tenant_id = :tid OR tenant_id IS NULL)
+             AND {$dateColumn} BETWEEN :sd AND :ed";
+    $params = [':tid' => $tenantId, ':sd' => $start_date, ':ed' => $end_date];
 
-  if ($type_filter === 'all' || $type_filter === 'income') {
-    if (table_exists('fee_payments')) {
-      $incomeRows = db()->fetchAll(
-        "SELECT DATE(payment_date) AS date,
-                'income' AS type,
-                CONCAT('Fee Payment', IF(reference_number IS NOT NULL AND reference_number <> '', CONCAT(' - ', reference_number), '')) AS description,
-                amount,
-                COALESCE(reference_number, CONCAT('PAY-', id)) AS reference
-         FROM fee_payments
-         WHERE tenant_id = ?
-           AND DATE(payment_date) BETWEEN ? AND ?",
-        [$tenantId, $start_date, $end_date]
-      ) ?: [];
-      $rows = array_merge($rows, $incomeRows);
+    if ($type_filter !== 'all') {
+      $sql .= " AND ({$typeExpr}) = :type";
+      $params[':type'] = $type_filter;
     }
-  }
 
-  if ($type_filter === 'all' || $type_filter === 'expense') {
-    if (table_exists('expenses')) {
-      $expenseRows = db()->fetchAll(
-        "SELECT DATE(expense_date) AS date,
-                'expense' AS type,
-                COALESCE(description, 'Expense') AS description,
-                amount,
-                COALESCE(receipt_number, CONCAT('EXP-', id)) AS reference
-         FROM expenses
-         WHERE tenant_id = ?
-           AND DATE(expense_date) BETWEEN ? AND ?",
-        [$tenantId, $start_date, $end_date]
-      ) ?: [];
-      $rows = array_merge($rows, $expenseRows);
-    }
-  }
+    $sql .= "
+             ORDER BY date DESC
+             LIMIT 120";
+    $stmt = $db->prepare(
+      $sql
+    );
+    $stmt->execute($params);
+    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
-  usort($rows, static function (array $a, array $b): int {
-    return strcmp((string)($b['date'] ?? ''), (string)($a['date'] ?? ''));
-  });
-
-  $transactions = array_slice($rows, 0, 120);
-
-  foreach ($transactions as $t) {
-    $amt = (float)($t['amount'] ?? 0);
-    if (($t['type'] ?? '') === 'income') {
-      $total_income += $amt;
-    } else {
-      $total_expenses += $amt;
+    foreach ($transactions as $t) {
+      $amt = (float)($t['amount'] ?? 0);
+      $transactionType = strtolower((string)($t['type'] ?? ''));
+      if ($transactionType === 'income') {
+        $total_income += $amt;
+      } elseif ($transactionType === 'expense') {
+        $total_expenses += $amt;
+      }
     }
   }
 } catch (Throwable $e) {
@@ -201,7 +171,8 @@ $page_title = 'Financial Reports';
 $page_icon = 'assessment';
 $page_subtitle = 'Generate and review financial performance reports.';
 
-ob_start();
+$activeTab = 'reports';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <?php if ($error !== ''): ?>
@@ -247,20 +218,20 @@ ob_start();
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
   <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
     <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Total Income</p>
-    <p class="text-3xl font-extrabold text-secondary">$<?php echo number_format($total_income, 2); ?></p>
+    <p class="text-3xl font-extrabold text-secondary"><?php echo accountant_currency($total_income); ?></p>
   </div>
   <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
     <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Total Expenses</p>
-    <p class="text-3xl font-extrabold text-error">$<?php echo number_format($total_expenses, 2); ?></p>
+    <p class="text-3xl font-extrabold text-error"><?php echo accountant_currency($total_expenses); ?></p>
   </div>
   <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
     <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Net Position</p>
-    <p class="text-3xl font-extrabold <?php echo $net_profit >= 0 ? 'text-secondary' : 'text-error'; ?>">$<?php echo number_format($net_profit, 2); ?></p>
+    <p class="text-3xl font-extrabold <?php echo $net_profit >= 0 ? 'text-secondary' : 'text-error'; ?>"><?php echo accountant_currency($net_profit); ?></p>
   </div>
   <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
     <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Transactions (<?php echo htmlspecialchars($selectedTypeLabel); ?>)</p>
     <p class="text-3xl font-extrabold text-primary"><?php echo number_format($total_transactions); ?></p>
-    <p class="mt-2 text-xs text-outline">Avg volume: $<?php echo number_format($average_transaction, 2); ?></p>
+    <p class="mt-2 text-xs text-outline">Avg volume: <?php echo accountant_currency($average_transaction); ?></p>
   </div>
 </div>
 
@@ -268,19 +239,19 @@ ob_start();
   <aside class="xl:col-span-3 bg-surface-container-low rounded-2xl border border-surface-container-high p-4">
     <h3 class="px-2 pb-3 text-[11px] uppercase tracking-widest text-outline font-bold">Report Center</h3>
     <div class="space-y-2">
-      <a href="income.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
+      <a href="index.php?page=income" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
         <span class="material-symbols-outlined text-base">receipt_long</span>
         Income Statement
       </a>
-      <a href="balance-sheet.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
+      <a href="index.php?page=balance-sheet" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
         <span class="material-symbols-outlined text-base">account_balance</span>
         Balance Sheet
       </a>
-      <a href="tax-reports.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
+      <a href="index.php?page=tax-reports" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
         <span class="material-symbols-outlined text-base">request_quote</span>
         Tax Compliance
       </a>
-      <a href="audit-trail.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
+      <a href="index.php?page=audit-trail" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-lowest transition-colors text-sm font-semibold text-on-surface">
         <span class="material-symbols-outlined text-base">change_history</span>
         Audit Trail
       </a>
@@ -321,7 +292,7 @@ ob_start();
             </td>
             <td class="px-4 py-3"><?php echo htmlspecialchars((string)($t['description'] ?? '')); ?></td>
             <td class="px-4 py-3 text-right font-bold <?php echo $isIncome ? 'text-secondary' : 'text-error'; ?>">
-              <?php echo $isIncome ? '+' : '-'; ?>$<?php echo number_format((float)($t['amount'] ?? 0), 2); ?>
+              <?php echo $isIncome ? '+' : '-'; ?><?php echo accountant_currency((float)($t['amount'] ?? 0)); ?>
             </td>
             <td class="px-4 py-3"><code class="text-xs"><?php echo htmlspecialchars((string)($t['reference'] ?? '')); ?></code></td>
           </tr>
@@ -340,11 +311,11 @@ ob_start();
       </div>
       <p class="text-white/80 text-sm leading-relaxed">Automate reporting workflows. Next scheduled report delivery is set for the first day of next month at 08:00 AM.</p>
       <div class="flex items-center gap-4 pt-2">
-        <button type="button" class="bg-white text-primary px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">Edit Settings</button>
-        <button type="button" class="text-white/80 hover:text-white px-2 py-2 text-xs font-bold transition-all">Disable</button>
+        <a href="index.php?page=settings#notifications" class="inline-flex items-center bg-white text-primary px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">Edit Settings</a>
+        <a href="index.php?page=settings" class="inline-flex items-center text-white/80 hover:text-white px-2 py-2 text-xs font-bold transition-all">Disable</a>
       </div>
     </div>
-    <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
+    <div class="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
   </div>
 
   <div class="bg-surface-container-low p-8 rounded-3xl border border-white space-y-4">
@@ -355,8 +326,8 @@ ob_start();
       </div>
     </div>
     <div class="space-y-4">
-      <div class="p-3 bg-white/60 rounded-xl flex gap-3 items-center">
-        <div class="w-8 h-8 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary">
+      <div class="p-3 bg-white rounded-xl flex gap-3 items-center">
+        <div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-secondary">
           <span class="material-symbols-outlined text-lg">warning</span>
         </div>
         <div>
@@ -364,12 +335,10 @@ ob_start();
           <p class="text-[10px] text-on-surface-variant">Threshold alert triggered recently</p>
         </div>
       </div>
-      <button type="button" class="w-full py-2.5 rounded-xl border-2 border-dashed border-primary/20 text-primary text-xs font-bold hover:bg-primary/5 transition-all">+ Add New Budget Alert</button>
+      <a href="index.php?page=settings#tax" class="inline-flex w-full items-center justify-center py-2.5 rounded-xl border-2 border-dashed border-primary/20 text-primary text-xs font-bold hover:bg-primary/5 transition-all">+ Add New Budget Alert</a>
     </div>
   </div>
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'reports', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

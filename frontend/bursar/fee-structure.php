@@ -30,9 +30,56 @@ try { $classes = db()->fetchAll("SELECT id, name FROM classes WHERE tenant_id = 
     <title>Fee Structure - SAMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/professional-ui.css">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link rel="stylesheet" href="../assets/css/sidebar-nav.css">
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">
+    <style>
+        .finance-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-grid label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            min-height: 44px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #0f172a;
+            padding: 0.65rem 0.75rem;
+            font: inherit;
+        }
+
+        .finance-table th,
+        .finance-table td {
+            padding: 0.875rem 1rem;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .finance-table th {
+            color: #475569;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            background: #f8fafc;
+        }
+    </style>
 </head>
 <body>
 <div class="app-layout">
@@ -42,7 +89,7 @@ try { $classes = db()->fetchAll("SELECT id, name FROM classes WHERE tenant_id = 
         <div class="cyber-content">
             <?php if ($msg): ?><div class="alert alert-info"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
             <div class="card" style="margin-bottom:24px;"><div class="card-header"><h3>Add Fee Structure</h3></div><div class="card-body">
-                <form method="POST" class="form-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;align-items:end;">
+                <form method="POST" class="form-grid finance-form-grid">
                     <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>"><input type="hidden" name="action" value="add">
                     <div><label>Name</label><input type="text" name="name" class="form-control" required placeholder="e.g. Tuition Fee"></div>
                     <div><label>Class</label><select name="class_id" class="form-control"><option value="0">All Classes</option><?php foreach ($classes as $c): ?><option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option><?php endforeach; ?></select></div>
@@ -54,7 +101,7 @@ try { $classes = db()->fetchAll("SELECT id, name FROM classes WHERE tenant_id = 
                 </form>
             </div></div>
             <div class="card"><div class="card-body" style="overflow-x:auto;">
-                <table class="table"><thead><tr><th>Name</th><th>Class</th><th>Amount</th><th>Type</th><th>Term</th><th>Year</th><th>Action</th></tr></thead><tbody>
+                <table class="table finance-table"><thead><tr><th>Name</th><th>Class</th><th>Amount</th><th>Type</th><th>Term</th><th>Year</th><th>Action</th></tr></thead><tbody>
                 <?php if (empty($structures)): ?><tr><td colspan="7" style="text-align:center;padding:24px;">No fee structures defined.</td></tr>
                 <?php else: foreach ($structures as $s): ?>
                 <tr><td><?= htmlspecialchars($s['name']) ?></td><td><?= $s['class_id'] ? htmlspecialchars($s['class_id']) : 'All' ?></td><td>$<?= number_format($s['amount'], 2) ?></td><td><?= ucfirst($s['fee_type'] ?? '') ?></td><td><?= htmlspecialchars($s['term'] ?? '-') ?></td><td><?= htmlspecialchars($s['academic_year'] ?? '-') ?></td><td>

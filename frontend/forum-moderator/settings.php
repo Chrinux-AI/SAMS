@@ -109,6 +109,8 @@ $page_title = "Forum Moderator Settings";
     <title><?php echo $page_title; ?> - SAMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link href="../assets/css/pwa-styles.css" rel="stylesheet">
     <?php include __DIR__ . '/../includes/settings-styles.php'; ?>
 </head>

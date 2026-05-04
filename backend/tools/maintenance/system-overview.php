@@ -31,7 +31,7 @@ $role_categories = [
     ],
     'Finance & Accounting' => [
         'bursar'     => ['label'=>'Bursar','icon'=>'money-check-dollar','color'=>'#14b8a6','gradient'=>'linear-gradient(135deg,#14b8a6,#0d9488)','path'=>'/attendance/bursar/dashboard.php','desc'=>'Fee collection, invoicing, payment plans, receipt generation, and financial summaries','modules'=>['Fee Collection','Invoices','Payment Plans','Receipts','Defaulters','Daily Summary']],
-        'accountant' => ['label'=>'Accountant','icon'=>'calculator','color'=>'#6366f1','gradient'=>'linear-gradient(135deg,#6366f1,#4f46e5)','path'=>'/attendance/accountant/dashboard.php','desc'=>'General ledger, expense tracking, payroll integration, and financial reporting','modules'=>['Ledger','Expenses','Payroll','Balance Sheet','P&L','Tax Reports']],
+        'accountant' => ['label'=>'Accountant','icon'=>'calculator','color'=>'#6366f1','gradient'=>'linear-gradient(135deg,#6366f1,#4f46e5)','path'=>'/attendance/accountant/index.php?page=dashboard','desc'=>'General ledger, expense tracking, payroll integration, and financial reporting','modules'=>['Ledger','Expenses','Payroll','Balance Sheet','P&L','Tax Reports']],
     ],
     'Operations' => [
         'librarian'  => ['label'=>'Librarian','icon'=>'book-open','color'=>'#8b5cf6','gradient'=>'linear-gradient(135deg,#8b5cf6,#7c3aed)','path'=>'/attendance/librarian/dashboard.php','desc'=>'Book catalog management, lending workflow, fines, and digital resource tracking','modules'=>['Catalog','Issue/Return','Fines','Digital Resources','Reports','Inventory']],
@@ -93,7 +93,7 @@ $role_dashboards = [
     'teacher'=>'/attendance/teacher/dashboard.php','class_teacher'=>'/attendance/teacher/dashboard.php',
     'student'=>'/attendance/student/dashboard.php','parent'=>'/attendance/parent/dashboard.php',
     'librarian'=>'/attendance/librarian/dashboard.php','bursar'=>'/attendance/bursar/dashboard.php',
-    'accountant'=>'/attendance/accountant/dashboard.php','transport'=>'/attendance/transport/dashboard.php',
+    'accountant'=>'/attendance/accountant/index.php?page=dashboard','transport'=>'/attendance/transport/dashboard.php',
     'forum_moderator'=>'/attendance/forum-moderator/dashboard.php',
 ];
 $my_dashboard = $role_dashboards[$current_role] ?? '/attendance/login.php';

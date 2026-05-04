@@ -119,7 +119,7 @@ $theme = $_SESSION['theme'] ?? 'light';
                     <div class="user-name"><?= htmlspecialchars($user_name) ?></div>
                     <div class="user-role"><?= ucfirst(str_replace('_', ' ', $current_role)) ?></div>
                 </div>
-                <a href="/logout.php" class="logout-link">
+                <a href="<?php echo rtrim(APP_URL, '/') . '/logout.php'; ?>" class="logout-link">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>

@@ -31,7 +31,7 @@ $modal_size   = $modal_size ?? 'md';
 $size_map = ['sm' => '400px', 'md' => '560px', 'lg' => '780px'];
 $max_width = $size_map[$modal_size] ?? $size_map['md'];
 ?>
-<div id="<?php echo htmlspecialchars($modal_id); ?>" class="sams-modal" style="display:none;position:fixed;inset:0;z-index:var(--z-modal);align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);">
+<div id="<?php echo htmlspecialchars($modal_id); ?>" class="sams-modal" style="display:none;position:fixed;inset:0;z-index:var(--z-modal);align-items:center;justify-content:center;background:rgba(0,0,0,.5);">
   <div class="sams-modal-dialog" style="background:var(--card-bg);border-radius:var(--card-radius);width:92%;max-width:<?php echo $max_width; ?>;max-height:85vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:modalIn var(--duration-base) var(--ease-out);">
     <?php if ($modal_title): ?>
       <div class="sams-modal-header" style="padding:var(--space-lg);border-bottom:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;">

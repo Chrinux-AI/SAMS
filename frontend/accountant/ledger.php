@@ -70,11 +70,79 @@ $totalCredit = array_sum(array_map(static function ($e) {
 
 $balance = $totalDebit - $totalCredit;
 
+$statusFilter = $_GET['status'] ?? 'all';
+if (!in_array($statusFilter, ['all', 'reconciled', 'pending'], true)) {
+    $statusFilter = 'all';
+}
+
+$accountFilter = strtolower(trim((string)($_GET['account'] ?? 'all')));
+$allowedAccounts = ['all', 'assets', 'liabilities', 'revenue', 'expenses', 'equity'];
+if (!in_array($accountFilter, $allowedAccounts, true)) {
+    $accountFilter = 'all';
+}
+
+$searchQuery = trim((string)($_GET['search'] ?? ''));
+
+$filteredEntries = array_values(array_filter($entries, static function ($row) use ($statusFilter, $accountFilter, $searchQuery) {
+    $rowRef = trim((string)($row['reference'] ?? ''));
+    $isReconciled = $rowRef !== '';
+
+    if ($statusFilter === 'reconciled' && !$isReconciled) {
+        return false;
+    }
+    if ($statusFilter === 'pending' && $isReconciled) {
+        return false;
+    }
+
+    $rowAccount = strtolower(trim((string)($row['account'] ?? '')));
+    if ($accountFilter !== 'all' && $rowAccount !== $accountFilter) {
+        return false;
+    }
+
+    if ($searchQuery !== '') {
+        $needle = strtolower($searchQuery);
+        $haystack = strtolower(
+            trim((string)($row['description'] ?? '')) . ' ' .
+            trim((string)($row['reference'] ?? '')) . ' ' .
+            trim((string)($row['account'] ?? ''))
+        );
+        if (strpos($haystack, $needle) === false) {
+            return false;
+        }
+    }
+
+    return true;
+}));
+
+$perPage = 20;
+$totalItems = count($filteredEntries);
+$totalPages = max(1, (int)ceil($totalItems / $perPage));
+$currentPage = max(1, (int)($_GET['p'] ?? 1));
+if ($currentPage > $totalPages) {
+    $currentPage = $totalPages;
+}
+
+$offset = ($currentPage - 1) * $perPage;
+$pageEntries = array_slice($filteredEntries, $offset, $perPage);
+
+$buildLedgerUrl = static function (array $overrides = []) use ($statusFilter, $accountFilter, $searchQuery, $currentPage) {
+    $params = array_merge([
+        'page' => 'ledger',
+        'status' => $statusFilter,
+        'account' => $accountFilter,
+        'search' => $searchQuery,
+        'p' => $currentPage,
+    ], $overrides);
+
+    return 'index.php?' . http_build_query($params);
+};
+
 $page_title = 'General Ledger';
 $page_icon = 'account_balance';
 $page_subtitle = 'Double-entry transaction records and account balances.';
 
-ob_start();
+$activeTab = 'ledger';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <?php if ($message !== ''): ?>
@@ -91,27 +159,27 @@ ob_start();
 <div class="flex space-x-6 overflow-x-auto pb-6 mb-2">
     <div class="flex-none w-72 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-primary">
         <div class="flex justify-between items-start mb-4">
-            <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">account_balance_wallet</span>
-            <span class="text-xs font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full">Liquid</span>
+            <span class="material-symbols-outlined text-primary bg-primary p-2 rounded-lg">account_balance_wallet</span>
+            <span class="text-xs font-bold text-primary px-2 py-0.5 bg-primary rounded-full">Liquid</span>
         </div>
         <p class="text-on-surface-variant text-sm font-medium">Cash at Bank</p>
-        <p class="text-2xl font-headline font-bold text-on-surface mt-1">$<?php echo number_format($totalDebit, 2); ?></p>
+        <p class="text-2xl font-headline font-bold text-on-surface mt-1"><?php echo accountant_currency($totalDebit); ?></p>
     </div>
     <div class="flex-none w-72 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-secondary-container">
         <div class="flex justify-between items-start mb-4">
-            <span class="material-symbols-outlined text-secondary bg-secondary-container/20 p-2 rounded-lg">trending_up</span>
-            <span class="text-xs font-bold text-secondary px-2 py-0.5 bg-secondary-container/20 rounded-full">Pending</span>
+            <span class="material-symbols-outlined text-secondary bg-secondary-container p-2 rounded-lg">trending_up</span>
+            <span class="text-xs font-bold text-secondary px-2 py-0.5 bg-secondary-container rounded-full">Pending</span>
         </div>
         <p class="text-on-surface-variant text-sm font-medium">Accounts Receivable</p>
-        <p class="text-2xl font-headline font-bold text-on-surface mt-1">$<?php echo number_format(max(0, $balance), 2); ?></p>
+        <p class="text-2xl font-headline font-bold text-on-surface mt-1"><?php echo accountant_currency(max(0, $balance)); ?></p>
     </div>
     <div class="flex-none w-72 bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-error">
         <div class="flex justify-between items-start mb-4">
-            <span class="material-symbols-outlined text-error bg-error-container/30 p-2 rounded-lg">trending_down</span>
-            <span class="text-xs font-bold text-error px-2 py-0.5 bg-error-container/30 rounded-full">Due</span>
+            <span class="material-symbols-outlined text-error bg-error-container p-2 rounded-lg">trending_down</span>
+            <span class="text-xs font-bold text-error px-2 py-0.5 bg-error-container rounded-full">Due</span>
         </div>
         <p class="text-on-surface-variant text-sm font-medium">Accounts Payable</p>
-        <p class="text-2xl font-headline font-bold text-on-surface mt-1">$<?php echo number_format($totalCredit, 2); ?></p>
+        <p class="text-2xl font-headline font-bold text-on-surface mt-1"><?php echo accountant_currency($totalCredit); ?></p>
     </div>
     <a href="#quick-journal" class="flex-none w-72 bg-primary-container p-6 rounded-xl shadow-md flex flex-col justify-center items-center text-white hover:opacity-90 transition-all">
         <span class="material-symbols-outlined text-4xl mb-2">add_circle</span>
@@ -122,37 +190,40 @@ ob_start();
 <div class="grid grid-cols-12 gap-8">
     <div class="col-span-12 lg:col-span-9 space-y-6">
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
-            <div class="flex flex-wrap items-center gap-4">
+            <form method="GET" class="flex flex-wrap items-center gap-4">
+                <input type="hidden" name="page" value="ledger">
                 <div class="flex-1 min-w-[180px]">
                     <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Account Filter</label>
-                    <select class="w-full bg-surface-container-low border-none rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
-                        <option>All Accounts</option>
-                        <option>Assets</option>
-                        <option>Liabilities</option>
-                        <option>Revenue</option>
-                        <option>Expenses</option>
+                    <select name="account" class="w-full bg-surface-container-low border-none rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+                        <option value="all" <?php echo $accountFilter === 'all' ? 'selected' : ''; ?>>All Accounts</option>
+                        <option value="assets" <?php echo $accountFilter === 'assets' ? 'selected' : ''; ?>>Assets</option>
+                        <option value="liabilities" <?php echo $accountFilter === 'liabilities' ? 'selected' : ''; ?>>Liabilities</option>
+                        <option value="revenue" <?php echo $accountFilter === 'revenue' ? 'selected' : ''; ?>>Revenue</option>
+                        <option value="expenses" <?php echo $accountFilter === 'expenses' ? 'selected' : ''; ?>>Expenses</option>
+                        <option value="equity" <?php echo $accountFilter === 'equity' ? 'selected' : ''; ?>>Equity</option>
                     </select>
                 </div>
                 <div class="flex-1 min-w-[180px]">
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Date Range</label>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Search</label>
                     <div class="flex items-center bg-surface-container-low rounded-lg px-3 py-2">
-                        <span class="material-symbols-outlined text-sm text-slate-400 mr-2">calendar_today</span>
-                        <input class="bg-transparent border-none p-0 text-sm w-full focus:ring-0" type="text" value="<?php echo htmlspecialchars(date('M d, Y')); ?>" />
+                        <span class="material-symbols-outlined text-sm text-slate-400 mr-2">search</span>
+                        <input name="search" class="bg-transparent border-none p-0 text-sm w-full focus:ring-0" type="text" value="<?php echo htmlspecialchars($searchQuery); ?>" placeholder="Description, account, ref..." />
                     </div>
                 </div>
                 <div class="flex-1 min-w-[150px]">
                     <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Status</label>
                     <div class="flex bg-surface-container-low rounded-lg p-1">
-                        <button type="button" class="flex-1 py-1 px-3 text-xs font-bold bg-white shadow-sm rounded-md">All</button>
-                        <button type="button" class="flex-1 py-1 px-3 text-xs font-bold text-on-surface-variant">Reconciled</button>
+                        <button type="submit" name="status" value="all" class="flex-1 py-1 px-3 text-xs font-bold <?php echo $statusFilter === 'all' ? 'bg-white shadow-sm rounded-md' : 'text-on-surface-variant'; ?>">All</button>
+                        <button type="submit" name="status" value="reconciled" class="flex-1 py-1 px-3 text-xs font-bold <?php echo $statusFilter === 'reconciled' ? 'bg-white shadow-sm rounded-md' : 'text-on-surface-variant'; ?>">Reconciled</button>
+                        <button type="submit" name="status" value="pending" class="flex-1 py-1 px-3 text-xs font-bold <?php echo $statusFilter === 'pending' ? 'bg-white shadow-sm rounded-md' : 'text-on-surface-variant'; ?>">Pending</button>
                     </div>
                 </div>
                 <div class="flex items-end">
-                    <button type="button" class="p-2 bg-surface-container-high rounded-lg text-primary hover:bg-primary-fixed transition-colors">
+                    <button type="submit" class="p-2 bg-surface-container-high rounded-lg text-primary hover:bg-primary-fixed transition-colors" title="Apply filters">
                         <span class="material-symbols-outlined">filter_list</span>
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
 
         <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
@@ -168,12 +239,12 @@ ob_start();
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-surface-container-low text-sm">
-                    <?php if (empty($entries)): ?>
+                    <?php if (empty($pageEntries)): ?>
                         <tr>
                             <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">No ledger entries yet.</td>
                         </tr>
                     <?php else: ?>
-                        <?php foreach (array_slice($entries, 0, 40) as $e): ?>
+                        <?php foreach ($pageEntries as $e): ?>
                             <?php
                             $entryDate = !empty($e['entry_date']) ? date('M d, Y', strtotime((string)$e['entry_date'])) : '-';
                             $debit = (float)($e['debit'] ?? 0);
@@ -201,11 +272,31 @@ ob_start();
             </table>
 
             <div class="px-6 py-4 bg-surface-container-low flex justify-between items-center text-xs font-bold text-on-surface-variant uppercase tracking-widest">
-                <span>Showing <?php echo min(40, count($entries)); ?> of <?php echo count($entries); ?> entries</span>
+                <?php
+                $startRecord = $totalItems === 0 ? 0 : ($offset + 1);
+                $endRecord = min($offset + $perPage, $totalItems);
+                ?>
+                <span>Showing <?php echo $startRecord; ?>-<?php echo $endRecord; ?> of <?php echo $totalItems; ?> entries</span>
                 <div class="flex space-x-2">
-                    <button type="button" class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm hover:bg-white">Prev</button>
-                    <button type="button" class="px-3 py-1 bg-primary text-white rounded-md shadow-sm">1</button>
-                    <button type="button" class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm hover:bg-white">2</button>
+                    <?php if ($currentPage > 1): ?>
+                        <a href="<?php echo htmlspecialchars($buildLedgerUrl(['p' => $currentPage - 1])); ?>" class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm hover:bg-white">Prev</a>
+                    <?php else: ?>
+                        <span class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm opacity-50 cursor-not-allowed">Prev</span>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <?php if ($i === $currentPage): ?>
+                            <span class="px-3 py-1 bg-primary text-white rounded-md shadow-sm"><?php echo $i; ?></span>
+                        <?php else: ?>
+                            <a href="<?php echo htmlspecialchars($buildLedgerUrl(['p' => $i])); ?>" class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm hover:bg-white"><?php echo $i; ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <?php if ($currentPage < $totalPages): ?>
+                        <a href="<?php echo htmlspecialchars($buildLedgerUrl(['p' => $currentPage + 1])); ?>" class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm hover:bg-white">Next</a>
+                    <?php else: ?>
+                        <span class="px-3 py-1 bg-surface-container-lowest rounded-md border border-outline-variant/10 shadow-sm opacity-50 cursor-not-allowed">Next</span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -222,13 +313,13 @@ ob_start();
                     <div class="flex justify-between items-end">
                         <div>
                             <p class="text-[10px] font-bold text-on-surface-variant uppercase">Assets</p>
-                            <p class="text-lg font-headline font-bold text-on-surface">$<?php echo number_format($totalDebit, 2); ?></p>
+                            <p class="text-lg font-headline font-bold text-on-surface"><?php echo accountant_currency($totalDebit); ?></p>
                         </div>
                     </div>
                     <div class="flex justify-between items-end">
                         <div>
                             <p class="text-[10px] font-bold text-on-surface-variant uppercase">Liabilities</p>
-                            <p class="text-lg font-headline font-bold text-on-surface">$<?php echo number_format($totalCredit, 2); ?></p>
+                            <p class="text-lg font-headline font-bold text-on-surface"><?php echo accountant_currency($totalCredit); ?></p>
                         </div>
                     </div>
                     <div class="pt-4 mt-4 border-t border-primary/10">
@@ -291,12 +382,10 @@ ob_start();
             <span class="material-symbols-outlined absolute top-4 right-4 text-white/20 text-4xl">info</span>
             <h4 class="font-bold mb-2">Month-End Audit</h4>
             <p class="text-xs text-blue-100 leading-relaxed mb-4">You have unreconciled transactions pending review. Complete reconciliation before monthly close.</p>
-            <a class="text-xs font-bold underline underline-offset-4 hover:text-white" href="audit-trail.php">Start Audit Tool</a>
+            <a class="text-xs font-bold underline underline-offset-4 hover:text-white" href="index.php?page=audit-trail">Start Audit Tool</a>
         </div>
     </div>
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'ledger', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

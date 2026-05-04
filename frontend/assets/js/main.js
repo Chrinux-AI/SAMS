@@ -76,7 +76,6 @@ function addManifest() {
     appleTouchIcon.href = "/attendance/assets/images/icons/logo3.png";
     document.head.appendChild(appleTouchIcon);
   }
-  }
 
   // Apple mobile web app capable
   if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
@@ -100,6 +99,36 @@ function addManifest() {
 }
 
 ensureProfessionalTheme();
+// Ensure SAMS core styles and Material Symbols are present on legacy pages
+function ensureSamsCore() {
+  // If already loaded, do nothing
+  if (
+    Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(
+      (l) => l.href && l.href.includes("sams-core.css"),
+    )
+  ) {
+    return;
+  }
+
+  try {
+    const core = document.createElement("link");
+    core.rel = "stylesheet";
+    core.href = "/attendance/assets/css/sams-core.css";
+    core.setAttribute("data-sams-core", "true");
+    document.head.appendChild(core);
+
+    const mat = document.createElement("link");
+    mat.rel = "stylesheet";
+    mat.href =
+      "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
+    mat.setAttribute("data-sams-material", "true");
+    document.head.appendChild(mat);
+  } catch (e) {
+    console.error("[Main] ensureSamsCore error", e);
+  }
+}
+
+ensureSamsCore();
 addManifest();
 
 // Theme system (global)

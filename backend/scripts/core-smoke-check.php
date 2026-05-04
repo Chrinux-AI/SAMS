@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -11,23 +12,33 @@ require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 $checks = [];
+$projectRoot = defined('PROJECT_ROOT') ? PROJECT_ROOT : dirname(__DIR__, 2);
 
 $criticalFiles = [
-    BASE_PATH . '/login.php',
-    BASE_PATH . '/forgot-password.php',
-    BASE_PATH . '/confirm-account.php',
-    BASE_PATH . '/admin/dashboard.php',
-    BASE_PATH . '/admin/teachers.php',
-    BASE_PATH . '/admin/students.php',
-    BASE_PATH . '/admin/classes.php',
-    BASE_PATH . '/admin/students-bulk-import.php',
-    BASE_PATH . '/api/messaging.php',
-    BASE_PATH . '/api/health.php',
+    $projectRoot . '/login.php',
+    $projectRoot . '/confirm-account.php',
+
+    // Launch-facing role pages (split frontend layout)
+    $projectRoot . '/frontend/admin/dashboard.php',
+    $projectRoot . '/frontend/admin/teachers.php',
+    $projectRoot . '/frontend/admin/students.php',
+    $projectRoot . '/frontend/admin/classes.php',
+    $projectRoot . '/frontend/admin/approve-users.php',
+    $projectRoot . '/frontend/admin/attendance.php',
+    $projectRoot . '/frontend/teacher/attendance.php',
+    $projectRoot . '/frontend/teacher/parent-comms.php',
+    $projectRoot . '/frontend/student/notifications.php',
+    $projectRoot . '/frontend/parent/dashboard.php',
+
+    // Launch-critical backend/API surfaces
+    $projectRoot . '/backend/api/health.php',
+    $projectRoot . '/backend/communication/api/messages.php',
+    $projectRoot . '/backend/api/notifications.php',
 ];
 
 foreach ($criticalFiles as $file) {
     $checks[] = [
-        'label' => 'FILE ' . str_replace(BASE_PATH . '/', '', $file),
+        'label' => 'FILE ' . str_replace($projectRoot . '/', '', $file),
         'ok' => file_exists($file)
     ];
 }
@@ -65,4 +76,3 @@ if (!empty($failed)) {
 
 echo "Result: PASSED\n";
 exit(0);
-

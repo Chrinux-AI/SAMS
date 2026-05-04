@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_toke
     if ($student_id > 0 && $amount > 0) {
         $inv_num = 'INV-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
         try {
-            db()->insert('invoices', ['tenant_id' => $tenantId, 'invoice_number' => $inv_num, 'student_id' => $student_id, 'total_amount' => $amount, 'balance' => $amount, 'status' => 'unpaid', 'due_date' => $due_date, 'issued_by' => $_SESSION['user_id'], 'notes' => $notes, 'created_at' => date('Y-m-d H:i:s')]);
+            insert_flexible('invoices', ['tenant_id' => $tenantId, 'invoice_number' => $inv_num, 'student_id' => $student_id, 'total_amount' => $amount, 'paid_amount' => 0, 'balance' => $amount, 'status' => 'unpaid', 'due_date' => $due_date, 'issued_by' => $_SESSION['user_id'], 'notes' => $notes, 'created_at' => date('Y-m-d H:i:s')]);
             $message = "Invoice {$inv_num} created for \${$amount}.";
             $message_type = 'success';
         } catch (Exception $e) {
@@ -37,7 +37,7 @@ try {
 }
 $students = [];
 try {
-    $students = db()->fetchAll("SELECT id, full_name FROM users WHERE role = 'student' AND status = 'active' ORDER BY full_name LIMIT 500");
+    $students = db()->fetchAll("SELECT id, full_name FROM users WHERE role = 'student' AND status = 'active' AND (tenant_id = ? OR tenant_id IS NULL) ORDER BY full_name LIMIT 500", [$tenantId]);
 } catch (Exception $e) {
 }
 ?>
@@ -52,9 +52,62 @@ try {
     <title>Invoices - SAMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/professional-ui.css">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link rel="stylesheet" href="../assets/css/sidebar-nav.css">
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">
+    <style>
+        .invoice-table th,
+        .invoice-table td {
+            padding: 0.875rem 1rem;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .invoice-table th {
+            color: #475569;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            background: #f8fafc;
+        }
+
+        .bursar-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            min-height: 44px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #0f172a;
+            padding: 0.65rem 0.75rem;
+            font: inherit;
+        }
+
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+            outline: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -74,7 +127,7 @@ try {
                     <div class="card-body">
                         <h3 style="margin-bottom:16px;"><i class="fas fa-plus"></i> Create Invoice</h3>
                         <form method="POST"><input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; align-items:end;">
+                            <div class="bursar-form-grid">
                                 <div class="form-group"><label>Student</label><select name="student_id" class="form-control" required>
                                         <option value="">Select</option><?php foreach ($students as $s): ?><option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['full_name']) ?></option><?php endforeach; ?>
                                     </select></div>
@@ -88,7 +141,7 @@ try {
                 </div>
                 <div class="card">
                     <div class="card-body" style="overflow-x:auto;">
-                        <table class="table">
+                        <table class="table invoice-table">
                             <thead>
                                 <tr>
                                     <th>Invoice #</th>

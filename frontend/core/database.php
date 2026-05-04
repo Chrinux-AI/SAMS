@@ -222,8 +222,13 @@ class Database
      */
     public function tableExists($table)
     {
-        $sql = "SHOW TABLES LIKE ?";
-        $result = $this->fetchOne($sql, [$table]);
+        $safeTable = preg_replace('/[^a-zA-Z0-9_]/', '', (string)$table);
+        if ($safeTable === '') {
+            return false;
+        }
+
+        $sql = "SHOW TABLES LIKE '{$safeTable}'";
+        $result = $this->fetchOne($sql);
         return !empty($result);
     }
 

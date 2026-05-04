@@ -18,6 +18,42 @@ $tenantId = $_SESSION['tenant_id'] ?? 1;
 $statusMessage = '';
 $statusType = 'info';
 
+if (($_GET['export'] ?? '') === 'csv') {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="expenses_' . date('Y-m-d_H-i-s') . '.csv"');
+
+    $out = fopen('php://output', 'w');
+    if ($out !== false) {
+        fputcsv($out, ['Date', 'Category', 'Description', 'Amount', 'Vendor', 'Payment Method', 'Receipt #', 'Status']);
+        try {
+            $exportRows = db()->fetchAll(
+                "SELECT expense_date, expense_category, description, amount, vendor_name, payment_method, bill_number, status
+                 FROM expenses
+                 WHERE tenant_id = ?
+                 ORDER BY expense_date DESC, created_at DESC",
+                [$tenantId]
+            ) ?: [];
+
+            foreach ($exportRows as $row) {
+                fputcsv($out, [
+                    (string)($row['expense_date'] ?? ''),
+                    (string)($row['expense_category'] ?? ''),
+                    (string)($row['description'] ?? ''),
+                    (float)($row['amount'] ?? 0),
+                    (string)($row['vendor_name'] ?? ''),
+                    (string)($row['payment_method'] ?? ''),
+                    (string)($row['bill_number'] ?? ''),
+                    (string)($row['status'] ?? ''),
+                ]);
+            }
+        } catch (Throwable $e) {
+            // Keep CSV response valid even when data read fails.
+        }
+        fclose($out);
+    }
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
         $statusMessage = 'Security validation failed. Please refresh and try again.';
@@ -27,14 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'add') {
             $data = [
                 'tenant_id' => $tenantId,
+                'expense_number' => 'EXP-' . strtoupper(uniqid()),
                 'expense_date' => trim($_POST['expense_date'] ?? date('Y-m-d')),
-                'category' => trim($_POST['category'] ?? 'other'),
+                'expense_category' => trim($_POST['category'] ?? 'other'),
                 'description' => trim($_POST['description'] ?? ''),
                 'amount' => (float)($_POST['amount'] ?? 0),
-                'vendor' => trim($_POST['vendor'] ?? ''),
+                'vendor_name' => trim($_POST['vendor'] ?? ''),
                 'payment_method' => trim($_POST['payment_method'] ?? 'cash'),
-                'receipt_number' => trim($_POST['receipt_number'] ?? ''),
+                'bill_number' => trim($_POST['receipt_number'] ?? ''),
                 'approved_by' => $_SESSION['user_id'] ?? null,
+                'paid_by' => $_SESSION['user_id'] ?? 0,
+                'status' => 'pending',
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
@@ -49,6 +88,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } catch (Throwable $e) {
                     $statusMessage = 'Could not record expense. Please try again.';
                     $statusType = 'error';
+                }
+            }
+        } elseif ($action === 'delete') {
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id > 0) {
+                try {
+                    db()->query("DELETE FROM expenses WHERE id = ? AND tenant_id = ?", [$id, $tenantId]);
+                    $statusMessage = 'Expense deleted successfully.';
+                    $statusType = 'success';
+                } catch (Throwable $e) {
+                    $statusMessage = 'Could not delete expense. ' . $e->getMessage();
+                    $statusType = 'error';
+                }
+            }
+        } elseif ($action === 'edit') {
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id > 0) {
+                $data = [
+                    'expense_date' => trim($_POST['expense_date'] ?? date('Y-m-d')),
+                    'expense_category' => trim($_POST['category'] ?? 'other'),
+                    'description' => trim($_POST['description'] ?? ''),
+                    'amount' => (float)($_POST['amount'] ?? 0),
+                    'vendor_name' => trim($_POST['vendor'] ?? ''),
+                    'payment_method' => trim($_POST['payment_method'] ?? 'cash'),
+                    'bill_number' => trim($_POST['receipt_number'] ?? '')
+                ];
+                if ($data['amount'] <= 0 || $data['description'] === '') {
+                    $statusMessage = 'Please provide a description and a valid amount.';
+                    $statusType = 'error';
+                } else {
+                    try {
+                        db()->query(
+                            "UPDATE expenses SET expense_date=?, expense_category=?, description=?, amount=?, vendor_name=?, payment_method=?, bill_number=? WHERE id=? AND tenant_id=?",
+                            [
+                                $data['expense_date'],
+                                $data['expense_category'],
+                                $data['description'],
+                                $data['amount'],
+                                $data['vendor_name'],
+                                $data['payment_method'],
+                                $data['bill_number'],
+                                $id,
+                                $tenantId
+                            ]
+                        );
+                        $statusMessage = 'Expense updated successfully.';
+                        $statusType = 'success';
+                    } catch (Throwable $e) {
+                        $statusMessage = 'Could not update expense.';
+                        $statusType = 'error';
+                    }
                 }
             }
         }
@@ -109,7 +199,7 @@ foreach ($expenses as $e) {
         $pendingCount++;
     }
 
-    $category = trim((string)($e['category'] ?? ''));
+    $category = trim((string)($e['expense_category'] ?? ($e['category'] ?? '')));
     if ($category !== '') {
         $liveCategories[strtolower($category)] = ucwords(str_replace('_', ' ', strtolower($category)));
     }
@@ -141,7 +231,8 @@ $page_title = 'Expense Management';
 $page_icon = 'receipt_long';
 $page_subtitle = 'Review, record, and track institutional expenditures.';
 
-ob_start();
+$activeTab = 'expenses';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <?php if ($statusMessage !== ''): ?>
@@ -150,16 +241,11 @@ ob_start();
     </div>
 <?php endif; ?>
 
-<div class="mb-8">
-    <h2 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface">Expense Management</h2>
-    <p class="text-on-surface-variant mt-1">Review and approve institutional expenditures.</p>
-</div>
-
 <div class="flex flex-wrap gap-3 justify-end mb-6">
-    <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-sm font-bold">
+    <a href="index.php?page=expenses&amp;export=csv" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-sm font-bold">
         <span class="material-symbols-outlined text-base">file_download</span> CSV
-    </button>
-    <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-sm font-bold">
+    </a>
+    <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-sm font-bold">
         <span class="material-symbols-outlined text-base">picture_as_pdf</span> PDF
     </button>
     <button type="button" class="inline-flex items-center gap-2 rounded-lg bg-primary text-on-primary px-6 py-2 text-sm font-bold shadow-md shadow-primary/20" onclick="document.getElementById('quick-add-expense').scrollIntoView({behavior:'smooth'})">
@@ -192,7 +278,7 @@ ob_start();
         <p class="text-[10px] font-bold text-on-primary/70 uppercase tracking-[0.2em] mb-2">Operational Health</p>
         <h2 class="text-4xl font-extrabold tracking-tight"><?php echo htmlspecialchars($operationalHealth); ?></h2>
         <p class="text-sm font-medium text-on-primary/80 mt-2"><?php echo htmlspecialchars($operationalSummary); ?></p>
-        <div class="mt-4 h-1.5 w-full bg-on-primary/20 rounded-full overflow-hidden">
+        <div class="mt-4 h-1.5 w-full bg-on-primary rounded-full overflow-hidden">
             <div class="h-full bg-on-primary" style="width:<?php echo $operationalHealth === 'Stable' ? '85' : ($operationalHealth === 'Watch' ? '60' : '40'); ?>%"></div>
         </div>
     </div>
@@ -213,14 +299,14 @@ ob_start();
         <span class="material-symbols-outlined text-base">calendar_month</span>
         <span><?php echo date('M 01'); ?> - <?php echo date('M t, Y'); ?></span>
     </div>
-    <button type="button" class="p-2 rounded-lg text-outline hover:bg-surface-container-highest">
+    <button type="button" onclick="window.location.reload()" class="p-2 rounded-lg text-outline hover:bg-surface-container-highest" title="Refresh list">
         <span class="material-symbols-outlined">refresh</span>
     </button>
 </div>
 
 <div class="bg-surface-container-lowest rounded-lg border border-outline-variant/10 shadow-sm overflow-x-auto">
     <table class="w-full text-sm">
-        <thead class="bg-surface-container-high/30 border-b border-outline-variant/30">
+        <thead class="bg-surface-container-high border-b border-outline-variant/30">
             <tr>
                 <th class="px-6 py-4 text-left text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/70 font-bold">Date</th>
                 <th class="px-6 py-4 text-left text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/70 font-bold">Category</th>
@@ -242,18 +328,18 @@ ob_start();
                         <td class="px-6 py-4 text-sm font-medium text-on-surface-variant"><?php echo !empty($e['expense_date']) ? date('M j, Y', strtotime((string)$e['expense_date'])) : '-'; ?></td>
                         <td class="px-6 py-4">
                             <span class="inline-flex px-2 py-1 rounded bg-secondary-container text-on-secondary-container text-[10px] uppercase tracking-wider font-bold">
-                                <?php echo htmlspecialchars((string)($e['category'] ?? 'other')); ?>
+                                <?php echo htmlspecialchars(ucwords(str_replace('_', ' ', (string)($e['expense_category'] ?? ($e['category'] ?? 'other'))))); ?>
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm font-bold text-on-surface"><?php echo htmlspecialchars((string)($e['description'] ?? '')); ?></td>
-                        <td class="px-6 py-4 text-sm text-on-surface-variant font-medium"><?php echo htmlspecialchars((string)($e['vendor'] ?? '-')); ?></td>
+                        <td class="px-6 py-4 text-sm text-on-surface-variant font-medium"><?php echo htmlspecialchars((string)($e['vendor_name'] ?? ($e['vendor'] ?? '-'))); ?></td>
                         <td class="px-6 py-4 text-right text-sm font-extrabold tabular-nums text-on-surface"><?php echo format_local_currency((float)($e['amount'] ?? 0), 2, $tenantId); ?></td>
                         <td class="px-6 py-4">
                             <?php
                             $rowStatus = strtolower((string)($e['status'] ?? 'submitted'));
                             $statusClass = 'bg-surface-container-highest text-on-surface-variant';
                             if ($rowStatus === 'approved' || $rowStatus === 'paid') {
-                                $statusClass = 'bg-primary/10 text-primary';
+                                $statusClass = 'bg-primary text-on-primary';
                             } elseif ($rowStatus === 'rejected' || $rowStatus === 'failed') {
                                 $statusClass = 'bg-error-container text-error';
                             } elseif ($rowStatus === 'draft') {
@@ -267,13 +353,30 @@ ob_start();
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <div class="inline-flex gap-1">
-                                <button type="button" class="p-2 rounded-lg text-outline hover:bg-surface-container-highest" title="Edit">
+                            <div class="inline-flex gap-1" style="align-items: center;">
+                                <?php
+                                $escData = htmlspecialchars(json_encode([
+                                    'id' => (int)($e['id'] ?? 0),
+                                    'expense_date' => $e['expense_date'] ?? date('Y-m-d'),
+                                    'category' => $e['expense_category'] ?? 'other',
+                                    'description' => $e['description'] ?? '',
+                                    'amount' => (float)($e['amount'] ?? 0),
+                                    'vendor' => $e['vendor_name'] ?? '',
+                                    'payment_method' => $e['payment_method'] ?? 'cash',
+                                    'receipt_number' => $e['bill_number'] ?? ''
+                                ]), ENT_QUOTES, 'UTF-8');
+                                ?>
+                                <button type="button" class="p-2 rounded-lg text-outline hover:bg-surface-container-highest" title="Edit" onclick="startEditExpense(<?php echo $escData; ?>)">
                                     <span class="material-symbols-outlined text-base">edit</span>
                                 </button>
-                                <button type="button" class="p-2 rounded-lg text-tertiary hover:bg-tertiary-container/40" title="Delete">
-                                    <span class="material-symbols-outlined text-base">delete</span>
-                                </button>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this expense?');">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generate_csrf_token()); ?>">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<?php echo (int)($e['id'] ?? 0); ?>">
+                                    <button type="submit" class="p-2 rounded-lg text-tertiary hover:bg-tertiary-container" title="Delete">
+                                        <span class="material-symbols-outlined text-base">delete</span>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -299,10 +402,11 @@ ob_start();
 </div>
 
 <div id="quick-add-expense" class="mt-7 bg-surface-container-lowest rounded-lg border border-outline-variant/10 p-6 shadow-sm">
-    <h3 class="text-lg font-extrabold mb-4">Record New Expense</h3>
-    <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <h3 id="expense-form-title" class="text-lg font-extrabold mb-4">Record New Expense</h3>
+    <form method="POST" id="expense-entry-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generate_csrf_token()); ?>">
-        <input type="hidden" name="action" value="add">
+        <input type="hidden" name="action" id="expense-action" value="add">
+        <input type="hidden" name="id" id="edit-expense-id" value="">
 
         <div>
             <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/70 mb-1">Date</label>
@@ -338,7 +442,7 @@ ob_start();
                 <option value="cash">Cash</option>
                 <option value="bank_transfer">Bank Transfer</option>
                 <option value="cheque">Cheque</option>
-                <option value="mobile_money">Mobile Money</option>
+                <option value="online">Online</option>
             </select>
         </div>
         <div>
@@ -356,6 +460,28 @@ ob_start();
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'expenses', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';
+?>
+<script>
+    function startEditExpense(data) {
+        document.getElementById('expense-form-title').innerText = 'Edit Expense';
+        document.getElementById('expense-action').value = 'edit';
+        document.getElementById('edit-expense-id').value = data.id;
+
+        const form = document.getElementById('expense-entry-form');
+        form.elements['expense_date'].value = data.expense_date;
+        form.elements['category'].value = data.category;
+        form.elements['amount'].value = data.amount;
+        form.elements['vendor'].value = data.vendor;
+        form.elements['description'].value = data.description;
+        form.elements['payment_method'].value = data.payment_method;
+        form.elements['receipt_number'].value = data.receipt_number;
+
+        const btn = form.querySelector('button[type="submit"]');
+        btn.innerHTML = '<span class="material-symbols-outlined text-base">save</span> Update Expense';
+
+        document.getElementById('quick-add-expense').scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+</script>

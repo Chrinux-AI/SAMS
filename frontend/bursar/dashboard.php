@@ -10,41 +10,75 @@ if (!has_role('bursar') && !has_role('admin')) {
 }
 
 $full_name = $_SESSION['full_name'] ?? 'User';
+$tenantId = (int)($_SESSION['tenant_id'] ?? 1);
+
+function brs_scope_sql(string $table, string $alias = ''): array {
+    global $tenantId;
+    $qualified = $alias !== '' ? $alias . '.' : '';
+    if (table_has_column($table, 'tenant_id')) {
+        return ['sql' => " AND {$qualified}tenant_id = ?", 'params' => [$tenantId]];
+    }
+    if (table_has_column($table, 'school_id')) {
+        return ['sql' => " AND {$qualified}school_id = ?", 'params' => [$tenantId]];
+    }
+    return ['sql' => '', 'params' => []];
+}
 
 function brs_count($table, $where = '1=1', $params = []) {
-    try { if (!table_exists($table)) return 0; return (int)db()->count($table, $where, $params); } catch (Throwable $e) { return 0; }
+    try {
+        if (!table_exists($table)) return 0;
+        $scope = brs_scope_sql($table);
+        return (int)db()->count($table, $where . $scope['sql'], array_merge($params, $scope['params']));
+    } catch (Throwable $e) { return 0; }
 }
 function brs_sum($table, $col, $where = '1=1', $params = []) {
     try {
         if (!table_exists($table)) return 0;
-        $r = db()->fetchOne("SELECT COALESCE(SUM($col),0) AS total FROM $table WHERE $where", $params);
+        $scope = brs_scope_sql($table);
+        $r = db()->fetchOne("SELECT COALESCE(SUM($col),0) AS total FROM $table WHERE $where{$scope['sql']}", array_merge($params, $scope['params']));
         return (float)($r['total'] ?? 0);
     } catch (Throwable $e) { return 0; }
 }
 
+$invoiceTable = table_exists('fee_invoices') ? 'fee_invoices' : (table_exists('invoices') ? 'invoices' : null);
+$invoicePendingClause = $invoiceTable === 'invoices' ? "status IN ('unpaid','partial')" : "status = 'pending'";
+$invoiceDefaulterClause = $invoiceTable === 'invoices'
+    ? "status IN ('unpaid','partial') AND due_date < CURDATE()"
+    : "status = 'overdue'";
+$paymentAmountColumn = table_has_column('fee_payments', 'amount_paid') ? 'amount_paid' : 'amount';
+
 $stats = [
     'total_students'    => brs_count('students'),
-    'invoices'          => brs_count('fee_invoices'),
+    'invoices'          => $invoiceTable ? brs_count($invoiceTable) : 0,
     'payments_today'    => brs_count('fee_payments', 'DATE(payment_date) = CURDATE()'),
-    'total_collected'   => brs_sum('fee_payments', 'amount'),
-    'pending_invoices'  => brs_count('fee_invoices', "status = 'pending'"),
-    'defaulters'        => brs_count('fee_invoices', "status = 'overdue'"),
+    'total_collected'   => brs_sum('fee_payments', $paymentAmountColumn),
+    'pending_invoices'  => $invoiceTable ? brs_count($invoiceTable, $invoicePendingClause) : 0,
+    'defaulters'        => $invoiceTable ? brs_count($invoiceTable, $invoiceDefaulterClause) : 0,
     'scholarships'      => brs_count('scholarships'),
 ];
 
 $recent_payments = [];
 try {
     if (table_exists('fee_payments')) {
+        $scope = brs_scope_sql('fee_payments', 'fp');
+        $studentJoin = '';
+        $nameExpr = "'' AS first_name, '' AS last_name";
+        if (table_has_column('fee_payments', 'student_id')) {
+            $studentJoin = " LEFT JOIN students s ON fp.student_id = s.id LEFT JOIN users u ON s.user_id = u.id";
+            $nameExpr = "COALESCE(u.first_name, '') AS first_name, COALESCE(u.last_name, '') AS last_name";
+        } elseif (table_has_column('fee_payments', 'fee_id') && table_exists('invoices') && table_has_column('invoices', 'student_id')) {
+            $studentJoin = " LEFT JOIN invoices inv ON fp.fee_id = inv.id LEFT JOIN students s ON inv.student_id = s.id LEFT JOIN users u ON s.user_id = u.id";
+            $nameExpr = "COALESCE(u.first_name, '') AS first_name, COALESCE(u.last_name, '') AS last_name";
+        }
         $recent_payments = db()->fetchAll("
-            SELECT fp.*, u.first_name, u.last_name
-            FROM fee_payments fp
-            LEFT JOIN students s ON fp.student_id = s.id
-            LEFT JOIN users u ON s.user_id = u.id
+            SELECT fp.*, {$nameExpr}, {$paymentAmountColumn} AS payment_amount
+            FROM fee_payments fp{$studentJoin}
+            WHERE 1=1{$scope['sql']}
             ORDER BY fp.payment_date DESC LIMIT 10
-        ") ?: [];
+        ", $scope['params']) ?: [];
     }
 } catch (Throwable $e) {}
-?>
+
 // Master layout configuration
 $page_title = 'Bursar Dashboard';
 $page_icon = 'fas fa-money-check-dollar';
@@ -194,7 +228,7 @@ ob_start();
                         <?php foreach ($recent_payments as $p): ?>
                         <tr class="hover:bg-slate-50 transition-colors group">
                             <td class="py-3 font-bold text-primary"><?php echo htmlspecialchars(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? '')); ?></td>
-                            <td class="py-3 font-bold text-teal-600">₦<?php echo number_format($p['amount'] ?? 0, 2); ?></td>
+                            <td class="py-3 font-bold text-teal-600">₦<?php echo number_format((float)($p['payment_amount'] ?? 0), 2); ?></td>
                             <td class="py-3 text-slate-600"><span class="px-2 py-1 bg-slate-100 rounded text-xs"><?php echo ucfirst($p['payment_method'] ?? 'cash'); ?></span></td>
                             <td class="py-3 text-slate-500 font-medium"><?php echo date('M j, Y', strtotime($p['payment_date'])); ?></td>
                             <td class="py-3 text-right">

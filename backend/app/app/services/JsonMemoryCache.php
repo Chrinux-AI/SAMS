@@ -471,14 +471,6 @@ class JsonMemoryCache
     }
 
     /**
-     * Get cache statistics
-     */
-    public function getStatistics()
-    {
-        return $this->getCacheStatistics();
-    }
-
-    /**
      * Warm up cache with frequently accessed data
      */
     public function warmUp()

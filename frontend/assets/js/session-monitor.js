@@ -8,10 +8,13 @@
 
   var HEARTBEAT_INTERVAL = 60000; // Check every 60s
   var WARNING_THRESHOLD = 120; // Show warning when 2 min left
+  var LOGOUT_CHANNEL = "sams-auth";
+  var LOGOUT_STORAGE_KEY = "sams-auth-event";
   var idleTimer = null;
   var heartbeatTimer = null;
   var warningShown = false;
   var warningOverlay = null;
+  var logoutChannel = null;
 
   function resetIdleTimer() {
     // The actual timeout enforcement is server-side;
@@ -94,8 +97,79 @@
     window.location.href = "/attendance/login.php?timeout=1";
   }
 
+  function broadcastLogout(reason) {
+    var payload = {
+      event: "logout",
+      reason: reason || "manual",
+      timestamp: Date.now(),
+    };
+
+    try {
+      localStorage.setItem(LOGOUT_STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {}
+
+    try {
+      if ("BroadcastChannel" in window) {
+        if (!logoutChannel) {
+          logoutChannel = new BroadcastChannel(LOGOUT_CHANNEL);
+        }
+        logoutChannel.postMessage(payload);
+      }
+    } catch (e) {}
+  }
+
+  function handleLogoutSignal(payload) {
+    if (!payload || payload.event !== "logout") {
+      return;
+    }
+    if (window.location.pathname.indexOf("/login.php") !== -1) {
+      return;
+    }
+    redirectToLogin();
+  }
+
+  function bindLogoutSignals() {
+    window.addEventListener("storage", function (event) {
+      if (event.key !== LOGOUT_STORAGE_KEY || !event.newValue) {
+        return;
+      }
+      try {
+        handleLogoutSignal(JSON.parse(event.newValue));
+      } catch (e) {}
+    });
+
+    if ("BroadcastChannel" in window) {
+      try {
+        logoutChannel = new BroadcastChannel(LOGOUT_CHANNEL);
+        logoutChannel.onmessage = function (event) {
+          handleLogoutSignal(event.data);
+        };
+      } catch (e) {}
+    }
+
+    document.addEventListener(
+      "click",
+      function (event) {
+        var target = event.target;
+        while (target && target !== document.body) {
+          if (
+            target.tagName === "A" &&
+            /logout\.php(?:\?|$)/i.test(target.getAttribute("href") || "")
+          ) {
+            broadcastLogout("manual");
+            return;
+          }
+          target = target.parentElement;
+        }
+      },
+      true,
+    );
+  }
+
   // Start monitoring
   function init() {
+    bindLogoutSignals();
+
     // Track user activity
     ["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(
       function (evt) {

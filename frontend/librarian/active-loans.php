@@ -63,6 +63,8 @@ $flash = get_flash_message();
     <title>Active Loans - SAMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/professional-ui.css">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link rel="stylesheet" href="../assets/css/sidebar-nav.css">
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -11,11 +11,7 @@ if (!has_role('accountant') && !has_role('admin')) {
 
 $success = '';
 $error = '';
-$category_filter = $_GET['category'] ?? '';
-
-$nowMonth = (int)date('n');
-$nowYear = (int)date('Y');
-$defaultFiscalYear = $nowMonth >= 7 ? ($nowYear . '-' . ($nowYear + 1)) : (($nowYear - 1) . '-' . $nowYear);
+$department_filter = $_GET['department'] ?? '';
 
 // Handle add budget item
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_budget'])) {
@@ -25,26 +21,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_budget'])) {
     $category = trim($_POST['category'] ?? '');
     $amount = floatval($_POST['amount'] ?? 0);
     $description = trim($_POST['description'] ?? '');
-    $fiscalYear = trim((string)($_POST['fiscal_year'] ?? $defaultFiscalYear));
+    $department = trim($_POST['department'] ?? '');
 
     if (empty($category) || $amount <= 0) {
       $error = 'Category and a positive amount are required.';
     } else {
       try {
-        if (table_exists('budget_items')) {
+        if (table_exists('budgets')) {
           $data = [
-            'tenant_id' => $_SESSION['tenant_id'] ?? 1,
-            'fiscal_year' => $fiscalYear,
             'category' => $category,
+            'allocated_amount' => $amount,
+            'spent_amount' => 0,
             'description' => $description,
-            'budgeted_amount' => $amount,
-            'actual_amount' => 0,
+            'department' => $department,
+            'tenant_id' => $_SESSION['tenant_id'] ?? 1,
+            'created_by' => $_SESSION['user_id'],
             'created_at' => date('Y-m-d H:i:s')
           ];
-          insert_flexible('budget_items', $data);
+          insert_flexible('budgets', $data);
           $success = 'Budget item added successfully.';
         } else {
-          $error = 'Budget items table does not exist.';
+          $error = 'Budgets table does not exist.';
         }
       } catch (Exception $e) {
         $error = 'Error adding budget item: ' . $e->getMessage();
@@ -58,21 +55,21 @@ $budgets = [];
 $total_budget = 0;
 $total_spent = 0;
 try {
-  if (table_exists('budget_items')) {
+  if (table_exists('budgets')) {
     $db = db();
-    $sql = "SELECT * FROM budget_items WHERE (tenant_id = :tid OR tenant_id IS NULL)";
+    $sql = "SELECT * FROM budgets WHERE (tenant_id = :tid OR tenant_id IS NULL)";
     $params = [':tid' => $_SESSION['tenant_id'] ?? 1];
-    if (!empty($category_filter)) {
-      $sql .= " AND category = :cat";
-      $params[':cat'] = $category_filter;
+    if (!empty($department_filter)) {
+      $sql .= " AND department = :dept";
+      $params[':dept'] = $department_filter;
     }
     $sql .= " ORDER BY created_at DESC";
     $stmt = $db->prepare($sql);
     $stmt->execute($params);
     $budgets = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($budgets as $b) {
-      $total_budget += floatval($b['budgeted_amount'] ?? 0);
-      $total_spent += floatval($b['actual_amount'] ?? 0);
+      $total_budget += floatval($b['allocated_amount'] ?? 0);
+      $total_spent += floatval($b['spent_amount'] ?? 0);
     }
   }
 } catch (Exception $e) {
@@ -82,11 +79,11 @@ try {
 // Demo data if empty
 if (empty($budgets)) {
   $budgets = [
-    ['id' => 1, 'fiscal_year' => $defaultFiscalYear, 'category' => 'Textbooks', 'budgeted_amount' => 50000, 'actual_amount' => 32000, 'description' => 'Student textbooks for all grades'],
-    ['id' => 2, 'fiscal_year' => $defaultFiscalYear, 'category' => 'Lab Equipment', 'budgeted_amount' => 30000, 'actual_amount' => 28500, 'description' => 'Laboratory supplies and equipment'],
-    ['id' => 3, 'fiscal_year' => $defaultFiscalYear, 'category' => 'Sports', 'budgeted_amount' => 20000, 'actual_amount' => 12000, 'description' => 'Sports equipment and uniforms'],
-    ['id' => 4, 'fiscal_year' => $defaultFiscalYear, 'category' => 'IT Infrastructure', 'budgeted_amount' => 45000, 'actual_amount' => 41000, 'description' => 'Computers and networking'],
-    ['id' => 5, 'fiscal_year' => $defaultFiscalYear, 'category' => 'Maintenance', 'budgeted_amount' => 25000, 'actual_amount' => 15000, 'description' => 'Building and grounds maintenance'],
+    ['id' => 1, 'category' => 'Textbooks', 'department' => 'Academics', 'allocated_amount' => 50000, 'spent_amount' => 32000, 'description' => 'Student textbooks for all grades'],
+    ['id' => 2, 'category' => 'Lab Equipment', 'department' => 'Science', 'allocated_amount' => 30000, 'spent_amount' => 28500, 'description' => 'Laboratory supplies and equipment'],
+    ['id' => 3, 'category' => 'Sports', 'department' => 'Athletics', 'allocated_amount' => 20000, 'spent_amount' => 12000, 'description' => 'Sports equipment and uniforms'],
+    ['id' => 4, 'category' => 'IT Infrastructure', 'department' => 'IT', 'allocated_amount' => 45000, 'spent_amount' => 41000, 'description' => 'Computers and networking'],
+    ['id' => 5, 'category' => 'Maintenance', 'department' => 'Facilities', 'allocated_amount' => 25000, 'spent_amount' => 15000, 'description' => 'Building and grounds maintenance'],
   ];
   $total_budget = 170000;
   $total_spent = 128500;
@@ -99,7 +96,8 @@ $page_title = 'Budget Planning';
 $page_icon = 'request_quote';
 $page_subtitle = 'Plan, allocate, and monitor department budgets.';
 
-ob_start();
+$activeTab = 'budget';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <?php if ($success): ?>
@@ -112,15 +110,15 @@ ob_start();
 <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-7">
   <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-5">
     <p class="text-[11px] uppercase tracking-wider text-outline font-bold mb-2">Total Budget</p>
-    <p class="text-2xl font-extrabold text-primary">$<?php echo number_format($total_budget, 2); ?></p>
+    <p class="text-2xl font-extrabold text-primary"><?php echo accountant_currency($total_budget); ?></p>
   </div>
   <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-5">
     <p class="text-[11px] uppercase tracking-wider text-outline font-bold mb-2">Total Spent</p>
-    <p class="text-2xl font-extrabold text-tertiary">$<?php echo number_format($total_spent, 2); ?></p>
+    <p class="text-2xl font-extrabold text-tertiary"><?php echo accountant_currency($total_spent); ?></p>
   </div>
   <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-5">
     <p class="text-[11px] uppercase tracking-wider text-outline font-bold mb-2">Remaining</p>
-    <p class="text-2xl font-extrabold <?php echo $remaining < 0 ? 'text-error' : 'text-secondary'; ?>">$<?php echo number_format($remaining, 2); ?></p>
+    <p class="text-2xl font-extrabold <?php echo $remaining < 0 ? 'text-error' : 'text-secondary'; ?>"><?php echo accountant_currency($remaining); ?></p>
   </div>
   <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-5">
     <p class="text-[11px] uppercase tracking-wider text-outline font-bold mb-2">Budget Used</p>
@@ -142,12 +140,20 @@ ob_start();
         <input type="text" name="category" required placeholder="e.g. Textbooks" class="w-full rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-3 py-2 text-sm">
       </div>
       <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Amount ($)</label>
+        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Amount (₦)</label>
         <input type="number" name="amount" step="0.01" min="0.01" required placeholder="0.00" class="w-full rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-3 py-2 text-sm">
       </div>
       <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Fiscal Year</label>
-        <input type="text" name="fiscal_year" value="<?php echo htmlspecialchars($defaultFiscalYear); ?>" class="w-full rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-3 py-2 text-sm" placeholder="e.g. 2024-2025" required>
+        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Department</label>
+        <select name="department" class="w-full rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-3 py-2 text-sm">
+          <option value="">Select Department</option>
+          <option value="Academics">Academics</option>
+          <option value="Science">Science</option>
+          <option value="Athletics">Athletics</option>
+          <option value="IT">IT</option>
+          <option value="Facilities">Facilities</option>
+          <option value="Administration">Administration</option>
+        </select>
       </div>
       <div>
         <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Description</label>
@@ -163,16 +169,16 @@ ob_start();
 
 <form method="GET" class="mb-5 flex flex-wrap items-end gap-3">
   <div>
-    <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Filter by Category</label>
-    <select name="category" class="rounded-lg border border-outline-variant/20 bg-surface-container-low px-3 py-2 text-sm">
-      <option value="">All Categories</option>
-      <?php foreach (['Textbooks', 'Lab Equipment', 'Sports', 'IT Infrastructure', 'Maintenance', 'Administration'] as $category): ?>
-        <option value="<?php echo $category; ?>" <?php echo $category_filter === $category ? 'selected' : ''; ?>><?php echo $category; ?></option>
+    <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-2">Filter by Department</label>
+    <select name="department" class="rounded-lg border border-outline-variant/20 bg-surface-container-low px-3 py-2 text-sm">
+      <option value="">All Departments</option>
+      <?php foreach (['Academics', 'Science', 'Athletics', 'IT', 'Facilities', 'Administration'] as $dept): ?>
+        <option value="<?php echo $dept; ?>" <?php echo $department_filter === $dept ? 'selected' : ''; ?>><?php echo $dept; ?></option>
       <?php endforeach; ?>
     </select>
   </div>
   <button type="submit" class="rounded-lg border border-outline-variant/30 px-4 py-2 text-sm font-semibold">Apply</button>
-  <a href="budget.php" class="rounded-lg border border-outline-variant/30 px-4 py-2 text-sm font-semibold">Reset</a>
+  <a href="index.php?page=budget" class="rounded-lg border border-outline-variant/30 px-4 py-2 text-sm font-semibold">Reset</a>
 </form>
 
 <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden">
@@ -180,8 +186,8 @@ ob_start();
     <table class="w-full text-sm">
       <thead class="bg-surface-container-high text-on-surface-variant">
         <tr>
-          <th class="px-4 py-3 text-left font-bold uppercase tracking-wider text-[11px]">Fiscal Year</th>
           <th class="px-4 py-3 text-left font-bold uppercase tracking-wider text-[11px]">Category</th>
+          <th class="px-4 py-3 text-left font-bold uppercase tracking-wider text-[11px]">Department</th>
           <th class="px-4 py-3 text-right font-bold uppercase tracking-wider text-[11px]">Allocated</th>
           <th class="px-4 py-3 text-right font-bold uppercase tracking-wider text-[11px]">Spent</th>
           <th class="px-4 py-3 text-right font-bold uppercase tracking-wider text-[11px]">Remaining</th>
@@ -191,24 +197,24 @@ ob_start();
       <tbody class="divide-y divide-outline-variant/10">
         <?php if (empty($budgets)): ?>
           <tr>
-            <td colspan="7" class="px-4 py-8 text-center text-outline">No budget items found.</td>
+            <td colspan="6" class="px-4 py-8 text-center text-outline">No budget items found.</td>
           </tr>
         <?php else: ?>
           <?php foreach ($budgets as $b):
-            $alloc = floatval($b['budgeted_amount'] ?? 0);
-            $spent = floatval($b['actual_amount'] ?? 0);
+            $alloc = floatval($b['allocated_amount'] ?? 0);
+            $spent = floatval($b['spent_amount'] ?? 0);
             $rem = $alloc - $spent;
             $usage = $alloc > 0 ? round(($spent / $alloc) * 100, 1) : 0;
           ?>
             <tr>
-              <td class="px-4 py-3"><?php echo htmlspecialchars((string)($b['fiscal_year'] ?? $defaultFiscalYear)); ?></td>
               <td class="px-4 py-3">
                 <p class="font-semibold"><?php echo htmlspecialchars($b['category']); ?></p>
                 <p class="text-xs text-outline mt-1"><?php echo htmlspecialchars($b['description'] ?? ''); ?></p>
               </td>
-              <td class="px-4 py-3 text-right">$<?php echo number_format($alloc, 2); ?></td>
-              <td class="px-4 py-3 text-right">$<?php echo number_format($spent, 2); ?></td>
-              <td class="px-4 py-3 text-right <?php echo $rem < 0 ? 'text-error' : 'text-secondary'; ?>">$<?php echo number_format($rem, 2); ?></td>
+              <td class="px-4 py-3"><?php echo htmlspecialchars($b['department'] ?? 'N/A'); ?></td>
+              <td class="px-4 py-3 text-right"><?php echo accountant_currency($alloc); ?></td>
+              <td class="px-4 py-3 text-right"><?php echo accountant_currency($spent); ?></td>
+              <td class="px-4 py-3 text-right <?php echo $rem < 0 ? 'text-error' : 'text-secondary'; ?>"><?php echo accountant_currency($rem); ?></td>
               <td class="px-4 py-3">
                 <p class="text-xs mb-1 <?php echo $usage > 90 ? 'text-error' : ($usage > 70 ? 'text-tertiary' : 'text-secondary'); ?>"><?php echo $usage; ?>%</p>
                 <div class="h-1.5 rounded-full bg-surface-container-high overflow-hidden">
@@ -224,6 +230,4 @@ ob_start();
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'reports', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

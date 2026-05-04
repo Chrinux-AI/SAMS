@@ -3,6 +3,7 @@ session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
+require_once PROJECT_ROOT . '/backend/includes/merit-integration.php';
 require_teacher('../login.php');
 
 $message = '';
@@ -42,6 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_grade'])) {
 
     $id = db()->insert('grades', $data);
     if ($id) {
+        sams_sync_grade_merit(
+            (int) $id,
+            $student_id,
+            $class_id,
+            $percentage,
+            (int) $_SESSION['user_id'],
+            date('Y-m-d'),
+            'teacher_grade'
+        );
         log_activity($_SESSION['user_id'], 'create', 'grades', $id);
         $message = 'Grade added successfully!';
         $message_type = 'success';
@@ -50,8 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_grade'])) {
 
 // Get teacher's classes
 $classes = db()->fetchAll("
-    SELECT * FROM classes WHERE teacher_id = ? ORDER BY class_name
-", [$teacher['id']]);
+    SELECT *
+    FROM classes
+    WHERE class_teacher_id = ? OR created_by = ?
+    ORDER BY class_name
+", [$_SESSION['user_id'], $_SESSION['user_id']]);
 
 // Get selected class students and grades
 $selected_class_id = isset($_GET['class']) ? (int)$_GET['class'] : null;
@@ -59,7 +72,11 @@ $students = [];
 $class_info = null;
 
 if ($selected_class_id) {
-    $class_info = db()->fetchOne("SELECT * FROM classes WHERE id = ? AND teacher_id = ?", [$selected_class_id, $teacher['id']]);
+    $class_info = db()->fetchOne("
+        SELECT *
+        FROM classes
+        WHERE id = ? AND (class_teacher_id = ? OR created_by = ?)
+    ", [$selected_class_id, $_SESSION['user_id'], $_SESSION['user_id']]);
 
     if ($class_info) {
         // Get students enrolled in this class with their grades
@@ -93,7 +110,7 @@ $full_name = $_SESSION['full_name'];
 
 <head>
     <script src="../assets/js/theme-loader.js"></script>
-        <link rel="manifest" href="/attendance/manifest.json">
+    <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <meta charset="UTF-8">
@@ -102,11 +119,11 @@ $full_name = $_SESSION['full_name'];
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
-    
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
 </head>
+
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -146,7 +163,7 @@ $full_name = $_SESSION['full_name'];
                             <?php foreach ($classes as $class): ?>
                                 <a href="?class=<?php echo $class['id']; ?>" class="cyber-btn <?php echo $selected_class_id === $class['id'] ? 'primary' : ''; ?>" style="display:block;padding:20px;text-align:center;">
                                     <div style="font-size:1.2rem;font-weight:700;margin-bottom:5px;"><?php echo htmlspecialchars($class['class_name']); ?></div>
-                                    <div style="font-size:0.85rem;opacity:0.8;">Grade <?php echo $class['grade']; ?> • Room <?php echo $class['room_number']; ?></div>
+                                    <div style="font-size:0.85rem;opacity:0.8;">Grade <?php echo htmlspecialchars((string) ($class['grade_level'] ?? $class['grade'] ?? 'N/A')); ?> | Room <?php echo htmlspecialchars((string) ($class['room_number'] ?? 'TBD')); ?></div>
                                 </a>
                             <?php endforeach; ?>
                         </div>

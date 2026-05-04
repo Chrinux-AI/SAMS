@@ -52,10 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_trip'])) {
 $trips = [];
 try {
   if (table_exists('trip_logs')) {
-    $db = db();
-    $stmt = $db->prepare("SELECT * FROM trip_logs WHERE (tenant_id = :tid OR tenant_id IS NULL) ORDER BY trip_date DESC, departure_time DESC LIMIT 100");
-    $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-    $trips = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $trips = db()->fetchAll("SELECT * FROM trip_logs WHERE (tenant_id = ? OR tenant_id IS NULL) ORDER BY trip_date DESC, departure_time DESC LIMIT 100", [$_SESSION['tenant_id'] ?? 1]) ?: [];
   }
 } catch (Exception $e) {
   $trips = [];
@@ -85,6 +82,8 @@ $page_title = "Trip Logs";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

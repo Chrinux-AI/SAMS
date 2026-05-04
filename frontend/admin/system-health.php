@@ -13,6 +13,23 @@ require_admin('../login.php');
 
 $full_name = $_SESSION['full_name'];
 
+function system_health_message_source(): array
+{
+    $candidates = [
+        ['table' => 'comm_messages', 'alias' => 'm', 'created_field' => 'created_at'],
+        ['table' => 'conversation_messages', 'alias' => 'm', 'created_field' => 'created_at'],
+        ['table' => 'messages', 'alias' => 'm', 'created_field' => 'created_at'],
+    ];
+
+    foreach ($candidates as $candidate) {
+        if (table_exists($candidate['table']) && table_has_column($candidate['table'], $candidate['created_field'])) {
+            return $candidate;
+        }
+    }
+
+    return [];
+}
+
 // Get System Information
 function getSystemMetrics()
 {
@@ -137,17 +154,35 @@ function getApplicationMetrics()
     $metrics['logins_today'] = table_exists('audit_logs')
         ? (db()->count('audit_logs', 'action = ? AND DATE(created_at) = CURDATE()', ['login']) ?? 0)
         : 0;
-    $metrics['attendance_records_today'] = table_exists('attendance_records')
-        ? (db()->count('attendance_records', 'DATE(attendance_date) = CURDATE()') ?? 0)
-        : 0;
+    if (table_exists('attendance_records')) {
+        if (table_has_column('attendance_records', 'attendance_date')) {
+            $metrics['attendance_records_today'] = db()->count('attendance_records', 'DATE(attendance_date) = CURDATE()') ?? 0;
+        } elseif (table_has_column('attendance_records', 'check_in_time')) {
+            $metrics['attendance_records_today'] = db()->count('attendance_records', 'DATE(check_in_time) = CURDATE()') ?? 0;
+        } else {
+            $metrics['attendance_records_today'] = 0;
+        }
+    } else {
+        $metrics['attendance_records_today'] = 0;
+    }
 
     // Messages
-    $metrics['messages_sent_today'] = table_exists('messages')
-        ? (db()->count('messages', 'DATE(created_at) = CURDATE()') ?? 0)
-        : 0;
-    $metrics['unread_messages'] = table_exists('message_recipients')
-        ? (db()->count('message_recipients', 'is_read = 0 AND deleted_at IS NULL') ?? 0)
-        : 0;
+    $messageSource = system_health_message_source();
+    if (!empty($messageSource)) {
+        $tenantId = current_tenant_id();
+        $tenantClause = ($tenantId > 0 && table_has_column($messageSource['table'], 'tenant_id'))
+            ? " AND {$messageSource['alias']}.tenant_id = ?"
+            : '';
+        $tenantParams = $tenantClause !== '' ? [$tenantId] : [];
+        $metrics['messages_sent_today'] = (int)(db()->fetchOne("
+            SELECT COUNT(*) AS count
+            FROM {$messageSource['table']} {$messageSource['alias']}
+            WHERE DATE({$messageSource['alias']}.{$messageSource['created_field']}) = CURDATE(){$tenantClause}
+        ", $tenantParams)['count'] ?? 0);
+    } else {
+        $metrics['messages_sent_today'] = 0;
+    }
+    $metrics['unread_messages'] = get_unread_message_count((int)($_SESSION['user_id'] ?? 0), current_tenant_id());
 
     // Error Rate (today)
     $metrics['total_events_today'] = table_exists('activity_logs')
@@ -260,6 +295,11 @@ foreach ($suggestions as $sugg) {
     elseif ($sugg['type'] === 'info') $health_score -= 5;
 }
 $health_score = max(0, $health_score);
+$health_color = $health_score >= 90
+    ? '#059669'
+    : ($health_score >= 70
+        ? '#2563EB'
+        : ($health_score >= 50 ? '#D97706' : '#DC2626'));
 
 $page_title = 'System Health & Performance';
 $page_icon = 'favorite'; // Material Symbols icon for heart
@@ -272,6 +312,15 @@ ob_start();
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+    .header-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+    }
+
     .health-gauge {
         position: relative;
         width: 200px;
@@ -279,35 +328,78 @@ ob_start();
         margin: 0 auto 20px;
     }
 
+    .score-value {
+        font-size: clamp(2.75rem, 4vw, 3.5rem);
+        font-weight: 900;
+        color: <?php echo $health_color; ?>;
+        margin: 20px 0 12px;
+        letter-spacing: -0.03em;
+    }
+
+    .score-status {
+        color: rgba(15, 23, 42, 0.72);
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .section-heading {
+        margin-bottom: 18px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--text-primary, #0f172a);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
     .metric-card {
-        background: linear-gradient(135deg, rgba(0, 191, 255, 0.05), rgba(138, 43, 226, 0.05));
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        padding: 20px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 247, 255, 0.95));
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
+        padding: 20px 18px;
+        min-height: 168px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 10px;
+        box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
         transition: all 0.3s;
     }
 
     .metric-card:hover {
-        border-color: var(--cyber-cyan);
-        box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+        border-color: rgba(37, 99, 235, 0.25);
+        box-shadow: 0 18px 40px rgba(37, 99, 235, 0.12);
         transform: translateY(-2px);
     }
 
     .metric-value {
-        font-size: 2rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--cyber-cyan), var(--hologram-purple));
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 10px 0;
+        font-size: clamp(1.8rem, 2.6vw, 2.35rem);
+        font-weight: 800;
+        color: var(--text-primary, #0f172a);
+        line-height: 1.1;
+        margin: 0;
     }
 
     .metric-label {
-        color: var(--text-muted);
-        font-size: 0.9rem;
+        color: rgba(15, 23, 42, 0.7);
+        font-size: 0.78rem;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.08em;
+    }
+
+    .metric-meta {
+        color: rgba(15, 23, 42, 0.58);
+        font-size: 0.86rem;
+        line-height: 1.45;
+        margin-top: auto;
     }
 
     .suggestion-card {
@@ -321,23 +413,43 @@ ob_start();
     }
 
     .suggestion-card.success {
-        background: rgba(0, 255, 127, 0.1);
+        background: rgba(16, 185, 129, 0.12);
         border-color: var(--neon-green);
     }
 
     .suggestion-card.info {
-        background: rgba(0, 191, 255, 0.1);
+        background: rgba(59, 130, 246, 0.12);
         border-color: var(--cyber-cyan);
     }
 
     .suggestion-card.warning {
-        background: rgba(255, 165, 0, 0.1);
+        background: rgba(245, 158, 11, 0.12);
         border-color: var(--golden-pulse);
     }
 
     .suggestion-card.danger {
-        background: rgba(255, 69, 0, 0.1);
+        background: rgba(239, 68, 68, 0.12);
         border-color: var(--cyber-red);
+    }
+
+    .suggestion-card p {
+        color: rgba(15, 23, 42, 0.72) !important;
+    }
+
+    @media (max-width: 768px) {
+        .header-actions {
+            align-items: stretch;
+        }
+
+        .header-actions .user-card {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .health-gauge {
+            width: 170px;
+            height: 170px;
+        }
     }
 </style>
 
@@ -359,7 +471,6 @@ ob_start();
         </div>
     </div>
 </div>
-</header>
 
 <div class="cyber-content slide-in">
     <!-- System Health Score -->
@@ -368,10 +479,10 @@ ob_start();
         <div class="health-gauge">
             <canvas id="healthGauge"></canvas>
         </div>
-        <div style="font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--neon-green),var(--cyber-cyan));background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:20px 0;">
+        <div class="score-value">
             <?php echo $health_score; ?>/100
         </div>
-        <div style="color:var(--text-muted);font-size:1.1rem;">
+        <div class="score-status">
             <?php
             if ($health_score >= 90) echo '🟢 Excellent - System running optimally';
             elseif ($health_score >= 70) echo '🟡 Good - Minor optimizations recommended';
@@ -382,8 +493,8 @@ ob_start();
     </div>
 
     <!-- System Metrics Grid -->
-    <h3 style="margin-bottom:20px;"><i class="fas fa-server"></i> System Metrics</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px;">
+    <h3 class="section-heading"><i class="fas fa-server"></i> System Metrics</h3>
+    <div class="metrics-grid">
         <div class="metric-card">
             <i class="fas fa-microchip" style="font-size:2rem;color:var(--cyber-cyan);"></i>
             <div class="metric-value"><?php echo $system_metrics['cpu_load_1min'] ?? 'N/A'; ?></div>
@@ -426,8 +537,8 @@ ob_start();
     </div>
 
     <!-- Database Metrics -->
-    <h3 style="margin-bottom:20px;"><i class="fas fa-database"></i> Database Metrics</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px;">
+    <h3 class="section-heading"><i class="fas fa-database"></i> Database Metrics</h3>
+    <div class="metrics-grid">
         <div class="metric-card">
             <i class="fas fa-database" style="font-size:2rem;color:var(--cyber-cyan);"></i>
             <div class="metric-value"><?php echo $db_metrics['db_size']; ?> MB</div>
@@ -451,8 +562,8 @@ ob_start();
     </div>
 
     <!-- Application Metrics -->
-    <h3 style="margin-bottom:20px;"><i class="fas fa-chart-line"></i> Application Metrics</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px;">
+    <h3 class="section-heading"><i class="fas fa-chart-line"></i> Application Metrics</h3>
+    <div class="metrics-grid">
         <div class="metric-card">
             <i class="fas fa-users" style="font-size:2rem;color:var(--cyber-cyan);"></i>
             <div class="metric-value"><?php echo number_format($app_metrics['total_users']); ?></div>
@@ -509,8 +620,6 @@ ob_start();
         <?php endforeach; ?>
     </div>
 </div>
-</main>
-</div>
 
 <script>
     // Health Gauge Chart
@@ -549,7 +658,6 @@ ob_start();
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/pwa-manager.js"></script>
 <script src="../assets/js/pwa-analytics.js"></script>
-</div><!-- End app-layout -->
 <?php
 // Capture output and use master layout
 $page_content = ob_get_clean();

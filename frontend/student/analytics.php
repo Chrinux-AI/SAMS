@@ -6,51 +6,65 @@ require_student();
 
 
 $user_id = $_SESSION['user_id'];
-
-// Fetch student information
+$attendanceDateField = table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : (table_has_column('attendance_records', 'date') ? 'date' : 'attendance_date');
 $student = db()->fetch("
-    SELECT s.*, c.class_name
+    SELECT s.*, u.first_name, u.last_name, u.email, c.class_name
     FROM students s
-    LEFT JOIN classes c ON s.class_id = c.class_id
+    JOIN users u ON s.user_id = u.id
+    LEFT JOIN classes c ON s.class_id = c.id
     WHERE s.user_id = ?
-", [$user_id]);
+", [$user_id]) ?: [
+    'id' => 0,
+    'user_id' => $user_id,
+    'first_name' => $_SESSION['full_name'] ?? 'Student',
+    'last_name' => '',
+    'email' => $_SESSION['email'] ?? '',
+    'student_id' => '',
+    'class_name' => null,
+];
+$studentRecordIds = array_values(array_unique(array_filter([
+    (int)($student['user_id'] ?? $user_id),
+    (int)($student['id'] ?? 0),
+])));
+$studentPlaceholders = implode(',', array_fill(0, max(1, count($studentRecordIds)), '?'));
 
 // Get attendance trends (last 30 days)
 $attendance_trend = db()->fetchAll("
     SELECT
-        DATE_FORMAT(date, '%b %d') as day,
+        DATE_FORMAT({$attendanceDateField}, '%b %d') as day,
         status,
-        date
+        {$attendanceDateField} as attendance_date
     FROM attendance_records
-    WHERE student_id = ? AND date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-    ORDER BY date ASC
-", [$student['student_id']]);
+    WHERE student_id IN ($studentPlaceholders) AND {$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    ORDER BY {$attendanceDateField} ASC
+", $studentRecordIds ?: [0]);
 
 // Get monthly attendance stats
 $monthly_stats = db()->fetchAll("
     SELECT
-        DATE_FORMAT(date, '%Y-%m') as month,
+        DATE_FORMAT({$attendanceDateField}, '%Y-%m') as month,
         COUNT(*) as total,
         SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) as present,
         SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as absent,
         ROUND((SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 1) as percentage
     FROM attendance_records
-    WHERE student_id = ? AND date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(date, '%Y-%m')
+    WHERE student_id IN ($studentPlaceholders) AND {$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+    GROUP BY DATE_FORMAT({$attendanceDateField}, '%Y-%m')
     ORDER BY month DESC
-", [$student['student_id']]);
+", $studentRecordIds ?: [0]);
 
 // Get behavior score trends
-$behavior_trend = db()->fetchAll("
+$behaviorLogsAvailable = table_exists('behavior_logs');
+$behavior_trend = $behaviorLogsAvailable ? db()->fetchAll("
     SELECT
         DATE_FORMAT(created_at, '%b %d') as day,
         AVG(behavior_score) as score,
         DATE(created_at) as date
     FROM behavior_logs
-    WHERE student_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    WHERE student_id IN ($studentPlaceholders) AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
     GROUP BY DATE(created_at)
     ORDER BY date ASC
-", [$student['student_id']]);
+", $studentRecordIds ?: [0]) : [];
 
 $page_title = "AI Analytics";
 ?>
@@ -66,8 +80,12 @@ $page_title = "AI Analytics";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - Attendance AI</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link href="../assets/css/pwa-styles.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -163,11 +181,10 @@ $page_title = "AI Analytics";
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
-
-<?php include '../includes/sidebar-nav.php'; ?>
-
-    <div class="analytics-container">
+    <div class="app-layout">
+        <?php include '../includes/sidebar-nav.php'; ?>
+        <main class="cyber-main">
+            <div class="analytics-container">
         <h1>
             <i class="fas fa-brain"></i> AI-Powered Analytics
             <span class="ai-badge">AI</span>
@@ -183,14 +200,14 @@ $page_title = "AI Analytics";
                     ROUND((SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 1) as attendance_rate,
                     SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as late_count
                 FROM attendance_records
-                WHERE student_id = ?
-            ", [$student['student_id']]) ?? ['total_days' => 0, 'attendance_rate' => 0, 'late_count' => 0];
+                WHERE student_id IN ($studentPlaceholders)
+            ", $studentRecordIds ?: [0]) ?? ['total_days' => 0, 'attendance_rate' => 0, 'late_count' => 0];
 
-            $behavior_avg = db()->fetch("
+            $behavior_avg = $behaviorLogsAvailable ? db()->fetch("
                 SELECT AVG(behavior_score) as avg_score
                 FROM behavior_logs
-                WHERE student_id = ?
-            ", [$student['student_id']]) ?? ['avg_score' => 0];
+                WHERE student_id IN ($studentPlaceholders)
+            ", $studentRecordIds ?: [0]) : ['avg_score' => 0];
             ?>
 
             <div class="stat-box">
@@ -272,6 +289,8 @@ $page_title = "AI Analytics";
                 ?>
             </p>
         </div>
+            </div>
+        </main>
     </div>
 
     <?php include '../includes/sams-bot.php'; ?>

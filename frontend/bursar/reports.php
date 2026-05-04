@@ -14,9 +14,12 @@ $dateCondition = match($period) {
     'term' => "AND fp.payment_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)",
     'year' => "AND fp.payment_date >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)",
 };
+$paymentAmountField = table_has_column('fee_payments', 'amount_paid') ? 'amount_paid' : 'amount';
+$paymentStatusField = table_has_column('fee_payments', 'payment_status') ? 'payment_status' : 'status';
+$paymentTypeField = table_has_column('fee_payments', 'payment_type') ? 'payment_type' : $paymentStatusField;
 $summary = ['total_collected' => 0, 'total_invoiced' => 0, 'total_outstanding' => 0, 'payment_count' => 0];
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(amount),0) as total, COUNT(*) as cnt FROM fee_payments fp WHERE fp.tenant_id = ? $dateCondition", [$tenantId]);
+    $row = db()->fetchOne("SELECT COALESCE(SUM({$paymentAmountField}),0) as total, COUNT(*) as cnt FROM fee_payments fp WHERE fp.tenant_id = ? $dateCondition", [$tenantId]);
     $summary['total_collected'] = $row['total'] ?? 0;
     $summary['payment_count'] = $row['cnt'] ?? 0;
 } catch (Exception $e) {}
@@ -26,9 +29,9 @@ try {
     $summary['total_outstanding'] = $row['outstanding'] ?? 0;
 } catch (Exception $e) {}
 $byType = [];
-try { $byType = db()->fetchAll("SELECT payment_type, COUNT(*) as cnt, SUM(amount) as total FROM fee_payments fp WHERE fp.tenant_id = ? $dateCondition GROUP BY payment_type ORDER BY total DESC", [$tenantId]); } catch (Exception $e) {}
+try { $byType = db()->fetchAll("SELECT {$paymentTypeField} AS payment_type, COUNT(*) as cnt, SUM({$paymentAmountField}) as total FROM fee_payments fp WHERE fp.tenant_id = ? $dateCondition GROUP BY {$paymentTypeField} ORDER BY total DESC", [$tenantId]); } catch (Exception $e) {}
 $byMethod = [];
-try { $byMethod = db()->fetchAll("SELECT payment_method, COUNT(*) as cnt, SUM(amount) as total FROM fee_payments fp WHERE fp.tenant_id = ? $dateCondition GROUP BY payment_method ORDER BY total DESC", [$tenantId]); } catch (Exception $e) {}
+try { $byMethod = db()->fetchAll("SELECT payment_method, COUNT(*) as cnt, SUM({$paymentAmountField}) as total FROM fee_payments fp WHERE fp.tenant_id = ? $dateCondition GROUP BY payment_method ORDER BY total DESC", [$tenantId]); } catch (Exception $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,9 +42,27 @@ try { $byMethod = db()->fetchAll("SELECT payment_method, COUNT(*) as cnt, SUM(am
     <title>Financial Reports - SAMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/professional-ui.css">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link rel="stylesheet" href="../assets/css/sidebar-nav.css">
     <link rel="stylesheet" href="../assets/css/sams-theme-system.css">
     <link rel="stylesheet" href="../assets/css/sams-layout.css">
+    <style>
+        .report-table th,
+        .report-table td {
+            padding: 0.875rem 1rem;
+            vertical-align: middle;
+        }
+
+        .report-table th {
+            color: #475569;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            background: #f8fafc;
+        }
+    </style>
 </head>
 <body>
 <div class="app-layout">
@@ -59,15 +80,15 @@ try { $byMethod = db()->fetchAll("SELECT payment_method, COUNT(*) as cnt, SUM(am
                 <div class="card"><div class="card-body" style="text-align:center;"><h3 style="color:#ef4444;font-size:2rem;">$<?= number_format($summary['total_outstanding'], 2) ?></h3><p>Outstanding</p></div></div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-                <div class="card"><div class="card-header"><h3>By Fee Type</h3></div><div class="card-body">
-                    <table class="table"><thead><tr><th>Type</th><th>Count</th><th>Total</th></tr></thead><tbody>
+                <div class="card"><div class="card-header"><h3><?= table_has_column('fee_payments', 'payment_type') ? 'By Fee Type' : 'By Payment Status' ?></h3></div><div class="card-body">
+                    <table class="table report-table"><thead><tr><th><?= table_has_column('fee_payments', 'payment_type') ? 'Type' : 'Status' ?></th><th>Count</th><th>Total</th></tr></thead><tbody>
                     <?php if (empty($byType)): ?><tr><td colspan="3" style="text-align:center;">No data</td></tr>
                     <?php else: foreach ($byType as $t): ?>
                     <tr><td><?= ucfirst(htmlspecialchars($t['payment_type'] ?? 'Unknown')) ?></td><td><?= $t['cnt'] ?></td><td>$<?= number_format($t['total'], 2) ?></td></tr>
                     <?php endforeach; endif; ?></tbody></table>
                 </div></div>
                 <div class="card"><div class="card-header"><h3>By Payment Method</h3></div><div class="card-body">
-                    <table class="table"><thead><tr><th>Method</th><th>Count</th><th>Total</th></tr></thead><tbody>
+                    <table class="table report-table"><thead><tr><th>Method</th><th>Count</th><th>Total</th></tr></thead><tbody>
                     <?php if (empty($byMethod)): ?><tr><td colspan="3" style="text-align:center;">No data</td></tr>
                     <?php else: foreach ($byMethod as $m): ?>
                     <tr><td><?= ucfirst(htmlspecialchars($m['payment_method'] ?? 'Unknown')) ?></td><td><?= $m['cnt'] ?></td><td>$<?= number_format($m['total'], 2) ?></td></tr>

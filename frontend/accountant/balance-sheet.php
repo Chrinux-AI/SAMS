@@ -15,19 +15,37 @@ if (!has_role('accountant') && !has_role('admin')) {
 
 $tenantId = $_SESSION['tenant_id'] ?? 1;
 
+function accountant_ledger_signed_total(int $tenantId, string $category, string $normalType): float
+{
+    if (!table_exists('ledger_entries')) {
+        return 0.0;
+    }
+
+    $categoryColumn = table_has_column('ledger_entries', 'category')
+        ? 'category'
+        : (table_has_column('ledger_entries', 'account_name') ? 'account_name' : '');
+    if ($categoryColumn === '') {
+        return 0.0;
+    }
+
+    $row = db()->fetchOne(
+        "SELECT COALESCE(SUM(CASE WHEN type = ? THEN amount ELSE -amount END), 0) AS total
+         FROM ledger_entries
+         WHERE tenant_id = ? AND {$categoryColumn} = ?",
+        [$normalType, $tenantId, $category]
+    );
+
+    return (float)($row['total'] ?? 0);
+}
+
 $assets = 0.0;
 $liabilities = 0.0;
 $equity = 0.0;
 
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(debit),0) - COALESCE(SUM(credit),0) AS bal FROM ledger_entries WHERE tenant_id = ? AND account = 'assets'", [$tenantId]);
-    $assets = (float)($row['bal'] ?? 0);
-
-    $row = db()->fetchOne("SELECT COALESCE(SUM(credit),0) - COALESCE(SUM(debit),0) AS bal FROM ledger_entries WHERE tenant_id = ? AND account = 'liabilities'", [$tenantId]);
-    $liabilities = (float)($row['bal'] ?? 0);
-
-    $row = db()->fetchOne("SELECT COALESCE(SUM(credit),0) - COALESCE(SUM(debit),0) AS bal FROM ledger_entries WHERE tenant_id = ? AND account = 'equity'", [$tenantId]);
-    $equity = (float)($row['bal'] ?? 0);
+    $assets = accountant_ledger_signed_total($tenantId, 'asset', 'debit');
+    $liabilities = accountant_ledger_signed_total($tenantId, 'liability', 'credit');
+    $equity = accountant_ledger_signed_total($tenantId, 'equity', 'credit');
 } catch (Throwable $e) {
     $assets = $liabilities = $equity = 0.0;
 }
@@ -35,18 +53,16 @@ try {
 $revenue = 0.0;
 $totalExpenses = 0.0;
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(credit),0) - COALESCE(SUM(debit),0) AS bal FROM ledger_entries WHERE tenant_id = ? AND account = 'revenue'", [$tenantId]);
-    $revenue = (float)($row['bal'] ?? 0);
-
-    $row = db()->fetchOne("SELECT COALESCE(SUM(debit),0) - COALESCE(SUM(credit),0) AS bal FROM ledger_entries WHERE tenant_id = ? AND account = 'expenses'", [$tenantId]);
-    $totalExpenses = (float)($row['bal'] ?? 0);
+    $revenue = accountant_ledger_signed_total($tenantId, 'income', 'credit');
+    $totalExpenses = accountant_ledger_signed_total($tenantId, 'expense', 'debit');
 } catch (Throwable $e) {
     $revenue = 0.0;
     $totalExpenses = 0.0;
 }
 
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(amount),0) AS total FROM fee_payments WHERE tenant_id = ?", [$tenantId]);
+    $paymentAmountField = table_has_column('fee_payments', 'amount_paid') ? 'amount_paid' : 'amount';
+    $row = db()->fetchOne("SELECT COALESCE(SUM({$paymentAmountField}),0) AS total FROM fee_payments WHERE tenant_id = ?", [$tenantId]);
     $revenue += (float)($row['total'] ?? 0);
 } catch (Throwable $e) {
 }
@@ -66,35 +82,36 @@ $page_title = 'Balance Sheet';
 $page_icon = 'account_balance';
 $page_subtitle = 'Assets, liabilities, and equity position as of ' . date('M j, Y') . '.';
 
-ob_start();
+$activeTab = 'balance-sheet';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Total Assets</p>
-        <p class="text-3xl font-extrabold text-primary">$<?php echo number_format(max(0, $assets), 2); ?></p>
+        <p class="text-3xl font-extrabold text-primary"><?php echo accountant_currency(max(0, $assets)); ?></p>
     </div>
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Liabilities</p>
-        <p class="text-3xl font-extrabold text-error">$<?php echo number_format($liabilities, 2); ?></p>
+        <p class="text-3xl font-extrabold text-error"><?php echo accountant_currency($liabilities); ?></p>
     </div>
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Equity + Retained</p>
-        <p class="text-3xl font-extrabold text-secondary">$<?php echo number_format($equity + $retainedEarnings, 2); ?></p>
+        <p class="text-3xl font-extrabold text-secondary"><?php echo accountant_currency($equity + $retainedEarnings); ?></p>
     </div>
     <div class="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high shadow-sm">
         <p class="text-[11px] uppercase tracking-widest text-outline font-bold mb-2">Balance Check</p>
         <p class="text-2xl font-extrabold <?php echo $balanced ? 'text-secondary' : 'text-error'; ?>">
             <?php echo $balanced ? 'Balanced' : 'Variance'; ?>
         </p>
-        <p class="mt-2 text-sm text-outline">$<?php echo number_format(abs($variance), 2); ?></p>
+        <p class="mt-2 text-sm text-outline"><?php echo accountant_currency(abs($variance)); ?></p>
     </div>
 </div>
 
 <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-4 mb-8">
     <p class="text-xs font-bold uppercase tracking-wider text-outline mb-2">Accounting Equation</p>
     <p class="text-lg font-headline font-extrabold text-on-surface">
-        Assets ($<?php echo number_format($assets, 2); ?>) = Liabilities ($<?php echo number_format($liabilities, 2); ?>) + Equity ($<?php echo number_format($equity + $retainedEarnings, 2); ?>)
+        Assets (<?php echo accountant_currency($assets); ?>) = Liabilities (<?php echo accountant_currency($liabilities); ?>) + Equity (<?php echo accountant_currency($equity + $retainedEarnings); ?>)
     </p>
 </div>
 
@@ -107,11 +124,11 @@ ob_start();
             <tbody class="divide-y divide-surface-container-low">
                 <tr>
                     <td class="px-4 py-3 text-outline">Ledger Asset Position</td>
-                    <td class="px-4 py-3 text-right font-bold text-primary">$<?php echo number_format($assets, 2); ?></td>
+                    <td class="px-4 py-3 text-right font-bold text-primary"><?php echo accountant_currency($assets); ?></td>
                 </tr>
                 <tr>
                     <td class="px-4 py-3 font-bold">Total Assets</td>
-                    <td class="px-4 py-3 text-right font-extrabold text-secondary">$<?php echo number_format($assets, 2); ?></td>
+                    <td class="px-4 py-3 text-right font-extrabold text-secondary"><?php echo accountant_currency($assets); ?></td>
                 </tr>
             </tbody>
         </table>
@@ -125,19 +142,19 @@ ob_start();
             <tbody class="divide-y divide-surface-container-low">
                 <tr>
                     <td class="px-4 py-3 text-outline">Liabilities</td>
-                    <td class="px-4 py-3 text-right">$<?php echo number_format($liabilities, 2); ?></td>
+                    <td class="px-4 py-3 text-right"><?php echo accountant_currency($liabilities); ?></td>
                 </tr>
                 <tr>
                     <td class="px-4 py-3 text-outline">Owner's Equity</td>
-                    <td class="px-4 py-3 text-right">$<?php echo number_format($equity, 2); ?></td>
+                    <td class="px-4 py-3 text-right"><?php echo accountant_currency($equity); ?></td>
                 </tr>
                 <tr>
                     <td class="px-4 py-3 text-outline">Retained Earnings</td>
-                    <td class="px-4 py-3 text-right">$<?php echo number_format($retainedEarnings, 2); ?></td>
+                    <td class="px-4 py-3 text-right"><?php echo accountant_currency($retainedEarnings); ?></td>
                 </tr>
                 <tr>
                     <td class="px-4 py-3 font-bold">Total Liabilities + Equity</td>
-                    <td class="px-4 py-3 text-right font-extrabold text-primary">$<?php echo number_format($totalLiabilitiesEquity, 2); ?></td>
+                    <td class="px-4 py-3 text-right font-extrabold text-primary"><?php echo accountant_currency($totalLiabilitiesEquity); ?></td>
                 </tr>
             </tbody>
         </table>
@@ -148,11 +165,9 @@ ob_start();
     <?php if ($balanced): ?>
         <p class="font-bold"><span class="material-symbols-outlined align-middle mr-1" style="font-size:18px">verified</span>Balance sheet is balanced.</p>
     <?php else: ?>
-        <p class="font-bold"><span class="material-symbols-outlined align-middle mr-1" style="font-size:18px">warning</span>Balance sheet variance detected: $<?php echo number_format(abs($variance), 2); ?>.</p>
+        <p class="font-bold"><span class="material-symbols-outlined align-middle mr-1" style="font-size:18px">warning</span>Balance sheet variance detected: <?php echo accountant_currency(abs($variance)); ?>.</p>
     <?php endif; ?>
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'reports', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

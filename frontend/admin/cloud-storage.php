@@ -113,7 +113,7 @@ $available_percentage = 100 - $used_percentage;
 
 <head>
     <script src="../assets/js/theme-loader.js"></script>
-        <link rel="manifest" href="/attendance/manifest.json">
+    <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <meta charset="UTF-8">
@@ -142,7 +142,7 @@ $available_percentage = 100 - $used_percentage;
             font-size: 0.9rem;
             font-weight: 600;
             z-index: 1000;
-            backdrop-filter: blur(10px);
+
         }
 
         .storage-overview {
@@ -271,7 +271,7 @@ $available_percentage = 100 - $used_percentage;
 
 
 
-        <!-- Cloud Indicator -->
+    <!-- Cloud Indicator -->
     <div class="cloud-indicator">
         <i class="fas fa-cloud"></i> Cloud Connected
     </div>
@@ -285,7 +285,7 @@ $available_percentage = 100 - $used_percentage;
             </div>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <span style="color: #10b981;"><i class="fas fa-check-circle"></i> All Clouds Online</span>
-                <a href="../logout.php" class="btn-logout">
+                <a href="<?php echo htmlspecialchars(site_url('logout.php')); ?>" class="btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>

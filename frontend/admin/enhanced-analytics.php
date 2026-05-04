@@ -148,7 +148,7 @@ $smart_recommendations = [
 
 <head>
     <script src="../assets/js/theme-loader.js"></script>
-        <link rel="manifest" href="/attendance/manifest.json">
+    <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <meta charset="UTF-8">
@@ -175,7 +175,7 @@ $smart_recommendations = [
 
         .metric-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+
             border-radius: 15px;
             padding: 20px;
             text-align: center;
@@ -203,7 +203,7 @@ $smart_recommendations = [
 
         .chart-container {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
@@ -278,7 +278,7 @@ $smart_recommendations = [
 
 
 
-        <!-- Real-time Indicator -->
+    <!-- Real-time Indicator -->
     <div class="realtime-indicator">
         <i class="fas fa-broadcast-tower"></i> Live AI Processing
     </div>
@@ -292,7 +292,7 @@ $smart_recommendations = [
             </div>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <span>Real-time Analysis Active</span>
-                <a href="../logout.php" class="btn-logout">
+                <a href="<?php echo htmlspecialchars(site_url('logout.php')); ?>" class="btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>

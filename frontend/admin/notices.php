@@ -88,7 +88,7 @@ $stats = [
 
 // Get all notices
 $filter = $_GET['filter'] ?? 'active';
-$where_clause = $filter === 'archived' ? "status='archived'" : "status='active'";
+$where_clause = $filter === 'archived' ? "n.status='archived'" : "n.status='active'";
 
 $notices = db()->fetchAll("
     SELECT n.*, u.first_name, u.last_name
@@ -98,10 +98,7 @@ $notices = db()->fetchAll("
     ORDER BY n.is_pinned DESC, n.created_at DESC
 ");
 
-$unread_messages = db()->fetchOne(
-    "SELECT COUNT(*) as count FROM message_recipients WHERE recipient_id = ? AND is_read = 0",
-    [$admin_id]
-)['count'] ?? 0;
+$unread_messages = get_unread_message_count((int)$admin_id, current_tenant_id());
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,6 +114,8 @@ $unread_messages = db()->fetchOne(
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
 </head>
 
@@ -125,7 +124,13 @@ $unread_messages = db()->fetchOne(
 
 
     <div class="app-layout">
-        <?php include '../includes/sidebar-nav.php'; ?>
+        <?php
+        try {
+            include '../includes/sidebar-nav.php';
+        } catch (Throwable $e) {
+            error_log('Notices sidebar include failed: ' . $e->getMessage());
+        }
+        ?>
         <main class="main-content">
             <header class="cyber-header">
                 <div class="page-title-section">

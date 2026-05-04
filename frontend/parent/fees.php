@@ -66,13 +66,16 @@ $full_name = $_SESSION['full_name'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     
 </head>
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -94,13 +97,13 @@ $full_name = $_SESSION['full_name'];
                     </div>
                 </div>
             </header>
-            <div class="app-layout">
+            <div style="display:grid;gap:24px;">
                 <?php if (empty($children)): ?>
                     <div class="holo-card">
                         <div class="card-body" style="text-align:center;padding:40px;">
-                            <i class="fas fa-user-friends" style="font-size:3rem;color:rgba(255,255,255,0.3);margin-bottom:15px;"></i>
-                            <div style="color:rgba(255,255,255,0.6);">No children linked to your account</div>
-                            <div style="color:rgba(255,255,255,0.4);font-size:0.9rem;margin-top:10px;">Please contact the administrator</div>
+                            <i class="fas fa-user-friends" style="font-size:3rem;color:#cbd5e1;margin-bottom:15px;"></i>
+                            <div style="color:#0f172a;font-weight:600;">No children linked to your account</div>
+                            <div style="color:#64748b;font-size:0.9rem;margin-top:10px;">Please contact the administrator</div>
                         </div>
                     </div>
                 <?php else: ?>
