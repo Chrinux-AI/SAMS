@@ -105,7 +105,8 @@ function themeInjectTailwindConfig()
   $config = themeGetTailwindConfig();
 ?>
   <script>
-    tailwind.config = {
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
       darkMode: "<?php echo $config['darkMode']; ?>",
       theme: {
         extend: {
@@ -164,13 +165,13 @@ function themeGetFaviconMeta($basePath = '/attendance/assets/images/icons/')
 {
   return <<<HTML
 <!-- Favicon: Light and Dark Mode -->
-<link rel="icon" type="image/png" href="${basePath}logo3.png" />
-<link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" href="${basePath}logo2.png" />
-<link rel="shortcut icon" href="${basePath}logo3.png" />
-<link rel="apple-touch-icon" href="${basePath}logo3.png" />
-<link rel="apple-touch-icon" sizes="152x152" href="${basePath}logo3.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="${basePath}logo3.png" />
-<link rel="apple-touch-icon" sizes="192x192" href="${basePath}logo3.png" />
+<link rel="icon" type="image/png" href="{$basePath}logo3.png" />
+<link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" href="{$basePath}logo2.png" />
+<link rel="shortcut icon" href="{$basePath}logo3.png" />
+<link rel="apple-touch-icon" href="{$basePath}logo3.png" />
+<link rel="apple-touch-icon" sizes="152x152" href="{$basePath}logo3.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="{$basePath}logo3.png" />
+<link rel="apple-touch-icon" sizes="192x192" href="{$basePath}logo3.png" />
 HTML;
 }
 

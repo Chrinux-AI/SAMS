@@ -8,71 +8,28 @@ session_start();
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_admin('../login.php');
+require_once PROJECT_ROOT . '/backend/modules/admin/AdminManager.php';
 
 $user_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'] ?? ($_SESSION['first_name'] ?? 'Admin') . ' ' . ($_SESSION['last_name'] ?? '');
+$dashboardManager = new AdminManager((int)($_SESSION['tenant_id'] ?? 1));
+$dashboardPayload = $dashboardManager->getDashboardPayload();
 
-// Stats with safe queries
-try {
-    $total_students = db()->fetchOne("SELECT COUNT(*) as cnt FROM students WHERE is_active = 1")['cnt'] ?? 0;
-    $total_teachers = db()->fetchOne("SELECT COUNT(*) as cnt FROM users WHERE role = 'teacher' AND is_active = 1")['cnt'] ?? 0;
-    $total_classes  = db()->fetchOne("SELECT COUNT(*) as cnt FROM classes WHERE is_active = 1")['cnt'] ?? 0;
-    $total_parents  = db()->fetchOne("SELECT COUNT(*) as cnt FROM users WHERE role = 'parent' AND is_active = 1")['cnt'] ?? 0;
-} catch (Exception $e) {
-    $total_students = $total_teachers = $total_classes = $total_parents = 0;
-}
+$summary = $dashboardPayload['summary'] ?? [];
+$attendanceToday = $dashboardPayload['attendance_today'] ?? [];
+$recent_records = $dashboardPayload['recent_records'] ?? [];
+$risk_students = $dashboardPayload['risk_students'] ?? [];
 
-// Today's attendance
-$today = date('Y-m-d');
-try {
-    $att = db()->fetchOne("SELECT COUNT(*) as total,
-        SUM(CASE WHEN status='present' THEN 1 ELSE 0 END) as present,
-        SUM(CASE WHEN status='late' THEN 1 ELSE 0 END) as late,
-        SUM(CASE WHEN status='absent' THEN 1 ELSE 0 END) as absent
-        FROM attendance WHERE date = ?", [$today]);
-    $today_total   = (int)($att['total'] ?? 0);
-    $today_present = (int)($att['present'] ?? 0);
-    $today_late    = (int)($att['late'] ?? 0);
-    $today_absent  = (int)($att['absent'] ?? 0);
-    $today_rate    = $today_total > 0 ? round((($today_present + $today_late) / $today_total) * 100, 1) : 0;
-} catch (Exception $e) {
-    $today_total = $today_present = $today_late = $today_absent = 0;
-    $today_rate = 0;
-}
+$total_students = (int)($summary['students'] ?? 0);
+$total_teachers = (int)($summary['teachers'] ?? 0);
+$total_classes = (int)($summary['classes'] ?? 0);
+$total_parents = (int)($summary['parents'] ?? 0);
 
-// Recent attendance records
-try {
-    $recent_records = db()->fetchAll("
-        SELECT a.status, a.date, u.first_name, u.last_name, c.class_name as class_name,
-               CONCAT(u.first_name, ' ', u.last_name) as student_name
-        FROM attendance a
-        LEFT JOIN students s ON a.student_id = s.id
-        LEFT JOIN users u ON s.user_id = u.id
-        LEFT JOIN classes c ON a.class_id = c.id
-        ORDER BY a.created_at DESC LIMIT 10
-    ");
-} catch (Exception $e) {
-    $recent_records = [];
-}
-
-// Risk students (>20% absent in last 30 days)
-try {
-    $risk_students = db()->fetchAll("
-        SELECT s.id, s.admission_number, u.first_name, u.last_name,
-               COUNT(a.id) as total_days,
-               SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) as absent_days
-        FROM students s
-        JOIN users u ON s.user_id = u.id
-        JOIN attendance a ON a.student_id = s.id
-        WHERE a.date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-        GROUP BY s.id, s.admission_number, u.first_name, u.last_name
-        HAVING (SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) / COUNT(a.id)) > 0.2
-        ORDER BY (SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) / COUNT(a.id)) DESC
-        LIMIT 5
-    ");
-} catch (Exception $e) {
-    $risk_students = [];
-}
+$today_total = (int)($attendanceToday['total'] ?? 0);
+$today_present = (int)($attendanceToday['present'] ?? 0);
+$today_late = (int)($attendanceToday['late'] ?? 0);
+$today_absent = (int)($attendanceToday['absent'] ?? 0);
+$today_rate = (float)($attendanceToday['rate'] ?? 0);
 
 // Academic year
 $academic_year = date('Y') . '/' . (date('Y') + 1);
@@ -181,7 +138,7 @@ ob_start();
       ?>
       <div class="flex-1 bg-slate-50 rounded-t-lg relative <?php echo $isWeekend ? 'opacity-50' : 'group'; ?>" style="height:<?php echo $heights[$i]; ?>%">
         <?php if (!$isWeekend): ?>
-        <div class="absolute inset-x-0 bottom-0 bg-primary/10 rounded-t-lg group-hover:bg-primary/20 transition-all" style="height:<?php echo $fills[$i]; ?>%"></div>
+        <div class="absolute inset-x-0 bottom-0 bg-primary rounded-t-lg group-hover:bg-primary transition-all" style="height:<?php echo $fills[$i]; ?>%"></div>
         <?php endif; ?>
         <span class="absolute -bottom-6 inset-x-0 text-[10px] text-center text-slate-400"><?php echo $day; ?></span>
       </div>

@@ -98,7 +98,7 @@ $recent_activity = RealtimeSync::getRecentActivity();
 
 <head>
     <script src="../assets/js/theme-loader.js"></script>
-        <link rel="manifest" href="/attendance/manifest.json">
+    <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <meta charset="UTF-8">
@@ -283,7 +283,7 @@ $recent_activity = RealtimeSync::getRecentActivity();
 
 
 
-        <!-- Live Indicator -->
+    <!-- Live Indicator -->
     <div class="live-indicator">
         <i class="fas fa-circle" style="color: #ef4444;"></i> LIVE
     </div>
@@ -297,7 +297,7 @@ $recent_activity = RealtimeSync::getRecentActivity();
             </div>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <span style="color: #10b981;"><i class="fas fa-circle"></i> All Systems Operational</span>
-                <a href="../logout.php" class="btn-logout">
+                <a href="<?php echo htmlspecialchars(site_url('logout.php')); ?>" class="btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>

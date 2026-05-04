@@ -5,9 +5,9 @@ require_once __DIR__ . '/../../includes/functions.php';
 header('Content-Type: application/json');
 
 // Ensure correct roles
-if (!is_logged_in() || (!has_role('accountant') && !has_role('owner') && !has_role('super_admin'))) {
+if (!is_logged_in() || !has_role('dev')) {
   http_response_code(403);
-  echo json_encode(['success' => false, 'error' => 'Unauthorized access. Accountant role required.']);
+  echo json_encode(['success' => false, 'error' => 'Unauthorized access. Dev role required to view AI Insights.']);
   exit;
 }
 
@@ -176,7 +176,7 @@ Keep the tone encouraging but strictly professional and analytical.";
     exit;
   }
 
-  $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $apiKey;
+  $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=' . $apiKey;
 
   $requestData = [
     'contents' => [

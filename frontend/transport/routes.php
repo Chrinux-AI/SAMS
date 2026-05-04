@@ -49,9 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_route'])) {
     $error = 'Invalid CSRF token.';
   } else {
     try {
-      $db = db();
-      $stmt = $db->prepare("DELETE FROM transport_routes WHERE id = :id AND (tenant_id = :tid OR tenant_id IS NULL)");
-      $stmt->execute([':id' => intval($_POST['route_id']), ':tid' => $_SESSION['tenant_id'] ?? 1]);
+      db()->query("DELETE FROM transport_routes WHERE id = ? AND (tenant_id = ? OR tenant_id IS NULL)", [intval($_POST['route_id']), $_SESSION['tenant_id'] ?? 1]);
       $success = 'Route deleted.';
     } catch (Exception $e) {
       $error = 'Error deleting route.';
@@ -62,10 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_route'])) {
 $routes = [];
 try {
   if (table_exists('transport_routes')) {
-    $db = db();
-    $stmt = $db->prepare("SELECT * FROM transport_routes WHERE (tenant_id = :tid OR tenant_id IS NULL) ORDER BY route_name ASC");
-    $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-    $routes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $routes = db()->fetchAll("SELECT * FROM transport_routes WHERE (tenant_id = ? OR tenant_id IS NULL) ORDER BY route_name ASC", [$_SESSION['tenant_id'] ?? 1]) ?: [];
   }
 } catch (Exception $e) {
   $routes = [];
@@ -92,6 +87,8 @@ $page_title = "Route Management";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

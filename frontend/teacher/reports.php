@@ -53,10 +53,7 @@ foreach ($attendance_stats as $stat) {
 $attendance_rate = $total_records > 0 ? round((($present_count + $late_count) / $total_records) * 100, 1) : 0;
 
 // Unread messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$teacher_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$teacher_id, (int)current_tenant_id());
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,14 +67,17 @@ $unread_count = db()->fetchOne("
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
 </head>
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -101,7 +101,7 @@ $unread_count = db()->fetchOne("
                 </div>
             </header>
 
-            <div class="app-layout">
+            <div style="display:grid;gap:24px;">
                 <!-- Filters -->
                 <div class="holo-card">
                     <div class="card-header">
@@ -144,7 +144,7 @@ $unread_count = db()->fetchOne("
                 <!-- Statistics -->
                 <div class="stats-grid">
                     <div class="stat-orb">
-                        <div class="app-layout">
+                        <div class="stat-icon cyan">
                             <i class="fas fa-clipboard-list"></i>
                         </div>
                         <div class="stat-label">Total Records</div>

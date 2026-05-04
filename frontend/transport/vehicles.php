@@ -45,10 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_vehicle'])) {
 $vehicles = [];
 try {
   if (table_exists('vehicles')) {
-    $db = db();
-    $stmt = $db->prepare("SELECT * FROM vehicles WHERE (tenant_id = :tid OR tenant_id IS NULL) ORDER BY registration_no");
-    $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-    $vehicles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $vehicles = db()->fetchAll("SELECT * FROM vehicles WHERE (tenant_id = ? OR tenant_id IS NULL) ORDER BY registration_no", [$_SESSION['tenant_id'] ?? 1]) ?: [];
   }
 } catch (Exception $e) {
   $vehicles = [];
@@ -77,6 +74,8 @@ $page_title = "Vehicle Management";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

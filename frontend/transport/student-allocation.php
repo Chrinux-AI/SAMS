@@ -42,21 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_allocation'])) {
 $assignments = [];
 try {
   if (table_exists('transport_assignments')) {
-    $db = db();
     $sql = "SELECT ta.*, u.first_name, u.last_name, tr.route_name
                 FROM transport_assignments ta
                 LEFT JOIN users u ON ta.student_id = u.id
                 LEFT JOIN transport_routes tr ON ta.route_id = tr.id
-                WHERE (ta.tenant_id = :tid OR ta.tenant_id IS NULL)";
-    $params = [':tid' => $_SESSION['tenant_id'] ?? 1];
+                WHERE (ta.tenant_id = ? OR ta.tenant_id IS NULL)";
+    $params = [$_SESSION['tenant_id'] ?? 1];
     if (!empty($route_filter)) {
-      $sql .= " AND ta.route_id = :rid";
-      $params[':rid'] = intval($route_filter);
+      $sql .= " AND ta.route_id = ?";
+      $params[] = intval($route_filter);
     }
     $sql .= " ORDER BY u.last_name, u.first_name";
-    $stmt = $db->prepare($sql);
-    $stmt->execute($params);
-    $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $assignments = db()->fetchAll($sql, $params) ?: [];
   }
 } catch (Exception $e) {
   $assignments = [];
@@ -76,10 +73,7 @@ if (empty($assignments)) {
 $routes = [];
 try {
   if (table_exists('transport_routes')) {
-    $db = db();
-    $stmt = $db->prepare("SELECT id, route_name FROM transport_routes WHERE (tenant_id = :tid OR tenant_id IS NULL) ORDER BY route_name");
-    $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-    $routes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $routes = db()->fetchAll("SELECT id, route_name FROM transport_routes WHERE (tenant_id = ? OR tenant_id IS NULL) ORDER BY route_name", [$_SESSION['tenant_id'] ?? 1]) ?: [];
   }
 } catch (Exception $e) {
   $routes = [];
@@ -91,10 +85,7 @@ if (empty($routes)) {
 // Fetch students for dropdown
 $students = [];
 try {
-  $db = db();
-  $stmt = $db->prepare("SELECT id, first_name, last_name FROM users WHERE role = 'student' AND (tenant_id = :tid OR tenant_id IS NULL) ORDER BY last_name, first_name LIMIT 200");
-  $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $students = db()->fetchAll("SELECT id, first_name, last_name FROM users WHERE role = 'student' AND (tenant_id = ? OR tenant_id IS NULL) ORDER BY last_name, first_name LIMIT 200", [$_SESSION['tenant_id'] ?? 1]) ?: [];
 } catch (Exception $e) {
   $students = [];
 }
@@ -111,6 +102,8 @@ $page_title = "Student Allocation";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

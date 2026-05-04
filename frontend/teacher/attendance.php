@@ -2,61 +2,195 @@
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
+require_once PROJECT_ROOT . '/backend/includes/merit-integration.php';
 require_teacher();
 
-$teacher_id = $_SESSION['user_id'];
+$teacher_id = (int)($_SESSION['user_id'] ?? 0);
 $full_name = $_SESSION['full_name'];
 $success_msg = '';
 $error_msg = '';
+$currentTenantId = current_tenant_id();
+
+if (!isset($_SESSION['tenant_id'])) {
+    set_user_tenant_session($teacher_id);
+    $currentTenantId = current_tenant_id();
+}
+
+if ($teacher_id <= 0 || !$currentTenantId || !user_in_current_tenant($teacher_id)) {
+    http_response_code(403);
+    exit('Tenant access denied');
+}
+
+function teacher_attendance_scope(string $table, string $alias, int $tenantId): array
+{
+    $qualified = $alias !== '' ? $alias . '.' : '';
+    if (table_has_column($table, 'tenant_id')) {
+        return ['sql' => " AND {$qualified}tenant_id = ?", 'params' => [$tenantId]];
+    }
+    if (table_has_column($table, 'school_id')) {
+        return ['sql' => " AND {$qualified}school_id = ?", 'params' => [$tenantId]];
+    }
+
+    return ['sql' => '', 'params' => []];
+}
+
+function teacher_attendance_payload(string $table, int $tenantId): array
+{
+    if (table_has_column($table, 'tenant_id')) {
+        return ['tenant_id' => $tenantId];
+    }
+    if (table_has_column($table, 'school_id')) {
+        return ['school_id' => $tenantId];
+    }
+
+    return [];
+}
+
+function teacher_attendance_status(string $status): string
+{
+    $status = strtolower(trim($status));
+    return in_array($status, ['present', 'late', 'absent'], true) ? $status : 'present';
+}
+
+function teacher_attendance_datetime_field(string $table): string
+{
+    if (table_has_column($table, 'check_in_time')) {
+        return 'check_in_time';
+    }
+    if (table_has_column($table, 'attendance_date')) {
+        return 'attendance_date';
+    }
+    if (table_has_column($table, 'date')) {
+        return 'date';
+    }
+
+    return 'check_in_time';
+}
+
+function teacher_attendance_class_row(int $classId, int $teacherId, int $tenantId): ?array
+{
+    if ($classId <= 0 || $teacherId <= 0) {
+        return null;
+    }
+
+    $classScope = teacher_attendance_scope('classes', '', $tenantId);
+    $row = db()->fetchOne(
+        "SELECT * FROM classes WHERE id = ? AND class_teacher_id = ?{$classScope['sql']} LIMIT 1",
+        array_merge([$classId, $teacherId], $classScope['params'])
+    );
+
+    return $row ?: null;
+}
+
+function teacher_attendance_student_ids(int $classId, int $tenantId): array
+{
+    if ($classId <= 0) {
+        return [];
+    }
+
+    $classScope = teacher_attendance_scope('classes', 'c', $tenantId);
+    $studentScope = teacher_attendance_scope('students', 's', $tenantId);
+    $rows = db()->fetchAll(
+        "SELECT ce.student_id
+         FROM class_enrollments ce
+         JOIN classes c ON c.id = ce.class_id
+         JOIN students s ON s.user_id = ce.student_id
+         WHERE ce.class_id = ?{$classScope['sql']}{$studentScope['sql']}",
+        array_merge([$classId], $classScope['params'], $studentScope['params'])
+    );
+
+    return array_map(static fn(array $row): int => (int)$row['student_id'], $rows ?: []);
+}
 
 // Handle attendance submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_attendance'])) {
     $class_id = intval($_POST['class_id']);
     $attendance_date = sanitize($_POST['attendance_date']);
     $students = $_POST['students'] ?? [];
+    $parsedDate = date_create($attendance_date);
 
     try {
+        if (!$parsedDate) {
+            throw new RuntimeException('Invalid attendance date.');
+        }
+
+        if (!teacher_attendance_class_row($class_id, $teacher_id, $currentTenantId)) {
+            throw new RuntimeException('Selected class is not available in the active tenant.');
+        }
+
+        $validStudentIds = array_flip(teacher_attendance_student_ids($class_id, $currentTenantId));
+        $attendanceScope = teacher_attendance_scope('attendance_records', '', $currentTenantId);
+        $attendanceDateField = teacher_attendance_datetime_field('attendance_records');
+        $attendanceTimestamp = $parsedDate->format('Y-m-d') . ' ' . date('H:i:s');
+        $processedCount = 0;
+
         foreach ($students as $student_id => $status) {
-            // Check if attendance already exists
-            $existing = db()->fetchOne("
-                SELECT id FROM attendance_records
-                WHERE student_id = ? AND class_id = ? AND DATE(check_in_time) = ?
-            ", [$student_id, $class_id, $attendance_date]);
+            $student_id = (int)$student_id;
+            if ($student_id <= 0 || !isset($validStudentIds[$student_id])) {
+                continue;
+            }
+
+            $status = teacher_attendance_status((string)$status);
+            $existing = db()->fetchOne(
+                "SELECT id FROM attendance_records
+                WHERE student_id = ? AND class_id = ? AND DATE({$attendanceDateField}) = ?{$attendanceScope['sql']}",
+                array_merge([$student_id, $class_id, $parsedDate->format('Y-m-d')], $attendanceScope['params'])
+            );
 
             if ($existing) {
-                // Update existing record
-                db()->update('attendance_records', [
+                update_flexible('attendance_records', [
                     'status' => $status,
-                    'check_in_time' => $attendance_date . ' ' . date('H:i:s')
-                ], 'id = ?', [$existing['id']]);
+                    $attendanceDateField => $attendanceTimestamp,
+                    'marked_by' => $teacher_id,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ], 'id = ?', [(int)$existing['id']]);
+                $attendanceId = (int)$existing['id'];
             } else {
-                // Insert new record
-                db()->insert('attendance_records', [
+                $attendanceId = insert_flexible('attendance_records', array_merge([
                     'student_id' => $student_id,
                     'class_id' => $class_id,
-                    'check_in_time' => $attendance_date . ' ' . date('H:i:s'),
+                    $attendanceDateField => $attendanceTimestamp,
                     'status' => $status,
-                    'marked_by' => $teacher_id
-                ]);
+                    'marked_by' => $teacher_id,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ], teacher_attendance_payload('attendance_records', $currentTenantId)));
+            }
+
+            if (!$attendanceId) {
+                continue;
+            }
+
+            $processedCount++;
+
+            try {
+                sams_sync_attendance_merit((int) $attendanceId, (int) $student_id, (int) $class_id, (string) $status, (int) $teacher_id, (string) $attendance_date, 'teacher_attendance');
+            } catch (Throwable $e) {
+                error_log('Attendance merit sync failed (teacher): ' . $e->getMessage());
             }
         }
 
         log_activity($teacher_id, 'mark_attendance', 'attendance_records', $class_id, "Marked attendance for class ID: $class_id on $attendance_date");
-        $success_msg = "Attendance marked successfully for " . count($students) . " students!";
+        if ($processedCount === 0) {
+            throw new RuntimeException('No valid attendance records were saved.');
+        }
+
+        $success_msg = "Attendance marked successfully for {$processedCount} students!";
     } catch (Exception $e) {
         $error_msg = "Failed to mark attendance: " . $e->getMessage();
     }
 }
 
 // Get teacher's classes
+$classScope = teacher_attendance_scope('classes', 'c', $currentTenantId);
 $my_classes = db()->fetchAll("
     SELECT c.id, c.class_name, c.class_code, c.class_teacher_id, c.description, c.schedule, c.room_number, c.created_at,
            COUNT(DISTINCT ce.student_id) as student_count
     FROM classes c
     LEFT JOIN class_enrollments ce ON c.id = ce.class_id
-    WHERE c.class_teacher_id = ?
+    WHERE c.class_teacher_id = ?{$classScope['sql']}
     GROUP BY c.id, c.class_name, c.class_code, c.class_teacher_id, c.description, c.schedule, c.room_number, c.created_at
-", [$teacher_id]);
+", array_merge([$teacher_id], $classScope['params']));
 
 // Selected class for attendance
 $selected_class = isset($_GET['class']) ? intval($_GET['class']) : null;
@@ -66,29 +200,34 @@ $selected_date = isset($_GET['date']) ? sanitize($_GET['date']) : date('Y-m-d');
 $students = [];
 $class_info = null;
 if ($selected_class) {
-    $class_info = db()->fetchOne("SELECT * FROM classes WHERE id = ? AND class_teacher_id = ?", [$selected_class, $teacher_id]);
+    $class_info = teacher_attendance_class_row((int)$selected_class, $teacher_id, $currentTenantId);
 
     if ($class_info) {
+        $studentScope = teacher_attendance_scope('students', 's', $currentTenantId);
+        $userScope = teacher_attendance_scope('users', 'u', $currentTenantId);
+        $attendanceScope = teacher_attendance_scope('attendance_records', 'ar', $currentTenantId);
+        $attendanceDateField = teacher_attendance_datetime_field('attendance_records');
         $students = db()->fetchAll("
             SELECT u.id, u.first_name, u.last_name, s.admission_number AS student_id,
                    ar.status as current_status, ar.id as attendance_id
             FROM users u
             JOIN students s ON u.id = s.user_id
             JOIN class_enrollments ce ON s.user_id = ce.student_id
+            JOIN classes c ON c.id = ce.class_id
             LEFT JOIN attendance_records ar ON u.id = ar.student_id
                 AND ar.class_id = ?
-                AND DATE(ar.check_in_time) = ?
+                AND DATE(ar.{$attendanceDateField}) = ?{$attendanceScope['sql']}
             WHERE ce.class_id = ? AND u.status = 'active'
+            {$classScope['sql']}
+            {$studentScope['sql']}
+            {$userScope['sql']}
             ORDER BY u.last_name, u.first_name
-        ", [$selected_class, $selected_date, $selected_class]);
+        ", array_merge([$selected_class, $selected_date], $attendanceScope['params'], [$selected_class], $classScope['params'], $studentScope['params'], $userScope['params']));
     }
 }
 
 // Unread messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$teacher_id])['count'] ?? 0;
+$unread_count = get_unread_message_count($teacher_id, $currentTenantId);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,6 +243,7 @@ $unread_count = db()->fetchOne("
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
 
     <style>
         .attendance-grid {
@@ -195,7 +335,6 @@ $unread_count = db()->fetchOne("
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>

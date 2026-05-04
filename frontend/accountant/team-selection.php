@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -84,7 +84,8 @@ $page_title = 'Team Selection';
 $page_icon = 'groups';
 $page_subtitle = 'View and manage your team memberships.';
 
-ob_start();
+$activeTab = 'team-selection';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <?php if ($success): ?>
@@ -120,7 +121,7 @@ ob_start();
       <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-5">
         <div class="flex items-start justify-between gap-3 mb-2">
           <h3 class="font-bold text-on-surface"><?php echo htmlspecialchars($team['name'] ?? ''); ?></h3>
-          <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider <?php echo ($team['member_role'] ?? '') === 'leader' ? 'bg-primary/15 text-primary' : 'bg-secondary/15 text-secondary'; ?>">
+          <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider <?php echo ($team['member_role'] ?? '') === 'leader' ? 'bg-primary text-primary' : 'bg-secondary text-secondary'; ?>">
             <?php echo htmlspecialchars($team['member_role'] ?? 'member'); ?>
           </span>
         </div>
@@ -168,6 +169,4 @@ ob_start();
 <?php endif; ?>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'settings', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

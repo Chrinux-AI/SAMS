@@ -16,7 +16,20 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = (int) $_SESSION['user_id'];
+$tenantId = current_tenant_id();
+if (!isset($_SESSION['tenant_id'])) {
+  set_user_tenant_session($userId);
+  $tenantId = current_tenant_id();
+}
+if (!user_in_current_tenant($userId) || !$tenantId) {
+  http_response_code(403);
+  echo "data: {\"error\": \"tenant_access_denied\"}\n\n";
+  exit;
+}
+
 $conversationId = isset($_GET['conversation_id']) ? (int) $_GET['conversation_id'] : 0;
+$conversationTenantScoped = table_has_column('conversation_messages', 'tenant_id');
+$participantTenantScoped = table_has_column('conversation_participants', 'tenant_id');
 
 // Set SSE headers
 header('Content-Type: text/event-stream');
@@ -47,6 +60,29 @@ try {
 $lastMessageId = isset($_GET['last_message_id']) ? (int) $_GET['last_message_id'] : 0;
 $lastNotificationId = isset($_GET['last_notification_id']) ? (int) $_GET['last_notification_id'] : 0;
 
+$conversationTenantClause = $conversationTenantScoped ? ' AND cm.tenant_id = ?' : '';
+$participantTenantClause = $participantTenantScoped ? ' AND cp.tenant_id = ?' : '';
+$typingTenantClause = table_has_column('typing_indicators', 'tenant_id') ? ' AND ti.tenant_id = ?' : '';
+$notificationTenantClause = table_has_column('notifications', 'tenant_id') ? ' AND tenant_id = ?' : '';
+
+if ($conversationId > 0) {
+  $participantSql = "SELECT cp.id
+         FROM conversation_participants cp
+         WHERE cp.conversation_id = ? AND cp.user_id = ?";
+  $participantParams = [$conversationId, $userId];
+  if ($participantTenantScoped) {
+    $participantSql .= " AND cp.tenant_id = ?";
+    $participantParams[] = $tenantId;
+  }
+
+  $conversationAccess = db()->fetchOne($participantSql . " LIMIT 1", $participantParams);
+  if (!$conversationAccess) {
+    http_response_code(403);
+    echo "data: {\"error\": \"conversation_access_denied\"}\n\n";
+    exit;
+  }
+}
+
 // Send initial connection event
 sendEvent('connected', ['user_id' => $userId, 'timestamp' => date('c')]);
 
@@ -62,27 +98,43 @@ while ($iteration < $maxIterations) {
   // 1. Check for new messages
   try {
     if ($conversationId > 0) {
-      $newMessages = db()->fetchAll(
-        "SELECT cm.id, cm.conversation_id, cm.sender_id, cm.message_text, cm.created_at,
+      $conversationMessageSql = "SELECT cm.id, cm.conversation_id, cm.sender_id, cm.message_text, cm.created_at,
                         cm.reply_to_message_id, cm.is_edited,
                         u.first_name, u.last_name, u.profile_picture
                  FROM conversation_messages cm
                  JOIN users u ON cm.sender_id = u.id
-                 WHERE cm.conversation_id = ? AND cm.id > ? AND cm.is_deleted = 0
-                 ORDER BY cm.id ASC LIMIT 20",
-        [$conversationId, $lastMessageId]
+                 JOIN conversation_participants cp ON cp.conversation_id = cm.conversation_id AND cp.user_id = ?
+                 WHERE cm.conversation_id = ? AND cm.id > ? AND cm.is_deleted = 0{$conversationTenantClause}{$participantTenantClause}
+                 ORDER BY cm.id ASC LIMIT 20";
+      $conversationParams = [$userId, $conversationId, $lastMessageId];
+      if ($conversationTenantScoped) {
+        $conversationParams[] = $tenantId;
+      }
+      if ($participantTenantScoped) {
+        $conversationParams[] = $tenantId;
+      }
+      $newMessages = db()->fetchAll(
+        $conversationMessageSql,
+        $conversationParams
       );
     } else {
       // Check all conversations for the user
+      $messageParams = [$userId, $lastMessageId];
+      if ($conversationTenantClause !== '') {
+        $messageParams[] = $tenantId;
+      }
+      if ($participantTenantClause !== '') {
+        $messageParams[] = $tenantId;
+      }
       $newMessages = db()->fetchAll(
         "SELECT cm.id, cm.conversation_id, cm.sender_id, cm.message_text, cm.created_at,
                         u.first_name, u.last_name
                  FROM conversation_messages cm
                  JOIN users u ON cm.sender_id = u.id
                  JOIN conversation_participants cp ON cp.conversation_id = cm.conversation_id AND cp.user_id = ?
-                 WHERE cm.id > ? AND cm.is_deleted = 0
+                 WHERE cm.id > ? AND cm.is_deleted = 0{$conversationTenantClause}{$participantTenantClause}
                  ORDER BY cm.id ASC LIMIT 20",
-        [$userId, $lastMessageId]
+        $messageParams
       );
     }
 
@@ -99,12 +151,17 @@ while ($iteration < $maxIterations) {
   // 2. Check typing indicators (only for active conversation)
   if ($conversationId > 0) {
     try {
+      $typingTenantJoin = table_has_column('typing_indicators', 'tenant_id') ? ' AND ti.tenant_id = ?' : '';
+      $typingParams = [$conversationId, $userId];
+      if ($typingTenantJoin !== '') {
+        $typingParams[] = $tenantId;
+      }
       $typers = db()->fetchAll(
         "SELECT ti.user_id, u.first_name
                  FROM typing_indicators ti
                  JOIN users u ON ti.user_id = u.id
-                 WHERE ti.conversation_id = ? AND ti.user_id != ? AND ti.is_typing = 1 AND ti.updated_at > DATE_SUB(NOW(), INTERVAL 5 SECOND)",
-        [$conversationId, $userId]
+                 WHERE ti.conversation_id = ? AND ti.user_id != ? AND ti.is_typing = 1 AND ti.updated_at > DATE_SUB(NOW(), INTERVAL 5 SECOND){$typingTenantJoin}",
+        $typingParams
       );
       if (!empty($typers)) {
         sendEvent('typing', ['conversation_id' => $conversationId, 'users' => $typers]);
@@ -117,12 +174,16 @@ while ($iteration < $maxIterations) {
   // 3. Check for new notifications (every 5 iterations)
   if ($iteration % 5 === 0) {
     try {
-      $newNotifications = db()->fetchAll(
-        "SELECT id, title, message, type, link, created_at
+      $notificationTypeSelect = table_has_column('notifications', 'category')
+        ? "COALESCE(category, 'general') AS type"
+        : (table_has_column('notifications', 'type') ? 'type' : "'general' AS type");
+      $notificationSql = "SELECT id, title, message, {$notificationTypeSelect}, link, created_at
                  FROM notifications
-                 WHERE user_id = ? AND id > ? AND is_read = 0
-                 ORDER BY id ASC LIMIT 10",
-        [$userId, $lastNotificationId]
+                 WHERE user_id = ? AND id > ? AND is_read = 0{$notificationTenantClause}
+                 ORDER BY id ASC LIMIT 10";
+      $newNotifications = db()->fetchAll(
+        $notificationSql,
+        table_has_column('notifications', 'tenant_id') ? [$userId, $lastNotificationId, $tenantId] : [$userId, $lastNotificationId]
       );
       if (!empty($newNotifications)) {
         foreach ($newNotifications as $notif) {
@@ -136,12 +197,21 @@ while ($iteration < $maxIterations) {
 
     // 4. Unread conversation counts
     try {
+      $unreadTenantJoin = table_has_column('conversation_messages', 'tenant_id') ? ' AND cm.tenant_id = ?' : '';
+      $participantUnreadTenantJoin = table_has_column('conversation_participants', 'tenant_id') ? ' AND cp.tenant_id = ?' : '';
+      $unreadParams = [$userId, $userId];
+      if ($unreadTenantJoin !== '') {
+        $unreadParams[] = $tenantId;
+      }
+      if ($participantUnreadTenantJoin !== '') {
+        $unreadParams[] = $tenantId;
+      }
       $unread = db()->fetchOne(
         "SELECT COUNT(*) as cnt FROM conversation_messages cm
                  JOIN conversation_participants cp ON cp.conversation_id = cm.conversation_id AND cp.user_id = ?
                  WHERE cm.sender_id != ? AND cm.is_deleted = 0
-                   AND (cp.last_read_at IS NULL OR cm.created_at > cp.last_read_at)",
-        [$userId, $userId]
+                   AND (cp.last_read_at IS NULL OR cm.created_at > cp.last_read_at){$unreadTenantJoin}{$participantUnreadTenantJoin}",
+        $unreadParams
       );
       sendEvent('unread_count', ['total' => (int)($unread['cnt'] ?? 0)]);
     } catch (Exception $e) {

@@ -14,6 +14,7 @@ require_parent();
 
 $parent_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenantId = current_tenant_id();
 
 // Get linked children with LMS data
 $children = db()->fetchAll("
@@ -53,10 +54,7 @@ foreach ($children as $child) {
     $sync_data[$child['id']] = $syncs;
 }
 
-$unread_messages = db()->fetchOne(
-    "SELECT COUNT(*) as count FROM message_recipients WHERE recipient_id = ? AND is_read = 0",
-    [$parent_id]
-)['count'] ?? 0;
+$unread_messages = get_unread_message_count((int)$parent_id, $tenantId ? (int)$tenantId : null);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,13 +68,16 @@ $unread_messages = db()->fetchOne(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LMS Overview - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
 </head>
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -88,7 +89,7 @@ $unread_messages = db()->fetchOne(
                 </div>
             </header>
 
-            <div class="app-layout">
+            <div style="display:grid;gap:24px;">
                 <?php if (empty($children)): ?>
                     <div class="holo-card">
                         <div class="card-body" style="text-align:center;padding:60px 20px;">
@@ -175,7 +176,7 @@ $unread_messages = db()->fetchOne(
                                         <h4 style="margin:0 0 15px 0;color:var(--cyber-cyan);">
                                             <i class="fas fa-sync-alt"></i> Recent LMS Grade Syncs
                                         </h4>
-                                        <div class="app-layout">
+                                        <div style="overflow-x:auto;">
                                             <table class="cyber-table">
                                                 <thead>
                                                     <tr>

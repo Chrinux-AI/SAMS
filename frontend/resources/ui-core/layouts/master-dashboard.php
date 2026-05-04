@@ -21,9 +21,13 @@
  *   require BASE_PATH . '/resources/ui-core/layouts/master-dashboard.php';
  */
 
+// Resolve the frontend root from this layout's location so runtime path drift
+// (for example from backend bootstraps) cannot break dashboard rendering.
+$_frontend_root = dirname(__DIR__, 3);
+
 // Ensure config is loaded
 if (!defined('BASE_PATH')) {
-  require_once dirname(__DIR__, 3) . '/includes/config.php';
+  require_once $_frontend_root . '/includes/config.php';
 }
 
 // Layout variables with safe defaults
@@ -44,7 +48,7 @@ $_layout_initials = strtoupper(substr($_layout_name, 0, 2));
 // Determine depth for relative paths
 $_layout_depth = '';
 $_script_dir = dirname($_SERVER['SCRIPT_FILENAME']);
-$_base_dir = realpath(BASE_PATH);
+$_base_dir = realpath($_frontend_root);
 if ($_script_dir && $_base_dir) {
   $_rel = str_replace('\\', '/', substr($_script_dir, strlen($_base_dir)));
   $_depth_count = substr_count(trim($_rel, '/'), '/');
@@ -152,6 +156,23 @@ if (empty($_layout_depth)) {
 
   <!-- SAMS Core Design System -->
   <link href="<?php echo $_layout_depth; ?>assets/css/sams-core.css" rel="stylesheet">
+  <style>
+    /* Enhanced Layout Polish */
+    body { background-color: var(--surface-container-low); }
+    .sams-topbar {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .dark .sams-topbar {
+      background: #111827;
+      border-bottom: 1px solid #374151;
+    }
+    .sams-fade-in {
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 
   <!-- Legacy Font Awesome (for backwards compat with sidebar) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -172,7 +193,7 @@ if (empty($_layout_depth)) {
 <body class="bg-background font-body text-on-surface flex min-h-screen <?php echo htmlspecialchars($body_class); ?>">
 
   <!-- Sidebar -->
-  <?php include BASE_PATH . '/includes/sidebar-nav.php'; ?>
+  <?php include $_frontend_root . '/includes/sidebar-nav.php'; ?>
 
   <!-- Sidebar overlay for mobile -->
   <div class="sams-sidebar-overlay" onclick="closeMobileSidebar()"></div>
@@ -209,6 +230,9 @@ if (empty($_layout_depth)) {
             </button>
             <button class="icon-btn" title="Help">
               <span class="material-symbols-outlined">help_outline</span>
+            </button>
+            <button class="icon-btn" title="More">
+              <span class="material-symbols-outlined">more_vert</span>
             </button>
           </div>
           <div style="display:flex;align-items:center;gap:0.75rem">

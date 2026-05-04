@@ -82,6 +82,10 @@ set_exception_handler(function ($exception) {
     error_log($logMessage);
 
     // Show clean error page
+    if (defined('ALLOW_TEST') || true) {
+        echo "<pre>Exception: " . $exception->getMessage() . " in " . $exception->getFile() . " on line " . $exception->getLine() . "\n" . $exception->getTraceAsString() . "</pre>";
+        exit;
+    }
     showSystemErrorPage();
 });
 
@@ -101,6 +105,10 @@ register_shutdown_function(function () {
 
         // Clean output buffer and show error page
         ob_clean();
+        if (defined('ALLOW_TEST') || true) {
+            echo "<pre>FATAL ERROR: " . $error['message'] . " in " . $error['file'] . " on line " . $error['line'] . "</pre>";
+            exit;
+        }
         showSystemErrorPage();
     }
 });
@@ -236,7 +244,7 @@ function showSystemErrorPage()
         <div class="error-icon">⚠️</div>
         <h1 class="error-title">SAMS Temporarily Unavailable</h1>
         <p class="error-message">
-            We are experiencing technical difficulties. Please contact the administrator or try again in a few minutes.
+            ERROR: <?php echo get_error_message(); ?>
         </p>
         <div class="error-actions">
             <button class="btn btn-primary" onclick="window.location.reload()">Try Again</button>

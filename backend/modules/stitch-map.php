@@ -37,7 +37,7 @@ return [
   'ai_onboarding_bulk_user_creator' => '/attendance/admin/ai-user-creator.php',
 
   // Role dashboards
-  'accountant_dashboard_fiscal_overview' => '/attendance/accountant/dashboard.php',
+  'accountant_dashboard_fiscal_overview' => '/attendance/accountant/index.php?page=dashboard',
   'bursar_dashboard_financial_oversight' => '/attendance/bursar/dashboard.php',
   'finance_dashboard_bursar_accountant' => '/attendance/admin/financial-management.php',
   'librarian_dashboard_resource_hub' => '/attendance/librarian/dashboard.php',

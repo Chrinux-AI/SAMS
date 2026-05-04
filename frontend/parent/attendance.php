@@ -6,6 +6,7 @@ require_parent();
 
 $parent_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenantId = current_tenant_id();
 
 // Get selected child
 $selected_student = isset($_GET['student']) ? intval($_GET['student']) : null;
@@ -13,26 +14,48 @@ $start_date = isset($_GET['start']) ? sanitize($_GET['start']) : date('Y-m-01');
 $end_date = isset($_GET['end']) ? sanitize($_GET['end']) : date('Y-m-d');
 
 // Get children
-$children = db()->fetchAll("
-    SELECT u.id, u.first_name, u.last_name, s.admission_number AS student_id
-    FROM users u
-    JOIN students s ON u.id = s.user_id
-    JOIN parent_student_links psl ON s.user_id = psl.student_id
-    WHERE psl.parent_id = ? AND u.status = 'active'
-", [$parent_id]);
+$children = get_parent_linked_children((int)$parent_id, (int)$tenantId);
+$allowedChildIds = array_map('intval', array_column($children, 'user_id'));
+if ($selected_student && !in_array($selected_student, $allowedChildIds, true)) {
+    $selected_student = null;
+}
+$selected_child = null;
+foreach ($children as $child) {
+    if ((int)($child['user_id'] ?? 0) === (int)$selected_student) {
+        $selected_child = $child;
+        break;
+    }
+}
 
 // Get attendance records
 $attendance = [];
 $stats = ['total' => 0, 'present' => 0, 'late' => 0, 'absent' => 0];
 
-if ($selected_student) {
-    $attendance = db()->fetchAll("
-        SELECT ar.*, c.class_name
-        FROM attendance_records ar
-        JOIN classes c ON ar.class_id = c.id
-        WHERE ar.student_id = ? AND DATE(ar.check_in_time) BETWEEN ? AND ?
-        ORDER BY ar.check_in_time DESC
-    ", [$selected_student, $start_date, $end_date]);
+if ($selected_child && table_exists('attendance_records')) {
+    $studentIdentifiers = array_values(array_unique(array_filter([
+        (int)($selected_child['user_id'] ?? 0),
+        (int)($selected_child['student_profile_id'] ?? 0),
+    ])));
+    $dateField = table_has_column('attendance_records', 'check_in_time')
+        ? 'check_in_time'
+        : (table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : null);
+
+    if (!empty($studentIdentifiers) && $dateField !== null) {
+        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+        $classJoin = (table_exists('classes') && table_has_column('attendance_records', 'class_id'))
+            ? ' LEFT JOIN classes c ON ar.class_id = c.id'
+            : '';
+        $classSelect = ($classJoin !== '' && table_has_column('classes', 'class_name'))
+            ? ', c.class_name'
+            : ", '' AS class_name";
+
+        $attendance = db()->fetchAll("
+            SELECT ar.*{$classSelect}
+            FROM attendance_records ar{$classJoin}
+            WHERE ar.student_id IN ({$placeholders}) AND DATE(ar.{$dateField}) BETWEEN ? AND ?
+            ORDER BY ar.{$dateField} DESC
+        ", array_merge($studentIdentifiers, [$start_date, $end_date])) ?: [];
+    }
 
     $stats['total'] = count($attendance);
     $stats['present'] = count(array_filter($attendance, fn($r) => $r['status'] === 'present'));
@@ -40,7 +63,7 @@ if ($selected_student) {
     $stats['absent'] = count(array_filter($attendance, fn($r) => $r['status'] === 'absent'));
 }
 
-$unread_count = db()->fetchOne("SELECT COUNT(*) as count FROM message_recipients WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL", [$parent_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$parent_id, (int)$tenantId);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,14 +77,17 @@ $unread_count = db()->fetchOne("SELECT COUNT(*) as count FROM message_recipients
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
 
 </head>
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -81,7 +107,7 @@ $unread_count = db()->fetchOne("SELECT COUNT(*) as count FROM message_recipients
                     </a>
                 </div>
             </header>
-            <div class="app-layout">
+            <div style="display:grid; gap:24px;">
                 <div class="holo-card">
                     <div class="card-header">
                         <div class="card-title"><i class="fas fa-filter"></i><span>Filter</span></div>

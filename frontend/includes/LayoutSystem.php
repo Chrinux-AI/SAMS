@@ -86,6 +86,7 @@ class SAMS_LayoutSystem
 
     <!-- Page-specific CSS -->
     " . $this->getPageCSS() . "
+    <script src='/attendance/frontend/assets/js/session-monitor.js'></script>
 </head>";
     }
 
@@ -175,7 +176,7 @@ class SAMS_LayoutSystem
             <div class='user-name'>$userName</div>
             <div class='user-role'>$userRole</div>
         </div>
-        <a href='/logout.php' class='logout-link'>
+        <a href='" . rtrim(APP_URL, '/') . "/logout.php' class='logout-link'>
             <span class='icon icon-logout'></span>
             <span>Logout</span>
         </a>

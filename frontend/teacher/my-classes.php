@@ -18,10 +18,7 @@ $classes = db()->fetchAll("
 ", [$teacher_id]);
 
 // Unread messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$teacher_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$teacher_id, (int)current_tenant_id());
 ?>
 <!DOCTYPE html>
 <html lang="en">

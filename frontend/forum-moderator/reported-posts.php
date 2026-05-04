@@ -78,6 +78,8 @@ $page_title = "Reported Posts";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

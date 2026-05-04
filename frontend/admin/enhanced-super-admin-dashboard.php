@@ -74,6 +74,8 @@ $system_health = [
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <style>
         :root {
             --primary: #4F46E5;
@@ -100,7 +102,7 @@ $system_health = [
 
         .dashboard-header {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
@@ -181,7 +183,7 @@ $system_health = [
 
         .stat-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -277,7 +279,7 @@ $system_health = [
 
         .panel {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -469,7 +471,7 @@ $system_health = [
 
         .quick-action-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            
             border-radius: 20px;
             padding: 25px;
             text-align: center;

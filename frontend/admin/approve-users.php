@@ -3,308 +3,48 @@ session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
+require_once PROJECT_ROOT . '/backend/modules/admin/AdminUserManager.php';
 require_admin();
 
 $full_name = $_SESSION['full_name'];
-$admin_id = $_SESSION['user_id'];
+$adminUserManager = new AdminUserManager(current_tenant_id(), (int)($_SESSION['user_id'] ?? 0));
 
-function generate_bulk_assigned_id(string $role): string
-{
-    $year = date('Y');
-    $suffix = str_pad((string)random_int(1, 9999), 4, '0', STR_PAD_LEFT);
-    if ($role === 'teacher') {
-        return 'TCH' . $year . $suffix;
-    }
-    if ($role === 'student') {
-        return 'STU' . $year . $suffix;
-    }
-    return strtoupper(substr($role, 0, 3)) . $year . $suffix;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $result = null;
 
-// Handle bulk approval/rejection for pending users
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
-    $bulk_action = $_POST['bulk_action'];
-    $selected_user_ids = array_values(array_filter(array_map('intval', $_POST['selected_user_ids'] ?? []), static fn($v) => $v > 0));
-
-    if (!empty($selected_user_ids)) {
-        $processed = 0;
-        foreach ($selected_user_ids as $user_id) {
-            $user = db()->fetchOne("SELECT * FROM users WHERE id = ?", [$user_id]);
-            if (!$user) {
-                continue;
+    if (isset($_POST['bulk_action'])) {
+        $selectedUserIds = array_values(array_filter(array_map('intval', $_POST['selected_user_ids'] ?? []), static fn($value) => $value > 0));
+        if (!empty($selectedUserIds)) {
+            if ($_POST['bulk_action'] === 'approve_selected') {
+                $result = $adminUserManager->bulkApproveUsers($selectedUserIds, $_POST['bulk_assigned_ids'] ?? []);
+            } elseif ($_POST['bulk_action'] === 'reject_selected') {
+                $result = $adminUserManager->bulkRejectUsers($selectedUserIds);
             }
-
-            if ($bulk_action === 'approve_selected') {
-                $assigned_id = trim((string)($_POST['bulk_assigned_ids'][$user_id] ?? ''));
-                if ($assigned_id === '') {
-                    $assigned_id = generate_bulk_assigned_id((string)$user['role']);
-                }
-
-                db()->update(
-                    'users',
-                    [
-                        'approved' => 1,
-                        'approved_by' => $admin_id,
-                        'approved_at' => date('Y-m-d H:i:s'),
-                        'status' => 'active'
-                    ],
-                    'id = ?',
-                    [$user_id]
-                );
-
-                if ($user['role'] === 'student') {
-                    db()->update('students', ['student_id' => $assigned_id, 'status' => 'active'], 'user_id = ?', [$user_id]);
-                } elseif ($user['role'] === 'teacher') {
-                    db()->update('teachers', ['teacher_id' => $assigned_id, 'status' => 'active'], 'user_id = ?', [$user_id]);
-                }
-
-                send_approval_notification(
-                    $user_id,
-                    $user['email'],
-                    $user['first_name'] . ' ' . $user['last_name'],
-                    $user['role'],
-                    $assigned_id,
-                    $user['username']
-                );
-
-                log_activity($admin_id, 'bulk_approve_user', 'users', $user_id, "Bulk approved user: {$user['email']} with ID: {$assigned_id}");
-                $processed++;
-            }
-
-            if ($bulk_action === 'reject_selected') {
-                log_activity($admin_id, 'bulk_reject_user', 'users', $user_id, "Bulk rejected user: {$user['email']}");
-                db()->delete('users', 'id = ?', [$user_id]);
-                $processed++;
-            }
+        } else {
+            $result = ['success' => false, 'message' => 'Select at least one user first.'];
         }
+    } elseif (isset($_POST['approve_unverified'])) {
+        $result = $adminUserManager->approveUser((int)($_POST['user_id'] ?? 0), sanitize($_POST['assigned_id'] ?? ''), true);
+    } elseif (isset($_POST['approve_user'])) {
+        $result = $adminUserManager->approveUser((int)($_POST['user_id'] ?? 0), sanitize($_POST['assigned_id'] ?? ''));
+    } elseif (isset($_POST['disapprove_user'])) {
+        $result = $adminUserManager->disapproveUser((int)($_POST['user_id'] ?? 0));
+    } elseif (isset($_POST['reject_user'])) {
+        $result = $adminUserManager->rejectUser((int)($_POST['user_id'] ?? 0));
+    }
 
-        if ($bulk_action === 'approve_selected') {
-            $success_msg = "Bulk approval completed: {$processed} user(s) approved.";
-        } elseif ($bulk_action === 'reject_selected') {
-            $success_msg = "Bulk rejection completed: {$processed} user(s) rejected/deleted.";
+    if (is_array($result)) {
+        if (!empty($result['success'])) {
+            $success_msg = (string)($result['message'] ?? 'Action completed successfully.');
+        } else {
+            $error_msg = (string)($result['message'] ?? $result['error'] ?? 'Unable to complete the action.');
         }
     }
 }
 
-// Handle approval for unverified users
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve_unverified'])) {
-    $user_id = intval($_POST['user_id']);
-    $assigned_id = sanitize($_POST['assigned_id']);
-
-    // Get user details
-    $user = db()->fetchOne("SELECT * FROM users WHERE id = ?", [$user_id]);
-
-    if ($user) {
-        // Approve and verify in one go
-        db()->update(
-            'users',
-            [
-                'email_verified' => 1,
-                'approved' => 1,
-                'approved_by' => $admin_id,
-                'approved_at' => date('Y-m-d H:i:s'),
-                'status' => 'active',
-                'email_verification_token' => null,
-                'token_expires_at' => null
-            ],
-            'id = ?',
-            [$user_id]
-        );
-
-        // If student, update student record with assigned ID
-        if ($user['role'] === 'student') {
-            db()->update(
-                'students',
-                [
-                    'student_id' => $assigned_id,
-                    'status' => 'active'
-                ],
-                'user_id = ?',
-                [$user_id]
-            );
-        }
-
-        // If teacher, update teacher record with assigned ID
-        if ($user['role'] === 'teacher') {
-            db()->update(
-                'teachers',
-                [
-                    'teacher_id' => $assigned_id,
-                    'status' => 'active'
-                ],
-                'user_id = ?',
-                [$user_id]
-            );
-        }
-
-        // Send approval email with assigned ID
-        $email_sent = send_approval_notification(
-            $user_id,
-            $user['email'],
-            $user['first_name'] . ' ' . $user['last_name'],
-            $user['role'],
-            $assigned_id,
-            $user['username']
-        );
-
-        if (!$email_sent) {
-            error_log("Failed to send approval email to {$user['email']}");
-        }
-
-        log_activity($admin_id, 'approve_unverified_user', 'users', $user_id, "Approved unverified user: {$user['email']} with ID: {$assigned_id}");
-        try {
-            AuditLogger::log('approve_unverified_user', 'users', "Approved unverified user #{$user_id}: {$user['email']} with ID: {$assigned_id}", $_SESSION['user_id'] ?? null);
-        } catch (\Throwable $e) {
-        }
-
-        $success_msg = "User approved successfully (email verification bypassed)! Email sent to {$user['email']}";
-    }
-}
-
-// Handle approval action
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve_user'])) {
-    $user_id = intval($_POST['user_id']);
-    $assigned_id = sanitize($_POST['assigned_id']);
-
-    // Get user details
-    $user = db()->fetchOne("SELECT * FROM users WHERE id = ?", [$user_id]);
-
-    if ($user) {
-        // Update user approval status
-        db()->update(
-            'users',
-            [
-                'approved' => 1,
-                'approved_by' => $admin_id,
-                'approved_at' => date('Y-m-d H:i:s'),
-                'status' => 'active'
-            ],
-            'id = ?',
-            [$user_id]
-        );
-
-        // If student, update student record with assigned ID
-        if ($user['role'] === 'student') {
-            db()->update(
-                'students',
-                [
-                    'student_id' => $assigned_id,
-                    'status' => 'active'
-                ],
-                'user_id = ?',
-                [$user_id]
-            );
-        }
-
-        // If teacher, update teacher record with assigned ID
-        if ($user['role'] === 'teacher') {
-            db()->update(
-                'teachers',
-                [
-                    'teacher_id' => $assigned_id,
-                    'status' => 'active'
-                ],
-                'user_id = ?',
-                [$user_id]
-            );
-        }
-
-        // Send approval email with assigned ID
-        $email_sent = send_approval_notification(
-            $user_id,
-            $user['email'],
-            $user['first_name'] . ' ' . $user['last_name'],
-            $user['role'],
-            $assigned_id,
-            $user['username']
-        );
-
-        if (!$email_sent) {
-            error_log("Failed to send approval email to {$user['email']}");
-        }
-
-        log_activity($admin_id, 'approve_user', 'users', $user_id, "Approved user: {$user['email']} with ID: {$assigned_id}");
-        try {
-            AuditLogger::log('approve_user', 'users', "Approved user #{$user_id}: {$user['email']} with ID: {$assigned_id}", $_SESSION['user_id'] ?? null);
-        } catch (\Throwable $e) {
-        }
-
-        $success_msg = "User approved successfully! Email sent to {$user['email']} with ID: {$assigned_id}";
-    }
-}
-
-// Handle disapproval (set to unapproved status)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['disapprove_user'])) {
-    $user_id = intval($_POST['user_id']);
-
-    $user = db()->fetchOne("SELECT * FROM users WHERE id = ?", [$user_id]);
-
-    if ($user) {
-        db()->update(
-            'users',
-            [
-                'approved' => 0,
-                'status' => 'pending',
-                'approved_by' => null,
-                'approved_at' => null
-            ],
-            'id = ?',
-            [$user_id]
-        );
-
-        // Update role-specific tables
-        if ($user['role'] === 'student') {
-            db()->update('students', ['status' => 'pending'], 'user_id = ?', [$user_id]);
-        } elseif ($user['role'] === 'teacher') {
-            db()->update('teachers', ['status' => 'pending'], 'user_id = ?', [$user_id]);
-        }
-
-        log_activity($admin_id, 'disapprove_user', 'users', $user_id, "Disapproved user: {$user['email']}");
-        try {
-            AuditLogger::log('disapprove_user', 'users', "Disapproved user #{$user_id}: {$user['email']}", $_SESSION['user_id'] ?? null);
-        } catch (\Throwable $e) {
-        }
-
-        $success_msg = "User disapproved and set to pending status.";
-    }
-}
-
-// Handle rejection (delete user)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_user'])) {
-    $user_id = intval($_POST['user_id']);
-
-    $user = db()->fetchOne("SELECT * FROM users WHERE id = ?", [$user_id]);
-
-    if ($user) {
-        // Log before deletion
-        log_activity($admin_id, 'reject_user', 'users', $user_id, "Rejected and deleted user: {$user['email']}");
-        try {
-            AuditLogger::log('reject_user', 'users', "Rejected and deleted user #{$user_id}: {$user['email']}", $_SESSION['user_id'] ?? null);
-        } catch (\Throwable $e) {
-        }
-
-        // Delete user (cascade will handle related records)
-        db()->delete('users', 'id = ?', [$user_id]);
-
-        $success_msg = "User registration rejected and deleted.";
-    }
-}
-
-// Get pending users (email verified but not approved)
-$pending_users = db()->fetchAll("SELECT u.*,
-    CASE
-        WHEN u.role = 'student' THEN s.admission_number
-        ELSE NULL
-    END as generated_id
-    FROM users u
-    LEFT JOIN students s ON u.id = s.user_id
-    WHERE u.email_verified = 1 AND u.approved = 0
-    ORDER BY u.created_at DESC");
-if (!$pending_users) $pending_users = [];
-
-// Get unverified users
-$unverified_users = db()->fetchAll("SELECT * FROM users WHERE email_verified = 0 ORDER BY created_at DESC");
-if (!$unverified_users) $unverified_users = [];
+$approvalData = $adminUserManager->getApprovalScreenData();
+$pending_users = $approvalData['pending_users'] ?? [];
+$unverified_users = $approvalData['unverified_users'] ?? [];
 
 $page_title = 'Approve Users';
 $page_icon = 'person_check'; // Material Symbols icon
@@ -315,33 +55,31 @@ ob_start();
 ?>
 
 <!-- User Approval Interface -->
-
-<body>
-
-
-
-    <div class="app-layout">
-        <?php include '../includes/sidebar-nav.php'; ?>
-        <main class="main-content">
-            <header class="cyber-header">
-                <div class="page-title-section">
-                    <div class="page-icon-orb"><i class="fas fa-<?php echo $page_icon; ?>"></i></div>
-                    <h1 class="page-title"><?php echo $page_title; ?></h1>
-                </div>
-                <div class="header-actions">
-                    <a href="unapproved-users.php" class="cyber-btn secondary" style="margin-right: 10px;">
-                        <i class="fas fa-user-times"></i> View Unapproved Users
-                    </a>
-                    <div class="stat-badge" style="background:rgba(255,165,0,0.1);border:1px solid orange;padding:8px 15px;border-radius:8px;">
-                        <i class="fas fa-clock"></i> <?php echo count($pending_users); ?> Pending
-                    </div>
-                </div>
-            </header>
-            <div class="cyber-content slide-in">
+<section class="cyber-header">
+    <div class="page-title-section">
+        <div class="page-icon-orb"><i class="fas fa-<?php echo $page_icon; ?>"></i></div>
+        <h1 class="page-title"><?php echo $page_title; ?></h1>
+    </div>
+    <div class="header-actions">
+        <a href="unapproved-users.php" class="cyber-btn secondary" style="margin-right: 10px;">
+            <i class="fas fa-user-times"></i> View Unapproved Users
+        </a>
+        <div class="stat-badge" style="background:rgba(255,165,0,0.1);border:1px solid orange;padding:8px 15px;border-radius:8px;">
+            <i class="fas fa-clock"></i> <?php echo count($pending_users); ?> Pending
+        </div>
+    </div>
+</section>
+<div class="cyber-content slide-in">
 
                 <?php if (isset($success_msg)): ?>
                     <div style="padding:15px 20px;border-radius:10px;margin-bottom:20px;display:flex;align-items:center;gap:12px;background:rgba(0,255,127,0.1);border:1px solid var(--neon-green);color:var(--neon-green);">
-                        <i class="fas fa-check-circle"></i><span><?php echo $success_msg; ?></span>
+                        <i class="fas fa-check-circle"></i><span><?php echo htmlspecialchars($success_msg); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($error_msg)): ?>
+                    <div style="padding:15px 20px;border-radius:10px;margin-bottom:20px;display:flex;align-items:center;gap:12px;background:rgba(255,99,71,0.12);border:1px solid rgba(255,99,71,0.5);color:#ff7f7f;">
+                        <i class="fas fa-exclamation-triangle"></i><span><?php echo htmlspecialchars($error_msg); ?></span>
                     </div>
                 <?php endif; ?>
 
@@ -474,10 +212,10 @@ ob_start();
                 </div>
 
             </div>
-        </main>
-    </div>
 
     <script>
+        const APPROVALS_API = '../../backend/api/admin/approvals.php';
+
         function togglePendingSelection() {
             const check = document.getElementById('selectAllPending');
             document.querySelectorAll('.pending-checkbox').forEach(cb => {
@@ -517,7 +255,7 @@ ob_start();
             }
 
             try {
-                const response = await fetch('../api/resend-verification.php?action=resend_single', {
+                const response = await fetch(`${APPROVALS_API}?action=resend_single`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -573,7 +311,7 @@ ob_start();
             }
 
             try {
-                const response = await fetch('../api/resend-verification.php?action=resend_bulk', {
+                const response = await fetch(`${APPROVALS_API}?action=resend_bulk`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -606,7 +344,7 @@ ob_start();
             }
 
             try {
-                const response = await fetch('../api/resend-verification.php?action=resend_all', {
+                const response = await fetch(`${APPROVALS_API}?action=resend_all`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -679,12 +417,158 @@ ob_start();
         }
     </script>
 
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/pwa-manager.js"></script>
-    <script src="../assets/js/pwa-analytics.js"></script>
-    </div><!-- End app-layout content -->
-    <?php
-    // Capture output and use master layout
-    $page_content = ob_get_clean();
-    require BASE_PATH . '/resources/ui-core/layouts/master-dashboard.php';
-    ?>
+    <script>
+        function approvalApiMessage(result, fallback = 'Request failed.') {
+            return result?.message || result?.error || fallback;
+        }
+
+        async function resendVerification(userId, email) {
+            if (!confirm(`Resend verification email to ${email}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${APPROVALS_API}?action=resend_single`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Verification email sent successfully to ${result.email || email}.`);
+                } else {
+                    alert(approvalApiMessage(result, 'Unable to resend verification email.'));
+                }
+            } catch (error) {
+                alert(`Network error: ${error.message}`);
+            }
+        }
+
+        async function resendToSelected() {
+            if (selectedResendUsers.length === 0) {
+                return;
+            }
+
+            if (!confirm(`Resend verification emails to ${selectedResendUsers.length} users?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${APPROVALS_API}?action=resend_bulk`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_ids: selectedResendUsers.map(user => user.id)
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`Successfully sent ${result.sent} verification email(s).`);
+                } else {
+                    const details = Array.isArray(result.errors) && result.errors.length > 0
+                        ? `\n\n${result.errors.join('\n')}`
+                        : '';
+                    alert(`${approvalApiMessage(result, 'Some verification emails failed.')}${details}`);
+                }
+                location.reload();
+            } catch (error) {
+                alert(`Network error: ${error.message}`);
+            }
+        }
+
+        async function resendToAll() {
+            const confirmation = prompt('RESEND TO ALL UNVERIFIED USERS?\n\nThis will send verification emails to all users who have not verified.\nType "RESEND_ALL" to confirm:');
+
+            if (confirmation !== 'RESEND_ALL') {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${APPROVALS_API}?action=resend_all`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        confirm: 'RESEND_ALL'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Successfully sent ${result.sent} verification email(s).`);
+                    location.reload();
+                } else {
+                    alert(approvalApiMessage(result, 'Unable to resend verification emails.'));
+                }
+            } catch (error) {
+                alert(`Network error: ${error.message}`);
+            }
+        }
+
+        async function approveUnverified(userId, email, role) {
+            if (!confirm(`Approve without email verification?\n\nUser: ${email}\nRole: ${role.toUpperCase()}\n\nThis will approve the user even though the email is still unverified.\n\nContinue?`)) {
+                return;
+            }
+
+            const year = new Date().getFullYear();
+            const randomNum = Math.floor(Math.random() * 10000);
+            const normalizedRole = String(role || '').toLowerCase();
+            let suggestedId = '';
+
+            if (normalizedRole === 'student') {
+                suggestedId = `STU${year}${String(randomNum).padStart(4, '0')}`;
+            } else if (normalizedRole === 'teacher') {
+                suggestedId = `TCH${year}${String(randomNum).padStart(4, '0')}`;
+            }
+
+            const assignedId = prompt(`Enter ID to assign to this user:\n\nSuggested: ${suggestedId}`, suggestedId);
+            if (!assignedId || assignedId.trim() === '') {
+                alert('An assigned ID is required to approve this user.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${APPROVALS_API}?action=approve_unverified`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        assigned_id: assignedId.trim()
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(approvalApiMessage(result, 'User approved successfully.'));
+                    location.reload();
+                } else {
+                    alert(approvalApiMessage(result, 'Failed to approve user.'));
+                }
+            } catch (error) {
+                alert(`Network error: ${error.message}`);
+            }
+        }
+    </script>
+
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/pwa-manager.js"></script>
+<script src="../assets/js/pwa-analytics.js"></script>
+<?php
+// Capture output and use master layout
+$page_content = ob_get_clean();
+require BASE_PATH . '/resources/ui-core/layouts/master-dashboard.php';
+?>

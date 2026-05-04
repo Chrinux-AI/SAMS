@@ -51,9 +51,11 @@ $page_title = "Emergency Alerts";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
-    <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png"><title><?php echo $page_title; ?> - SAMS</title>
+    <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
+    <title><?php echo $page_title; ?> - SAMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
     <link href="../assets/css/pwa-styles.css" rel="stylesheet">
     <style>
         .alerts-container {
@@ -230,9 +232,8 @@ $page_title = "Emergency Alerts";
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
-        <?php include '../includes/sidebar-nav.php'; ?>
+    <?php include '../includes/sidebar-nav.php'; ?>
 
     <div class="alerts-container">
         <h1><i class="fas fa-exclamation-triangle"></i> Emergency Alerts</h1>

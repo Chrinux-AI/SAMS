@@ -45,10 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_driver'])) {
 $drivers = [];
 try {
   if (table_exists('drivers')) {
-    $db = db();
-    $stmt = $db->prepare("SELECT * FROM drivers WHERE (tenant_id = :tid OR tenant_id IS NULL) ORDER BY name");
-    $stmt->execute([':tid' => $_SESSION['tenant_id'] ?? 1]);
-    $drivers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $drivers = db()->fetchAll("SELECT * FROM drivers WHERE (tenant_id = ? OR tenant_id IS NULL) ORDER BY name", [$_SESSION['tenant_id'] ?? 1]) ?: [];
   }
 } catch (Exception $e) {
   $drivers = [];
@@ -77,6 +74,8 @@ $page_title = "Driver Management";
   <title><?php echo $page_title; ?> - SAMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
   <link href="../assets/css/sidebar-nav.css" rel="stylesheet">
   <link href="../assets/css/sams-theme-system.css" rel="stylesheet">
   <style>

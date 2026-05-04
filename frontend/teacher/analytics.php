@@ -11,115 +11,199 @@ require_once '../includes/functions.php';
 require_once '../includes/database.php';
 require_teacher('../login.php');
 
-$teacher_id = $_SESSION['assigned_id'];
+$teacherIds = array_values(array_unique(array_filter([
+    (int)($_SESSION['assigned_id'] ?? 0),
+    (int)($_SESSION['user_id'] ?? 0),
+])));
+$teacher_id = $teacherIds[0] ?? 0;
 $full_name = $_SESSION['full_name'];
+$attendanceDateField = table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : (table_has_column('attendance_records', 'date') ? 'date' : 'attendance_date');
+$hasAssignments = table_exists('assignments');
+$hasAssignmentSubmissions = table_exists('assignment_submissions');
+$supportsGradeAnalytics = $hasAssignments && $hasAssignmentSubmissions;
+$teacherPlaceholders = implode(',', array_fill(0, max(1, count($teacherIds)), '?'));
 
 // Get time period from query params
 $period = $_GET['period'] ?? '30'; // days
 $class_filter = isset($_GET['class_id']) ? (int)$_GET['class_id'] : null;
 
 // Get teacher's classes
+$classFilterSql = $class_filter ? " AND c.id = ?" : "";
+$classFilterParams = $class_filter ? [$class_filter] : [];
+
 $classes = db()->fetchAll("
     SELECT c.*, COUNT(DISTINCT ce.student_id) as student_count
     FROM classes c
     LEFT JOIN class_enrollments ce ON c.id = ce.class_id
-    WHERE c.class_teacher_id = ?
+    WHERE c.class_teacher_id IN ($teacherPlaceholders)$classFilterSql
     GROUP BY c.id
     ORDER BY c.class_name
-", [$teacher_id]);
+", array_merge($teacherIds ?: [0], $classFilterParams));
 
-// Build WHERE clause for class filter
-$class_where = $class_filter ? "AND c.id = {$class_filter}" : "";
-
-// Get attendance vs grades correlation data
-$correlation_data = db()->fetchAll("
+$baseCorrelationSelect = "
     SELECT
-        s.id as student_id,
+        ce.student_id as student_id,
         CONCAT(u.first_name, ' ', u.last_name) as student_name,
         c.class_name,
         COUNT(DISTINCT CASE WHEN ar.status = 'present' THEN ar.id END) as present_count,
         COUNT(DISTINCT ar.id) as total_attendance,
-        ROUND(COUNT(DISTINCT CASE WHEN ar.status = 'present' THEN ar.id END) * 100.0 / NULLIF(COUNT(DISTINCT ar.id), 0), 1) as attendance_rate,
-        AVG((asub.grade / a.max_points) * 100) as avg_grade
-    FROM students s
-    JOIN users u ON s.user_id = u.id
-    JOIN class_enrollments ce ON s.id = ce.student_id
-    JOIN classes c ON ce.class_id = c.id
-    LEFT JOIN attendance_records ar ON s.id = ar.student_id
-        AND ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-    LEFT JOIN assignment_submissions asub ON s.id = asub.student_id AND asub.grade IS NOT NULL
-    LEFT JOIN assignments a ON asub.assignment_id = a.id AND a.class_id = c.id
-    WHERE c.class_teacher_id = ? {$class_where}
-    GROUP BY s.id, c.id
-    HAVING total_attendance > 0
-    ORDER BY student_name
-", [$period, $teacher_id]);
+        ROUND(COUNT(DISTINCT CASE WHEN ar.status = 'present' THEN ar.id END) * 100.0 / NULLIF(COUNT(DISTINCT ar.id), 0), 1) as attendance_rate";
+$baseCorrelationFrom = "
+    FROM class_enrollments ce
+    JOIN users u ON ce.student_id = u.id
+    LEFT JOIN attendance_records ar ON ce.student_id = ar.student_id
+        AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+    JOIN classes c ON ce.class_id = c.id";
+$baseCorrelationWhere = "
+    WHERE c.class_teacher_id IN ($teacherPlaceholders)$classFilterSql
+    GROUP BY ce.student_id, c.id";
+
+// Get attendance vs grades correlation data
+if ($supportsGradeAnalytics) {
+    $correlation_data = db()->fetchAll(
+        $baseCorrelationSelect . ",
+        AVG((asub.grade / NULLIF(a.max_points, 0)) * 100) as avg_grade
+        $baseCorrelationFrom
+        LEFT JOIN assignment_submissions asub ON ce.student_id = asub.student_id AND asub.grade IS NOT NULL
+        LEFT JOIN assignments a ON asub.assignment_id = a.id AND a.class_id = c.id
+        $baseCorrelationWhere
+        HAVING total_attendance > 0
+        ORDER BY student_name",
+        array_merge([$period], $teacherIds ?: [0], $classFilterParams)
+    ) ?: [];
+} else {
+    $correlation_data = db()->fetchAll(
+        $baseCorrelationSelect . ",
+        NULL as avg_grade
+        $baseCorrelationFrom
+        $baseCorrelationWhere
+        HAVING total_attendance > 0
+        ORDER BY student_name",
+        array_merge([$period], $teacherIds ?: [0], $classFilterParams)
+    ) ?: [];
+}
 
 // Identify at-risk students (low attendance OR low grades)
-$at_risk_students = db()->fetchAll("
-    SELECT DISTINCT
-        s.id,
-        CONCAT(u.first_name, ' ', u.last_name) as student_name,
-        c.class_name,
-        ROUND(COUNT(CASE WHEN ar.status = 'present' THEN 1 END) * 100.0 / COUNT(*), 1) as attendance_rate,
-        AVG((asub.grade / a.max_points) * 100) as avg_grade,
-        COUNT(CASE WHEN ar.status = 'absent' THEN 1 END) as absent_count,
-        MAX(ar.attendance_date) as last_present_date
-    FROM students s
-    JOIN users u ON s.user_id = u.id
-    JOIN class_enrollments ce ON s.id = ce.student_id
-    JOIN classes c ON ce.class_id = c.id
-    LEFT JOIN attendance_records ar ON s.id = ar.student_id
-        AND ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-    LEFT JOIN assignment_submissions asub ON s.id = asub.student_id AND asub.grade IS NOT NULL
-    LEFT JOIN assignments a ON asub.assignment_id = a.id AND a.class_id = c.id
-    WHERE c.class_teacher_id = ? {$class_where}
-    GROUP BY s.id, c.id
-    HAVING attendance_rate < 75 OR avg_grade < 70 OR absent_count >= 5
-    ORDER BY attendance_rate ASC, avg_grade ASC
-    LIMIT 20
-", [$period, $teacher_id]);
+if ($supportsGradeAnalytics) {
+    $at_risk_students = db()->fetchAll("
+        SELECT DISTINCT
+            ce.student_id as id,
+            CONCAT(u.first_name, ' ', u.last_name) as student_name,
+            c.class_name,
+            ROUND(COUNT(CASE WHEN ar.status = 'present' THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 1) as attendance_rate,
+            AVG((asub.grade / NULLIF(a.max_points, 0)) * 100) as avg_grade,
+            COUNT(CASE WHEN ar.status = 'absent' THEN 1 END) as absent_count,
+            MAX(ar.{$attendanceDateField}) as last_present_date
+        FROM class_enrollments ce
+        JOIN users u ON ce.student_id = u.id
+        JOIN classes c ON ce.class_id = c.id
+        LEFT JOIN attendance_records ar ON ce.student_id = ar.student_id
+            AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        LEFT JOIN assignment_submissions asub ON ce.student_id = asub.student_id AND asub.grade IS NOT NULL
+        LEFT JOIN assignments a ON asub.assignment_id = a.id AND a.class_id = c.id
+        WHERE c.class_teacher_id IN ($teacherPlaceholders)$classFilterSql
+        GROUP BY ce.student_id, c.id
+        HAVING attendance_rate < 75 OR avg_grade < 70 OR absent_count >= 5
+        ORDER BY attendance_rate ASC, avg_grade ASC
+        LIMIT 20
+    ", array_merge([$period], $teacherIds ?: [0], $classFilterParams)) ?: [];
+} else {
+    $at_risk_students = db()->fetchAll("
+        SELECT DISTINCT
+            ce.student_id as id,
+            CONCAT(u.first_name, ' ', u.last_name) as student_name,
+            c.class_name,
+            ROUND(COUNT(CASE WHEN ar.status = 'present' THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 1) as attendance_rate,
+            NULL as avg_grade,
+            COUNT(CASE WHEN ar.status = 'absent' THEN 1 END) as absent_count,
+            MAX(ar.{$attendanceDateField}) as last_present_date
+        FROM class_enrollments ce
+        JOIN users u ON ce.student_id = u.id
+        JOIN classes c ON ce.class_id = c.id
+        LEFT JOIN attendance_records ar ON ce.student_id = ar.student_id
+            AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        WHERE c.class_teacher_id IN ($teacherPlaceholders)$classFilterSql
+        GROUP BY ce.student_id, c.id
+        HAVING attendance_rate < 75 OR absent_count >= 5
+        ORDER BY attendance_rate ASC, absent_count DESC
+        LIMIT 20
+    ", array_merge([$period], $teacherIds ?: [0], $classFilterParams)) ?: [];
+}
 
 // Get trend data (last 8 weeks)
-$trend_data = db()->fetchAll("
-    SELECT
-        WEEK(ar.attendance_date) as week_num,
-        DATE_FORMAT(MIN(ar.attendance_date), '%b %d') as week_start,
-        ROUND(COUNT(CASE WHEN ar.status = 'present' THEN 1 END) * 100.0 / COUNT(*), 1) as attendance_rate,
-        AVG((asub.grade / a.max_points) * 100) as avg_grade
-    FROM attendance_records ar
-    JOIN students s ON ar.student_id = s.id
-    JOIN class_enrollments ce ON s.id = ce.student_id
-    JOIN classes c ON ce.class_id = c.id
-    LEFT JOIN assignment_submissions asub ON s.id = asub.student_id
-        AND WEEK(asub.submitted_at) = WEEK(ar.attendance_date)
-        AND asub.grade IS NOT NULL
-    LEFT JOIN assignments a ON asub.assignment_id = a.id
-    WHERE c.class_teacher_id = ?
-        AND ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL 56 DAY)
-        {$class_where}
-    GROUP BY WEEK(ar.attendance_date)
-    ORDER BY week_num DESC
-    LIMIT 8
-", [$teacher_id]);
+if ($supportsGradeAnalytics) {
+    $trend_data = db()->fetchAll("
+        SELECT
+            WEEK(ar.{$attendanceDateField}) as week_num,
+            DATE_FORMAT(MIN(ar.{$attendanceDateField}), '%b %d') as week_start,
+            ROUND(COUNT(CASE WHEN ar.status = 'present' THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 1) as attendance_rate,
+            AVG((asub.grade / NULLIF(a.max_points, 0)) * 100) as avg_grade
+        FROM attendance_records ar
+        JOIN class_enrollments ce ON ar.student_id = ce.student_id
+        JOIN classes c ON ce.class_id = c.id
+        LEFT JOIN assignment_submissions asub ON ce.student_id = asub.student_id
+            AND WEEK(asub.submitted_at) = WEEK(ar.{$attendanceDateField})
+            AND asub.grade IS NOT NULL
+        LEFT JOIN assignments a ON asub.assignment_id = a.id
+        WHERE c.class_teacher_id IN ($teacherPlaceholders)
+            AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL 56 DAY)$classFilterSql
+        GROUP BY WEEK(ar.{$attendanceDateField})
+        ORDER BY week_num DESC
+        LIMIT 8
+    ", array_merge($teacherIds ?: [0], $classFilterParams)) ?: [];
+} else {
+    $trend_data = db()->fetchAll("
+        SELECT
+            WEEK(ar.{$attendanceDateField}) as week_num,
+            DATE_FORMAT(MIN(ar.{$attendanceDateField}), '%b %d') as week_start,
+            ROUND(COUNT(CASE WHEN ar.status = 'present' THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 1) as attendance_rate,
+            NULL as avg_grade
+        FROM attendance_records ar
+        JOIN class_enrollments ce ON ar.student_id = ce.student_id
+        JOIN classes c ON ce.class_id = c.id
+        WHERE c.class_teacher_id IN ($teacherPlaceholders)
+            AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL 56 DAY)$classFilterSql
+        GROUP BY WEEK(ar.{$attendanceDateField})
+        ORDER BY week_num DESC
+        LIMIT 8
+    ", array_merge($teacherIds ?: [0], $classFilterParams)) ?: [];
+}
 $trend_data = array_reverse($trend_data);
 
 // Calculate overall statistics
-$overall_stats = db()->fetchOne("
-    SELECT
-        COUNT(DISTINCT s.id) as total_students,
-        ROUND(AVG(CASE WHEN ar.status = 'present' THEN 100 ELSE 0 END), 1) as avg_attendance,
-        ROUND(AVG((asub.grade / a.max_points) * 100), 1) as avg_grade,
-        COUNT(DISTINCT CASE WHEN ar.status = 'absent' THEN s.id END) as students_with_absences
-    FROM students s
-    JOIN class_enrollments ce ON s.id = ce.student_id
-    JOIN classes c ON ce.class_id = c.id
-    LEFT JOIN attendance_records ar ON s.id = ar.student_id
-        AND ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-    LEFT JOIN assignment_submissions asub ON s.id = asub.student_id AND asub.grade IS NOT NULL
-    LEFT JOIN assignments a ON asub.assignment_id = a.id AND a.class_id = c.id
-    WHERE c.class_teacher_id = ? {$class_where}
-", [$period, $teacher_id]);
+$overall_stats = $supportsGradeAnalytics
+    ? db()->fetchOne("
+        SELECT
+            COUNT(DISTINCT ce.student_id) as total_students,
+            ROUND(AVG(CASE WHEN ar.status = 'present' THEN 100 ELSE 0 END), 1) as avg_attendance,
+            ROUND(AVG((asub.grade / NULLIF(a.max_points, 0)) * 100), 1) as avg_grade,
+            COUNT(DISTINCT CASE WHEN ar.status = 'absent' THEN ce.student_id END) as students_with_absences
+        FROM class_enrollments ce
+        JOIN classes c ON ce.class_id = c.id
+        LEFT JOIN attendance_records ar ON ce.student_id = ar.student_id
+            AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        LEFT JOIN assignment_submissions asub ON ce.student_id = asub.student_id AND asub.grade IS NOT NULL
+        LEFT JOIN assignments a ON asub.assignment_id = a.id AND a.class_id = c.id
+        WHERE c.class_teacher_id IN ($teacherPlaceholders)$classFilterSql
+    ", array_merge([$period], $teacherIds ?: [0], $classFilterParams))
+    : db()->fetchOne("
+        SELECT
+            COUNT(DISTINCT ce.student_id) as total_students,
+            ROUND(AVG(CASE WHEN ar.status = 'present' THEN 100 ELSE 0 END), 1) as avg_attendance,
+            NULL as avg_grade,
+            COUNT(DISTINCT CASE WHEN ar.status = 'absent' THEN ce.student_id END) as students_with_absences
+        FROM class_enrollments ce
+        JOIN classes c ON ce.class_id = c.id
+        LEFT JOIN attendance_records ar ON ce.student_id = ar.student_id
+            AND ar.{$attendanceDateField} >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        WHERE c.class_teacher_id IN ($teacherPlaceholders)$classFilterSql
+    ", array_merge([$period], $teacherIds ?: [0], $classFilterParams));
+$overall_stats = $overall_stats ?: [
+    'total_students' => 0,
+    'avg_attendance' => 0,
+    'avg_grade' => null,
+    'students_with_absences' => 0,
+];
 
 // AI-powered recommendations
 $recommendations = [];
@@ -132,7 +216,7 @@ if ($overall_stats['avg_attendance'] < 85) {
         'action' => 'Review attendance patterns and contact parents of frequently absent students.'
     ];
 }
-if ($overall_stats['avg_grade'] < 75) {
+if ($overall_stats['avg_grade'] !== null && $overall_stats['avg_grade'] < 75) {
     $recommendations[] = [
         'type' => 'danger',
         'icon' => 'chart-line',
@@ -175,8 +259,12 @@ $page_icon = 'chart-line';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Rajdhana:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -234,7 +322,6 @@ $page_icon = 'chart-line';
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>

@@ -30,7 +30,7 @@ $full_name = $_SESSION['full_name'];
 
 <head>
     <script src="../assets/js/theme-loader.js"></script>
-        <link rel="manifest" href="/attendance/manifest.json">
+    <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <meta charset="UTF-8">
@@ -39,11 +39,12 @@ $full_name = $_SESSION['full_name'];
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
-    
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 </head>
+
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>

@@ -9,6 +9,57 @@ defined('BASE_PATH') || define('BASE_PATH', dirname(__DIR__));
 defined('INCLUDES_PATH') || define('INCLUDES_PATH', BASE_PATH . '/includes');
 defined('PROJECT_ROOT') || define('PROJECT_ROOT', dirname(BASE_PATH));
 
+if (!function_exists('detect_app_base_path')) {
+    function detect_app_base_path(): string
+    {
+        $scriptName = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+        if ($scriptName === '') {
+            return '/attendance';
+        }
+
+        $patterns = [
+            '#^(.*?)/frontend(?:/.*)?$#',
+            '#^(.*?)/backend(?:/.*)?$#',
+            '#^(.*?)/api(?:/.*)?$#',
+            '#^(.*?)/[^/]+\.php$#'
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $scriptName, $matches)) {
+                $base = rtrim((string)($matches[1] ?? ''), '/');
+                return $base === '' ? '' : $base;
+            }
+        }
+
+        return '/attendance';
+    }
+}
+
+if (!function_exists('detect_app_url')) {
+    function detect_app_url(): string
+    {
+        $envUrl = getenv('APP_URL') ?: getenv('WEBSITE_HOSTNAME');
+        if ($envUrl) {
+            if (filter_var($envUrl, FILTER_VALIDATE_URL)) {
+                return rtrim($envUrl, '/');
+            }
+
+            $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
+            $scheme = $https ? 'https' : 'http';
+            $basePath = detect_app_base_path();
+            return $scheme . '://' . trim((string)$envUrl, '/') . $basePath;
+        }
+
+        $host = (string)($_SERVER['HTTP_X_FORWARDED_HOST'] ?? ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
+        $scheme = $https ? 'https' : 'http';
+        $basePath = detect_app_base_path();
+        return rtrim($scheme . '://' . $host . $basePath, '/');
+    }
+}
+
 // Database Configuration
 define('DB_HOST', 'localhost');  // Windows XAMPP
 define('DB_USER', 'root');
@@ -19,7 +70,7 @@ define('DB_CHARSET', 'utf8mb4');
 // Application Settings
 define('APP_NAME', 'School Attendance System');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost/attendance');
+define('APP_URL', detect_app_url());
 define('TIMEZONE', 'America/New_York');
 
 // Security Settings
@@ -77,9 +128,13 @@ ini_set('error_log', $frontendLogDir . '/system.log');
 // Session configuration (must be set before session_start)
 if (session_status() === PHP_SESSION_NONE) {
     // Set session settings before starting
+    $isHttpsRequest = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
     ini_set('session.cookie_httponly', 1);
     ini_set('session.use_only_cookies', 1);
-    ini_set('session.cookie_secure', 0); // Set to 1 if using HTTPS
+    ini_set('session.cookie_secure', $isHttpsRequest ? '1' : '0');
+    ini_set('session.cookie_path', '/');
+    ini_set('session.use_strict_mode', '1');
     ini_set('session.gc_maxlifetime', SESSION_TIMEOUT);
     $backendLogDir = BASE_PATH . '/storage/logs';
     if (!is_dir($backendLogDir)) {
@@ -108,10 +163,9 @@ enforce_session_timeout();
 
 // Load bootstrap from whichever path exists in the current split-folder setup
 $bootstrapCandidates = [
+    PROJECT_ROOT . '/backend/app/app/bootstrap.php',  // backend split path
     BASE_PATH . '/app/bootstrap.php',                 // legacy monolith path
     BASE_PATH . '/core/bootstrap.php',                // current frontend path
-    PROJECT_ROOT . '/backend/app/app/bootstrap.php',  // backend split path
-    PROJECT_ROOT . '/backend/core/bootstrap.php',     // backend core fallback
 ];
 
 $bootstrapLoaded = false;

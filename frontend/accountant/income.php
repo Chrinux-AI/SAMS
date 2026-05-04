@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Accountant Income Management
@@ -17,7 +17,8 @@ $tenantId = $_SESSION['tenant_id'] ?? 1;
 
 $feeIncome = 0.0;
 try {
-    $row = db()->fetchOne("SELECT COALESCE(SUM(amount),0) AS total FROM fee_payments WHERE tenant_id = ?", [$tenantId]);
+    $amountField = table_has_column('fee_payments', 'amount_paid') ? 'amount_paid' : 'amount';
+    $row = db()->fetchOne("SELECT COALESCE(SUM({$amountField}),0) AS total FROM fee_payments WHERE tenant_id = ?", [$tenantId]);
     $feeIncome = (float)($row['total'] ?? 0);
 } catch (Throwable $e) {
     $feeIncome = 0.0;
@@ -26,7 +27,7 @@ try {
 $otherIncome = [];
 try {
     $otherIncome = db()->fetchAll(
-        "SELECT * FROM ledger_entries WHERE tenant_id = ? AND account = 'revenue' AND credit > 0 ORDER BY entry_date DESC, id DESC LIMIT 80",
+        "SELECT * FROM ledger_entries WHERE tenant_id = ? AND category = 'income' AND type = 'credit' ORDER BY entry_date DESC, id DESC LIMIT 80",
         [$tenantId]
     ) ?: [];
 } catch (Throwable $e) {
@@ -34,15 +35,23 @@ try {
 }
 
 $otherTotal = array_sum(array_map(static function ($r) {
-    return (float)($r['credit'] ?? 0);
+    return (float)($r['amount'] ?? 0);
 }, $otherIncome));
 
 $recentPayments = [];
 try {
+    $amountField = table_has_column('fee_payments', 'amount_paid') ? 'fp.amount_paid' : 'fp.amount';
+    $statusField = table_has_column('fee_payments', 'payment_status') ? 'fp.payment_status' : 'fp.status';
+    $joins = '';
+    if (table_has_column('fee_payments', 'student_id')) {
+        $joins = ' LEFT JOIN users u ON fp.student_id = u.id';
+    } elseif (table_has_column('fee_payments', 'fee_id') && table_exists('invoices')) {
+        $joins = ' LEFT JOIN invoices i ON fp.fee_id = i.id LEFT JOIN users u ON i.student_id = u.id';
+    }
     $recentPayments = db()->fetchAll(
-        "SELECT fp.*, u.full_name
+        "SELECT fp.*, u.full_name, {$amountField} AS display_amount, {$statusField} AS display_status
          FROM fee_payments fp
-         LEFT JOIN users u ON fp.student_id = u.id
+         {$joins}
          WHERE fp.tenant_id = ?
          ORDER BY fp.payment_date DESC, fp.created_at DESC
          LIMIT 40",
@@ -56,9 +65,9 @@ $totalIncome = $feeIncome + $otherTotal;
 
 $outstandingTotal = 0.0;
 foreach ($recentPayments as $paymentRow) {
-    $status = strtolower((string)($paymentRow['status'] ?? 'pending'));
-    if (!in_array($status, ['paid', 'approved', 'success'], true)) {
-        $outstandingTotal += (float)($paymentRow['amount'] ?? 0);
+    $status = strtolower((string)($paymentRow['display_status'] ?? 'pending'));
+    if (!in_array($status, ['paid', 'approved', 'success', 'completed'], true)) {
+        $outstandingTotal += (float)($paymentRow['display_amount'] ?? 0);
     }
 }
 
@@ -66,51 +75,47 @@ $page_title = 'Income Management';
 $page_icon = 'payments';
 $page_subtitle = 'Revenue streams, collections, and recent income activities.';
 
-ob_start();
+$activeTab = 'income';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
-<div class="mb-8">
-    <h2 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface">Income Management</h2>
-    <p class="text-on-surface-variant mt-1">Fiscal year revenue oversight across collections, other income streams, and student balances.</p>
-</div>
-
 <div class="flex flex-wrap justify-end gap-3 mb-6">
-    <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-highest px-4 py-2.5 text-sm font-semibold text-primary">
+    <a href="index.php?page=reports&amp;type=income" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-highest px-4 py-2.5 text-sm font-semibold text-primary">
         <span class="material-symbols-outlined text-base">description</span>
-        Generate Invoice
-    </button>
-    <button type="button" class="inline-flex items-center gap-2 rounded-lg bg-primary text-on-primary px-6 py-2.5 text-sm font-bold shadow-lg shadow-primary/20">
+        Income Report
+    </a>
+    <a href="index.php?page=ledger#quick-journal" class="inline-flex items-center gap-2 rounded-lg bg-primary text-on-primary px-6 py-2.5 text-sm font-bold shadow-lg shadow-primary/20">
         <span class="material-symbols-outlined text-base">add_circle</span>
         Record Other Income
-    </button>
+    </a>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
     <div class="bg-surface-container-lowest rounded-xl p-6 border-l-4 border-primary shadow-sm">
         <p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-1">Fee Collections</p>
-        <div class="text-4xl font-extrabold text-on-surface tabular-nums">$<?php echo number_format($feeIncome, 2); ?></div>
-        <div class="mt-4 inline-flex items-center gap-1 rounded-full bg-secondary-container/30 px-2 py-1 text-xs font-bold text-secondary">
+        <div class="text-4xl font-extrabold text-on-surface tabular-nums"><?php echo accountant_currency($feeIncome); ?></div>
+        <div class="mt-4 inline-flex items-center gap-1 rounded-full bg-secondary-container px-2 py-1 text-xs font-bold text-secondary">
             <span class="material-symbols-outlined text-sm">trending_up</span>+12% vs LY
         </div>
     </div>
     <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
         <p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-1">Other Income</p>
-        <div class="text-4xl font-extrabold text-on-surface tabular-nums">$<?php echo number_format($otherTotal, 2); ?></div>
+        <div class="text-4xl font-extrabold text-on-surface tabular-nums"><?php echo accountant_currency($otherTotal); ?></div>
         <p class="mt-4 text-xs text-on-surface-variant italic">Grants, donations &amp; ledger credits</p>
     </div>
     <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
         <p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-1">Total Income</p>
-        <div class="text-4xl font-extrabold text-primary tabular-nums">$<?php echo number_format($totalIncome, 2); ?></div>
+        <div class="text-4xl font-extrabold text-primary tabular-nums"><?php echo accountant_currency($totalIncome); ?></div>
         <div class="mt-4 h-1.5 rounded-full bg-surface-container-high overflow-hidden">
             <div class="h-full w-3/4 rounded-full bg-primary"></div>
         </div>
     </div>
     <div class="bg-surface-container-lowest rounded-xl p-6 border-l-4 border-error shadow-sm">
         <p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-1">Outstanding Balances</p>
-        <div class="text-4xl font-extrabold text-error tabular-nums">$<?php echo number_format($outstandingTotal, 2); ?></div>
-        <button type="button" class="mt-4 inline-flex items-center text-xs font-bold text-primary hover:underline">
+        <div class="text-4xl font-extrabold text-error tabular-nums"><?php echo accountant_currency($outstandingTotal); ?></div>
+        <a href="index.php?page=reports&amp;type=income" class="mt-4 inline-flex items-center text-xs font-bold text-primary hover:underline">
             Review Aging Report <span class="material-symbols-outlined text-sm ml-1">chevron_right</span>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -147,9 +152,9 @@ ob_start();
                     <?php else: ?>
                         <?php foreach ($recentPayments as $p): ?>
                             <?php
-                            $paymentStatus = strtolower((string)($p['status'] ?? 'pending'));
+                            $paymentStatus = strtolower((string)($p['display_status'] ?? 'pending'));
                             $badgeClass = 'bg-surface-container-highest text-on-surface-variant';
-                            if (in_array($paymentStatus, ['paid', 'approved', 'success'], true)) {
+                            if (in_array($paymentStatus, ['paid', 'approved', 'success', 'completed'], true)) {
                                 $badgeClass = 'bg-secondary-container text-on-secondary-container';
                             } elseif (in_array($paymentStatus, ['failed', 'rejected', 'overdue'], true)) {
                                 $badgeClass = 'bg-error-container text-on-error-container';
@@ -158,7 +163,7 @@ ob_start();
                             <tr class="hover:bg-surface-container-low transition-colors">
                                 <td class="px-6 py-4 text-sm font-semibold"><?php echo htmlspecialchars((string)($p['full_name'] ?? 'N/A')); ?></td>
                                 <td class="px-6 py-4 text-sm text-on-surface-variant"><?php echo !empty($p['payment_date']) ? date('M j, Y', strtotime((string)$p['payment_date'])) : '-'; ?></td>
-                                <td class="px-6 py-4 text-right text-sm font-bold tabular-nums">$<?php echo number_format((float)($p['amount'] ?? 0), 2); ?></td>
+                                <td class="px-6 py-4 text-right text-sm font-bold tabular-nums"><?php echo accountant_currency((float)($p['display_amount'] ?? 0)); ?></td>
                                 <td class="px-6 py-4 text-sm text-on-surface-variant"><?php echo htmlspecialchars(ucfirst((string)($p['payment_method'] ?? ''))); ?></td>
                                 <td class="px-6 py-4"><span class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider <?php echo $badgeClass; ?>"><?php echo htmlspecialchars(ucfirst($paymentStatus)); ?></span></td>
                             </tr>
@@ -203,16 +208,14 @@ ob_start();
                     <div class="rounded-lg bg-surface p-3">
                         <p class="text-sm font-bold">Outstanding student balances</p>
                         <p class="text-xs text-on-surface-variant mt-1">Automate reminders to reduce unpaid fee records.</p>
-                        <p class="mt-2 text-base font-extrabold text-error">$<?php echo number_format($outstandingTotal, 2); ?></p>
+                        <p class="mt-2 text-base font-extrabold text-error"><?php echo accountant_currency($outstandingTotal); ?></p>
                     </div>
                 <?php endif; ?>
             </div>
-            <button type="button" class="w-full mt-5 rounded-lg border border-primary/20 py-2.5 text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5">View All Delinquencies</button>
+            <a href="index.php?page=reports&amp;type=income" class="inline-flex w-full items-center justify-center mt-5 rounded-lg border border-primary/20 py-2.5 text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5">View All Delinquencies</a>
         </div>
     </div>
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'income', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

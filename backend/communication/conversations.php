@@ -9,10 +9,7 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/database.php';
 
-if (!is_logged_in()) {
-  header('Location: ../login.php');
-  exit;
-}
+require_login('../login.php');
 
 $user_id = (int)$_SESSION['user_id'];
 $user_role = $_SESSION['role'] ?? 'student';

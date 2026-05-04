@@ -14,6 +14,7 @@ require_student();
 
 $student_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenantId = current_tenant_id();
 
 // Get student's LMS user ID
 $student_data = db()->fetchOne(
@@ -52,10 +53,7 @@ $lms_sessions = db()->fetchAll(
     [$student_id]
 );
 
-$unread_messages = db()->fetchOne(
-    "SELECT COUNT(*) as count FROM message_recipients WHERE recipient_id = ? AND is_read = 0",
-    [$student_id]
-)['count'] ?? 0;
+$unread_messages = get_unread_message_count((int)$student_id, $tenantId ? (int)$tenantId : null);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,12 +69,12 @@ $unread_messages = db()->fetchOne(
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
 
 </head>
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>

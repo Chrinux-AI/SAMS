@@ -1,2 +1,2 @@
 ﻿<?php
-require __DIR__ . '/frontend/system-overview.php';
+require_once __DIR__ . '/tools/maintenance/system-overview.php';

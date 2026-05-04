@@ -87,260 +87,195 @@ if ($_GET['generate'] ?? false) {
 ob_start();
 ?>
 
-<!-- Reports Interface -->
-
-<style>
-    .report-filters {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-
-    .filter-group label {
-        display: block;
-        color: var(--cyber-cyan);
-        font-size: 0.85rem;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .filter-group select,
-    .filter-group input {
-        width: 100%;
-        padding: 10px;
-        background: rgba(0, 255, 255, 0.05);
-        border: 1px solid var(--glass-border);
-        border-radius: 8px;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-    }
-
-    .report-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    .report-table th {
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
-        padding: 12px;
-        text-align: left;
-        color: var(--cyber-cyan);
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        border-bottom: 2px solid var(--cyber-cyan);
-    }
-
-    .report-table td {
-        padding: 10px 12px;
-        border-bottom: 1px solid var(--glass-border);
-        color: var(--text-primary);
-    }
-
-    .report-table tr:hover {
-        background: rgba(0, 255, 255, 0.05);
-    }
-
-    .export-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-    }
-</style>
-
-<!-- Reports Interface -->
-
-<?php // Report generation logic already complete above 
-?>
-<main class="main-content">
-    <header class="cyber-header">
-        <div class="page-title-section">
-            <div class="page-icon-orb"><i class="fas fa-<?php echo $page_icon; ?>"></i></div>
-            <h1 class="page-title"><?php echo $page_title; ?></h1>
+<div class="space-y-6">
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm">
+            <p class="text-[11px] font-bold uppercase tracking-widest text-outline mb-2">Total Students</p>
+            <p class="text-3xl font-extrabold text-on-surface"><?php echo number_format($total_students); ?></p>
         </div>
-        <div class="header-actions">
-            <div class="biometric-orb" title="Quick Scan" onclick="openQuickScan()"><i class="fas fa-fingerprint"></i></div>
-            <div class="user-card" style="padding:8px 15px;margin:0;">
-                <div class="user-avatar" style="width:35px;height:35px;font-size:0.9rem;">
-                    <?php echo strtoupper(substr($full_name, 0, 2)); ?></div>
-                <div class="user-info">
-                    <div class="user-name" style="font-size:0.85rem;"><?php echo htmlspecialchars($full_name); ?></div>
-                    <div class="user-role">Administrator</div>
-                </div>
-            </div>
+        <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm">
+            <p class="text-[11px] font-bold uppercase tracking-widest text-outline mb-2">Total Classes</p>
+            <p class="text-3xl font-extrabold text-on-surface"><?php echo number_format($total_classes); ?></p>
         </div>
-    </header>
-    <div class="cyber-content slide-in">
-        <section class="orb-grid">
-            <div class="stat-orb">
-                <div class="stat-icon cyan"><i class="fas fa-user-graduate"></i></div>
-                <div class="stat-content">
-                    <div class="stat-value"><?php echo number_format($total_students); ?></div>
-                    <div class="stat-label">Total Students</div>
-                    <div class="stat-trend up"><i class="fas fa-arrow-up"></i><span>Active</span></div>
-                </div>
-            </div>
-            <div class="stat-orb">
-                <div class="stat-icon green"><i class="fas fa-door-open"></i></div>
-                <div class="stat-content">
-                    <div class="stat-value"><?php echo number_format($total_classes); ?></div>
-                    <div class="stat-label">Total Classes</div>
-                    <div class="stat-trend up"><i class="fas fa-check"></i><span>All Levels</span></div>
-                </div>
-            </div>
-            <div class="stat-orb">
-                <div class="stat-icon purple"><i class="fas fa-clipboard-check"></i></div>
-                <div class="stat-content">
-                    <div class="stat-value"><?php echo number_format($total_attendance); ?></div>
-                    <div class="stat-label">Total Records</div>
-                    <div class="stat-trend up"><i class="fas fa-database"></i><span>Recorded</span></div>
-                </div>
-            </div>
-        </section>
+        <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm">
+            <p class="text-[11px] font-bold uppercase tracking-widest text-outline mb-2">Attendance Records</p>
+            <p class="text-3xl font-extrabold text-on-surface"><?php echo number_format($total_attendance); ?></p>
+        </div>
+    </section>
 
-        <div class="holo-card">
-            <div class="card-header">
-                <div class="card-title"><i class="fas fa-filter"></i> <span>Report Filters</span></div>
-            </div>
-            <div class="card-body">
-                <form method="GET" action="">
-                    <input type="hidden" name="generate" value="1">
-                    <div class="report-filters">
-                        <div class="filter-group">
-                            <label>Report Type</label>
-                            <select name="type" required>
-                                <option value="attendance" <?php echo $report_type === 'attendance' ? 'selected' : ''; ?>>Detailed Attendance</option>
-                                <option value="summary" <?php echo $report_type === 'summary' ? 'selected' : ''; ?>>Attendance Summary</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Date From</label>
-                            <input type="date" name="date_from" value="<?php echo $date_from; ?>" required>
-                        </div>
-                        <div class="filter-group">
-                            <label>Date To</label>
-                            <input type="date" name="date_to" value="<?php echo $date_to; ?>" required>
-                        </div>
-                        <div class="filter-group">
-                            <label>Class (Optional)</label>
-                            <select name="class_id">
-                                <option value="">All Classes</option>
-                                <?php foreach ($classes as $class): ?>
-                                    <option value="<?php echo $class['id']; ?>" <?php echo $class_id == $class['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($class['class_name']); ?>
+    <section class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-outline-variant/10 bg-surface-container-low">
+            <h3 class="text-sm font-extrabold uppercase tracking-wide text-on-surface">Report Filters</h3>
+        </div>
+        <div class="p-5">
+            <form method="GET" action="" class="space-y-4">
+                <input type="hidden" name="generate" value="1">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-1">Report Type</label>
+                        <select name="type" required class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface">
+                            <option value="attendance" <?php echo $report_type === 'attendance' ? 'selected' : ''; ?>>Detailed Attendance</option>
+                            <option value="summary" <?php echo $report_type === 'summary' ? 'selected' : ''; ?>>Attendance Summary</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-1">Date From</label>
+                        <input type="date" name="date_from" value="<?php echo htmlspecialchars($date_from); ?>" required class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-1">Date To</label>
+                        <input type="date" name="date_to" value="<?php echo htmlspecialchars($date_to); ?>" required class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-1">Class</label>
+                        <select name="class_id" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface">
+                            <option value="">All Classes</option>
+                            <?php foreach ($classes as $class): ?>
+                                <option value="<?php echo $class['id']; ?>" <?php echo $class_id == $class['id'] ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($class['class_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <?php if ($report_type === 'attendance'): ?>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-outline mb-1">Student</label>
+                            <select name="student_id" class="w-full rounded-lg border border-outline-variant/30 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface">
+                                <option value="">All Students</option>
+                                <?php foreach ($students as $student): ?>
+                                    <option value="<?php echo $student['id']; ?>" <?php echo $student_id == $student['id'] ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars(trim(($student['first_name'] ?? '') . ' ' . ($student['last_name'] ?? ''))); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <?php if ($report_type === 'attendance'): ?>
-                            <div class="filter-group">
-                                <label>Student (Optional)</label>
-                                <select name="student_id">
-                                    <option value="">All Students</option>
-                                    <?php foreach ($students as $student): ?>
-                                        <option value="<?php echo $student['id']; ?>" <?php echo $student_id == $student['id'] ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    <button type="submit" class="cyber-btn primary">
-                        <i class="fas fa-chart-bar"></i> Generate Report
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <?php if (!empty($report_data)): ?>
-            <div class="holo-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-table"></i>
-                        <span><?php echo ucfirst($report_type); ?> Report (<?php echo count($report_data); ?> records)</span>
-                    </div>
-                    <div class="export-buttons">
-                        <button class="cyber-btn success" onclick="exportToCSV()">
-                            <i class="fas fa-file-csv"></i> Export CSV
-                        </button>
-                        <button class="cyber-btn primary" onclick="printReport()">
-                            <i class="fas fa-print"></i> Print
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <?php if ($report_type === 'attendance'): ?>
-                        <table class="report-table" id="reportTable">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Student ID</th>
-                                    <th>Student Name</th>
-                                    <th>Class</th>
-                                    <th>Status</th>
-                                    <th>Check-in Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($report_data as $record): ?>
-                                    <tr>
-                                        <td><?php echo date('M d, Y', strtotime($record['attendance_date'])); ?></td>
-                                        <td><?php echo htmlspecialchars($record['student_code']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['first_name'] . ' ' . $record['last_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['class_name']); ?></td>
-                                        <td><span class="status-badge <?php echo $record['status']; ?>"><?php echo ucfirst($record['status']); ?></span></td>
-                                        <td><?php echo $record['check_in_time'] ? date('h:i A', strtotime($record['check_in_time'])) : '-'; ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <table class="report-table" id="reportTable">
-                            <thead>
-                                <tr>
-                                    <th>Student ID</th>
-                                    <th>Student Name</th>
-                                    <th>Present</th>
-                                    <th>Absent</th>
-                                    <th>Late</th>
-                                    <th>Total Records</th>
-                                    <th>Attendance Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($report_data as $record): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($record['admission_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['first_name'] . ' ' . $record['last_name']); ?></td>
-                                        <td><?php echo $record['present_count']; ?></td>
-                                        <td><?php echo $record['absent_count']; ?></td>
-                                        <td><?php echo $record['late_count']; ?></td>
-                                        <td><?php echo $record['total_records']; ?></td>
-                                        <td>
-                                            <span class="status-badge <?php echo $record['attendance_rate'] >= 80 ? 'present' : ($record['attendance_rate'] >= 60 ? 'late' : 'absent'); ?>">
-                                                <?php echo $record['attendance_rate']; ?>%
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
                     <?php endif; ?>
                 </div>
-            </div>
-        <?php endif; ?>
+                <div class="flex flex-wrap gap-2">
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-primary text-on-primary px-4 py-2.5 text-sm font-bold hover:opacity-90">
+                        <i class="fas fa-chart-bar"></i>
+                        Generate Report
+                    </button>
+                    <?php if (!empty($_GET['generate'])): ?>
+                        <a href="reports.php" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/30 px-4 py-2.5 text-sm font-semibold text-on-surface hover:bg-surface-container-low">
+                            Reset Filters
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </form>
+        </div>
+    </section>
 
-    </div>
-</main>
+    <?php if (!empty($_GET['generate']) && empty($report_data)): ?>
+        <section class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-8 text-center shadow-sm">
+            <p class="text-on-surface font-bold mb-1">No records found for selected filters.</p>
+            <p class="text-sm text-on-surface-variant">Try a wider date range or remove class/student filters.</p>
+        </section>
+    <?php endif; ?>
+
+    <?php if (!empty($report_data)): ?>
+        <section class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-outline-variant/10 bg-surface-container-low flex flex-wrap items-center justify-between gap-3">
+                <h3 class="text-sm font-extrabold uppercase tracking-wide text-on-surface">
+                    <?php echo ucfirst($report_type); ?> Report (<?php echo count($report_data); ?> records)
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-outline-variant/30 px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-high" onclick="exportToCSV()">
+                        <i class="fas fa-file-csv"></i>
+                        Export CSV
+                    </button>
+                    <button type="button" class="inline-flex items-center gap-2 rounded-lg bg-primary text-on-primary px-3 py-2 text-sm font-bold hover:opacity-90" onclick="printReport()">
+                        <i class="fas fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <?php if ($report_type === 'attendance'): ?>
+                    <table class="min-w-full text-sm" id="reportTable">
+                        <thead class="bg-surface-container text-on-surface-variant">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Student ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Student Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Class</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Check-in Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/10">
+                            <?php foreach ($report_data as $record): ?>
+                                <?php
+                                $status = strtolower((string)($record['status'] ?? 'absent'));
+                                $statusClass = $status === 'present'
+                                    ? 'bg-secondary-container text-secondary'
+                                    : ($status === 'late' ? 'bg-primary-container text-primary' : 'bg-error-container text-error');
+                                ?>
+                                <tr class="hover:bg-surface-container-low">
+                                    <td class="px-4 py-3"><?php echo date('M d, Y', strtotime($record['attendance_date'])); ?></td>
+                                    <td class="px-4 py-3 font-medium"><?php echo htmlspecialchars((string)($record['student_code'] ?? '-')); ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars(trim(($record['first_name'] ?? '') . ' ' . ($record['last_name'] ?? ''))); ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars((string)($record['class_name'] ?? '-')); ?></td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold uppercase <?php echo $statusClass; ?>">
+                                            <?php echo ucfirst($status); ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3"><?php echo !empty($record['check_in_time']) ? date('h:i A', strtotime($record['check_in_time'])) : '-'; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <table class="min-w-full text-sm" id="reportTable">
+                        <thead class="bg-surface-container text-on-surface-variant">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Student ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Student Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Present</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Absent</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Late</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Total Records</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Attendance Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/10">
+                            <?php foreach ($report_data as $record): ?>
+                                <?php
+                                $rate = (float)($record['attendance_rate'] ?? 0);
+                                $rateClass = $rate >= 80
+                                    ? 'bg-secondary-container text-secondary'
+                                    : ($rate >= 60 ? 'bg-primary-container text-primary' : 'bg-error-container text-error');
+                                ?>
+                                <tr class="hover:bg-surface-container-low">
+                                    <td class="px-4 py-3 font-medium"><?php echo htmlspecialchars((string)($record['admission_number'] ?? '-')); ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars(trim(($record['first_name'] ?? '') . ' ' . ($record['last_name'] ?? ''))); ?></td>
+                                    <td class="px-4 py-3"><?php echo (int)($record['present_count'] ?? 0); ?></td>
+                                    <td class="px-4 py-3"><?php echo (int)($record['absent_count'] ?? 0); ?></td>
+                                    <td class="px-4 py-3"><?php echo (int)($record['late_count'] ?? 0); ?></td>
+                                    <td class="px-4 py-3"><?php echo (int)($record['total_records'] ?? 0); ?></td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold <?php echo $rateClass; ?>">
+                                            <?php echo number_format($rate, 2); ?>%
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+        </section>
+    <?php endif; ?>
 </div>
 
 <script>
     function exportToCSV() {
         const table = document.getElementById('reportTable');
+        if (!table) {
+            return;
+        }
         let csv = [];
 
         for (let row of table.rows) {
@@ -365,16 +300,8 @@ ob_start();
     function printReport() {
         window.print();
     }
-
-    function openQuickScan() {
-        window.location.href = 'biometric-scan.php';
-    }
 </script>
 
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/pwa-manager.js"></script>
-<script src="../assets/js/pwa-analytics.js"></script>
-</div><!-- End app-layout -->
 <?php
 // Capture output and use master layout
 $page_content = ob_get_clean();

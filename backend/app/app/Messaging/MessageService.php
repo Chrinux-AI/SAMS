@@ -12,28 +12,136 @@ class MessageService
 
   private static array $permissionMatrix = [
     'admin'      => ['*'],
+    'owner'      => ['*'],
+    'principal'  => ['admin', 'owner', 'principal', 'vice_principal', 'teacher', 'parent', 'student', 'staff', 'nurse', 'librarian', 'bursar', 'accountant', 'transport'],
+    'vice_principal' => ['admin', 'owner', 'principal', 'vice_principal', 'teacher', 'parent', 'student', 'staff', 'nurse', 'librarian', 'bursar', 'accountant', 'transport'],
     'teacher'    => ['student', 'parent', 'teacher', 'admin'],
     'student'    => ['teacher', 'student', 'admin'],
     'parent'     => ['teacher', 'admin'],
     'staff'      => ['admin', 'teacher', 'staff'],
+    'nurse'      => ['admin', 'principal', 'vice_principal', 'teacher', 'parent', 'nurse'],
     'librarian'  => ['admin', 'teacher', 'student', 'librarian'],
     'bursar'     => ['admin', 'parent', 'bursar'],
     'accountant' => ['admin', 'bursar', 'accountant'],
     'transport'  => ['admin', 'parent', 'transport'],
+    'forum_moderator' => ['admin', 'teacher', 'staff', 'forum_moderator'],
   ];
 
   public static function canCommunicate(string $fromRole, string $toRole): bool
   {
-    if ($fromRole === 'admin') return true;
-    if ($toRole === 'admin') return true;
+    $fromRole = self::normalizeRole($fromRole);
+    $toRole = self::normalizeRole($toRole);
+
+    if (in_array($fromRole, ['admin', 'owner'], true)) return true;
+    if (in_array($toRole, ['admin', 'owner'], true)) return true;
+
     $allowed = self::$permissionMatrix[$fromRole] ?? ['admin'];
     return in_array('*', $allowed, true) || in_array($toRole, $allowed, true);
+  }
+
+  private static function normalizeRole(string $role): string
+  {
+    $role = trim(strtolower($role));
+    return $role === 'forum-moderator' ? 'forum_moderator' : $role;
+  }
+
+  private static function tenantId(): int
+  {
+    $tenantId = function_exists('current_tenant_id')
+      ? (int)current_tenant_id()
+      : (int)($_SESSION['tenant_id'] ?? 1);
+
+    return $tenantId > 0 ? $tenantId : 1;
+  }
+
+  private static function tableColumn(string $table, string $alias, array $preferredColumns): ?string
+  {
+    if (!function_exists('table_has_column')) {
+      return null;
+    }
+
+    foreach ($preferredColumns as $column) {
+      if (table_has_column($table, $column)) {
+        return "{$alias}.{$column}";
+      }
+    }
+
+    return null;
+  }
+
+  private static function tenantFilterForUsers(string $alias = 'u'): array
+  {
+    $column = self::tableColumn('users', $alias, ['tenant_id', 'school_id']);
+    if ($column === null) {
+      return ['1=1', []];
+    }
+
+    return ["COALESCE({$column}, 1) = ?", [self::tenantId()]];
+  }
+
+  private static function tenantFilterForConversation(string $conversationAlias = 'c'): array
+  {
+    $tenantId = self::tenantId();
+    $clauses = [];
+    $params = [];
+
+    $conversationColumn = self::tableColumn('comm_conversations', $conversationAlias, ['tenant_id', 'school_id']);
+    if ($conversationColumn !== null) {
+      $clauses[] = "COALESCE({$conversationColumn}, 1) = ?";
+      $params[] = $tenantId;
+    }
+
+    $userTenantColumn = self::tableColumn('users', 'u_scope', ['tenant_id', 'school_id']);
+    if ($userTenantColumn !== null) {
+      $clauses[] = "NOT EXISTS (
+                SELECT 1
+                FROM comm_participants cp_scope
+                JOIN users u_scope ON u_scope.id = cp_scope.user_id
+                WHERE cp_scope.conversation_id = {$conversationAlias}.id
+                  AND COALESCE({$userTenantColumn}, 1) <> ?
+            )";
+      $params[] = $tenantId;
+    }
+
+    return [empty($clauses) ? '1=1' : implode(' AND ', $clauses), $params];
+  }
+
+  private static function tenantPayload(string $table): array
+  {
+    if (!function_exists('table_has_column')) {
+      return [];
+    }
+
+    if (table_has_column($table, 'tenant_id')) {
+      return ['tenant_id' => self::tenantId()];
+    }
+
+    if (table_has_column($table, 'school_id')) {
+      return ['school_id' => self::tenantId()];
+    }
+
+    return [];
+  }
+
+  private static function sanitizeMemberIds(array $memberIds, int $excludeUserId): array
+  {
+    $sanitized = [];
+    foreach ($memberIds as $memberId) {
+      $memberId = (int)$memberId;
+      if ($memberId > 0 && $memberId !== $excludeUserId) {
+        $sanitized[$memberId] = $memberId;
+      }
+    }
+
+    return array_values($sanitized);
   }
 
   // ─── Conversations ───
 
   public static function getConversations(int $userId): array
   {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
+
     return db()->fetchAll("
             SELECT c.id, c.title, c.type, c.updated_at,
                    (SELECT body FROM comm_messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1) as last_message,
@@ -48,24 +156,27 @@ class MessageService
                     WHERE cm4.conversation_id = c.id AND cm4.sender_id != ? AND cr.id IS NULL AND cm4.is_deleted = 0) as unread_count
             FROM comm_conversations c
             JOIN comm_participants cp ON c.id = cp.conversation_id
-            WHERE cp.user_id = ?
+            WHERE cp.user_id = ? AND {$tenantFilter}
             ORDER BY COALESCE((SELECT cm5.created_at FROM comm_messages cm5 WHERE cm5.conversation_id = c.id ORDER BY cm5.created_at DESC LIMIT 1), c.created_at) DESC
-        ", [$userId, $userId, $userId, $userId]);
+        ", array_merge([$userId, $userId, $userId, $userId], $tenantParams));
   }
 
   public static function enrichConversation(array &$row, int $userId): void
   {
     if ($row['type'] === 'direct') {
+      [$userTenantFilter, $userTenantParams] = self::tenantFilterForUsers('u');
       $other = db()->fetchOne("
                 SELECT u.id, u.first_name, u.last_name, u.role, u.profile_picture
                 FROM comm_participants cp JOIN users u ON cp.user_id = u.id
-                WHERE cp.conversation_id = ? AND cp.user_id != ?
+                WHERE cp.conversation_id = ? AND cp.user_id != ? AND {$userTenantFilter}
                 LIMIT 1
-            ", [$row['id'], $userId]);
+            ", array_merge([$row['id'], $userId], $userTenantParams));
       $row['other_user'] = $other ?: null;
       if ($other) {
         $row['display_name'] = $other['first_name'] . ' ' . $other['last_name'];
         $row['display_role'] = $other['role'];
+      } else {
+        $row['display_name'] = $row['title'] ?? 'Direct Message';
       }
     } else {
       $row['display_name'] = $row['title'] ?? 'Group Chat';
@@ -74,72 +185,156 @@ class MessageService
     }
   }
 
-  public static function getConversationInfo(int $convId): ?array
+  public static function getConversationInfo(int $convId, int $viewerUserId = 0): ?array
   {
-    $conv = db()->fetchOne("SELECT * FROM comm_conversations WHERE id = ?", [$convId]);
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
+    $sql = "SELECT c.* FROM comm_conversations c WHERE c.id = ? AND {$tenantFilter}";
+    $params = [$convId];
+
+    if ($viewerUserId > 0) {
+      $sql = "SELECT c.* FROM comm_conversations c
+                JOIN comm_participants cp_viewer ON cp_viewer.conversation_id = c.id
+              WHERE c.id = ? AND cp_viewer.user_id = ? AND {$tenantFilter}";
+      $params[] = $viewerUserId;
+    }
+
+    $conv = db()->fetchOne($sql, array_merge($params, $tenantParams));
     if (!$conv) return null;
 
+    [$userTenantFilter, $userTenantParams] = self::tenantFilterForUsers('u');
     $participants = db()->fetchAll("
             SELECT u.id, u.first_name, u.last_name, u.role, u.profile_picture, cp.role as chat_role
             FROM comm_participants cp JOIN users u ON cp.user_id = u.id
-            WHERE cp.conversation_id = ?
-        ", [$convId]);
+            WHERE cp.conversation_id = ? AND {$userTenantFilter}
+        ", array_merge([$convId], $userTenantParams));
 
     return ['conversation' => $conv, 'participants' => $participants];
   }
 
   public static function isParticipant(int $convId, int $userId): bool
   {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
     $row = db()->fetchOne(
-      "SELECT id FROM comm_participants WHERE conversation_id = ? AND user_id = ?",
-      [$convId, $userId]
+      "SELECT cp.id
+         FROM comm_participants cp
+         JOIN comm_conversations c ON c.id = cp.conversation_id
+        WHERE cp.conversation_id = ? AND cp.user_id = ? AND {$tenantFilter}",
+      array_merge([$convId, $userId], $tenantParams)
     );
     return (bool)$row;
   }
 
-  public static function createDirect(int $userId, int $targetId): array
+  public static function createDirect(int $userId, int $targetId, ?string $requesterRole = null): array
   {
+    [$targetTenantFilter, $targetTenantParams] = self::tenantFilterForUsers('u');
+    $target = db()->fetchOne(
+      "SELECT u.id, u.role
+         FROM users u
+        WHERE u.id = ? AND {$targetTenantFilter}
+        LIMIT 1",
+      array_merge([$targetId], $targetTenantParams)
+    );
+
+    if (!$target) {
+      return ['success' => false, 'error' => 'User not found in the active tenant'];
+    }
+
+    if ($requesterRole !== null && !self::canCommunicate($requesterRole, $target['role'])) {
+      return ['success' => false, 'error' => 'You do not have permission to message this user'];
+    }
+
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
+
     // Check if conversation already exists
     $existing = db()->fetchOne("
             SELECT c.id FROM comm_conversations c
             JOIN comm_participants p1 ON c.id = p1.conversation_id AND p1.user_id = ?
             JOIN comm_participants p2 ON c.id = p2.conversation_id AND p2.user_id = ?
-            WHERE c.type = 'direct' LIMIT 1
-        ", [$userId, $targetId]);
+            WHERE c.type = 'direct' AND {$tenantFilter}
+            LIMIT 1
+        ", array_merge([$userId, $targetId], $tenantParams));
 
     if ($existing) {
       return ['success' => true, 'conversation_id' => $existing['id'], 'existing' => true];
     }
 
-    $convId = insert_flexible('comm_conversations', [
+    $convId = insert_flexible('comm_conversations', array_merge(self::tenantPayload('comm_conversations'), [
       'type'       => 'direct',
       'created_by' => $userId,
       'created_at' => date('Y-m-d H:i:s'),
-    ]);
-    db()->query("INSERT INTO comm_participants (conversation_id, user_id, role) VALUES (?, ?, 'admin')", [$convId, $userId]);
-    db()->query("INSERT INTO comm_participants (conversation_id, user_id, role) VALUES (?, ?, 'member')", [$convId, $targetId]);
+    ]));
+    if (!$convId) {
+      return ['success' => false, 'error' => 'Failed to create conversation'];
+    }
+
+    insert_flexible('comm_participants', array_merge(self::tenantPayload('comm_participants'), [
+      'conversation_id' => $convId,
+      'user_id' => $userId,
+      'role' => 'admin',
+    ]));
+    insert_flexible('comm_participants', array_merge(self::tenantPayload('comm_participants'), [
+      'conversation_id' => $convId,
+      'user_id' => $targetId,
+      'role' => 'member',
+    ]));
 
     return ['success' => true, 'conversation_id' => $convId];
   }
 
-  public static function createGroup(int $userId, array $memberIds, string $title = 'Group Chat'): array
+  public static function createGroup(int $userId, array $memberIds, string $title = 'Group Chat', ?string $creatorRole = null): array
   {
-    $convId = insert_flexible('comm_conversations', [
+    $memberIds = self::sanitizeMemberIds($memberIds, $userId);
+    if (empty($memberIds)) {
+      return ['success' => false, 'error' => 'At least one valid member is required'];
+    }
+
+    [$tenantUserFilter, $tenantUserParams] = self::tenantFilterForUsers('u');
+    $placeholders = implode(',', array_fill(0, count($memberIds), '?'));
+    $candidates = db()->fetchAll(
+      "SELECT u.id, u.role
+         FROM users u
+        WHERE u.id IN ({$placeholders}) AND {$tenantUserFilter}",
+      array_merge($memberIds, $tenantUserParams)
+    );
+
+    $validMembers = [];
+    foreach ($candidates as $candidate) {
+      if ($creatorRole !== null && !self::canCommunicate($creatorRole, $candidate['role'])) {
+        continue;
+      }
+      $validMembers[(int)$candidate['id']] = (int)$candidate['id'];
+    }
+
+    if (count($validMembers) !== count($memberIds)) {
+      return ['success' => false, 'error' => 'One or more selected users are outside your allowed communication scope'];
+    }
+
+    $convId = insert_flexible('comm_conversations', array_merge(self::tenantPayload('comm_conversations'), [
       'title'      => $title,
       'type'       => 'group',
       'created_by' => $userId,
       'created_at' => date('Y-m-d H:i:s'),
-    ]);
-    db()->query("INSERT INTO comm_participants (conversation_id, user_id, role) VALUES (?, ?, 'admin')", [$convId, $userId]);
-    foreach ($memberIds as $mid) {
-      $mid = (int)$mid;
-      if ($mid && $mid !== $userId) {
-        try {
-          db()->query("INSERT INTO comm_participants (conversation_id, user_id) VALUES (?, ?)", [$convId, $mid]);
-        } catch (\Throwable $e) { /* duplicate */
-        }
+    ]));
+    if (!$convId) {
+      return ['success' => false, 'error' => 'Failed to create group conversation'];
+    }
+
+    insert_flexible('comm_participants', array_merge(self::tenantPayload('comm_participants'), [
+      'conversation_id' => $convId,
+      'user_id' => $userId,
+      'role' => 'admin',
+    ]));
+    foreach ($validMembers as $memberId) {
+      try {
+        insert_flexible('comm_participants', array_merge(self::tenantPayload('comm_participants'), [
+          'conversation_id' => $convId,
+          'user_id' => $memberId,
+          'role' => 'member',
+        ]));
+      } catch (\Throwable $e) { /* duplicate */
       }
     }
+
     return ['success' => true, 'conversation_id' => $convId];
   }
 
@@ -147,12 +342,15 @@ class MessageService
 
   public static function getMessages(int $convId, int $userId, int $limit = 50, ?int $before = null): array
   {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
     $params = [$convId];
     $sql = "SELECT m.id, m.conversation_id, m.sender_id, m.body, m.reply_to_id, m.is_deleted, m.created_at,
                        CONCAT(u.first_name,' ',u.last_name) as sender_name, u.role as sender_role, u.profile_picture as sender_avatar
-                FROM comm_messages m
-                JOIN users u ON m.sender_id = u.id
-                WHERE m.conversation_id = ?";
+                 FROM comm_messages m
+                 JOIN comm_conversations c ON c.id = m.conversation_id
+                 JOIN users u ON m.sender_id = u.id
+                 WHERE m.conversation_id = ? AND {$tenantFilter}";
+    $params = array_merge($params, $tenantParams);
     if ($before) {
       $sql .= " AND m.id < ?";
       $params[] = (int)$before;
@@ -190,13 +388,30 @@ class MessageService
 
   public static function send(int $convId, int $userId, string $body, ?int $replyToId = null): array
   {
-    $msgId = insert_flexible('comm_messages', [
+    if (!self::isParticipant($convId, $userId)) {
+      return ['success' => false, 'error' => 'Not a participant'];
+    }
+
+    if ($replyToId) {
+      $replyTarget = db()->fetchOne(
+        "SELECT id FROM comm_messages WHERE id = ? AND conversation_id = ? LIMIT 1",
+        [$replyToId, $convId]
+      );
+      if (!$replyTarget) {
+        return ['success' => false, 'error' => 'Reply target does not exist in this conversation'];
+      }
+    }
+
+    $msgId = insert_flexible('comm_messages', array_merge(self::tenantPayload('comm_messages'), [
       'conversation_id' => $convId,
       'sender_id'       => $userId,
       'body'            => $body,
       'reply_to_id'     => $replyToId,
       'created_at'      => date('Y-m-d H:i:s'),
-    ]);
+    ]));
+    if (!$msgId) {
+      return ['success' => false, 'error' => 'Failed to send message'];
+    }
 
     db()->query("UPDATE comm_conversations SET updated_at = NOW() WHERE id = ?", [$convId]);
     db()->query("DELETE FROM comm_typing WHERE conversation_id = ? AND user_id = ?", [$convId, $userId]);
@@ -215,8 +430,17 @@ class MessageService
 
   public static function deleteMessage(int $msgId, int $userId, string $userRole): array
   {
-    $msg = db()->fetchOne("SELECT id, sender_id FROM comm_messages WHERE id = ?", [$msgId]);
-    if (!$msg || ((int)$msg['sender_id'] !== $userId && $userRole !== 'admin')) {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
+    $msg = db()->fetchOne(
+      "SELECT m.id, m.sender_id
+         FROM comm_messages m
+         JOIN comm_conversations c ON c.id = m.conversation_id
+        WHERE m.id = ? AND {$tenantFilter}",
+      array_merge([$msgId], $tenantParams)
+    );
+
+    $normalizedRole = self::normalizeRole($userRole);
+    if (!$msg || ((int)$msg['sender_id'] !== $userId && !in_array($normalizedRole, ['admin', 'owner'], true))) {
       return ['success' => false, 'error' => 'Not allowed'];
     }
     db()->query("UPDATE comm_messages SET is_deleted = 1, body = '[Message deleted]' WHERE id = ?", [$msgId]);
@@ -225,12 +449,15 @@ class MessageService
 
   public static function poll(int $convId, int $userId, int $afterId): array
   {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
     return db()->fetchAll("
             SELECT m.*, CONCAT(u.first_name,' ',u.last_name) as sender_name, u.role as sender_role
-            FROM comm_messages m JOIN users u ON m.sender_id = u.id
-            WHERE m.conversation_id = ? AND m.id > ?
+            FROM comm_messages m
+            JOIN comm_conversations c ON c.id = m.conversation_id
+            JOIN users u ON m.sender_id = u.id
+            WHERE m.conversation_id = ? AND m.id > ? AND {$tenantFilter}
             ORDER BY m.created_at ASC
-        ", [$convId, $afterId]);
+        ", array_merge([$convId, $afterId], $tenantParams));
   }
 
   // ─── Typing ───
@@ -251,24 +478,28 @@ class MessageService
 
   public static function getTypingUsers(int $convId, int $userId): array
   {
+    [$userTenantFilter, $userTenantParams] = self::tenantFilterForUsers('u');
     return db()->fetchAll("
             SELECT CONCAT(u.first_name,' ',u.last_name) as name
             FROM comm_typing t JOIN users u ON t.user_id = u.id
             WHERE t.conversation_id = ? AND t.user_id != ? AND t.updated_at > DATE_SUB(NOW(), INTERVAL 5 SECOND)
-        ", [$convId, $userId]);
+              AND {$userTenantFilter}
+        ", array_merge([$convId, $userId], $userTenantParams));
   }
 
   // ─── User Search ───
 
   public static function searchUsers(string $query, int $excludeUserId, string $fromRole): array
   {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForUsers('u');
     $users = db()->fetchAll("
-            SELECT id, first_name, last_name, role, email, profile_picture
-            FROM users
-            WHERE id != ? AND status = 'active'
-              AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)
-            ORDER BY first_name LIMIT 20
-        ", [$excludeUserId, "%$query%", "%$query%", "%$query%"]);
+            SELECT u.id, u.first_name, u.last_name, u.role, u.email, u.profile_picture
+            FROM users u
+            WHERE u.id != ? AND u.status = 'active'
+              AND {$tenantFilter}
+              AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?)
+            ORDER BY u.first_name LIMIT 20
+        ", array_merge([$excludeUserId], $tenantParams, ["%$query%", "%$query%", "%$query%"]));
 
     return array_values(array_filter($users, function ($u) use ($fromRole) {
       return self::canCommunicate($fromRole, $u['role']);
@@ -279,12 +510,14 @@ class MessageService
 
   public static function getUnreadCount(int $userId): int
   {
+    [$tenantFilter, $tenantParams] = self::tenantFilterForConversation('c');
     $row = db()->fetchOne("
             SELECT COUNT(*) as cnt FROM comm_messages m
+            JOIN comm_conversations c ON c.id = m.conversation_id
             JOIN comm_participants cp ON m.conversation_id = cp.conversation_id AND cp.user_id = ?
             LEFT JOIN comm_reads cr ON m.id = cr.message_id AND cr.user_id = ?
-            WHERE m.sender_id != ? AND cr.id IS NULL AND m.is_deleted = 0
-        ", [$userId, $userId, $userId]);
+            WHERE m.sender_id != ? AND cr.id IS NULL AND m.is_deleted = 0 AND {$tenantFilter}
+        ", array_merge([$userId, $userId, $userId], $tenantParams));
     return (int)($row['cnt'] ?? 0);
   }
 
@@ -303,7 +536,10 @@ class MessageService
     foreach ($msgIds as $mid) {
       if (!in_array($mid, $existingIds) && $mid) {
         try {
-          db()->query("INSERT INTO comm_reads (message_id, user_id) VALUES (?, ?)", [$mid, $userId]);
+          insert_flexible('comm_reads', array_merge(self::tenantPayload('comm_reads'), [
+            'message_id' => $mid,
+            'user_id' => $userId,
+          ]));
         } catch (\Throwable $e) { /* duplicate key */
         }
       }

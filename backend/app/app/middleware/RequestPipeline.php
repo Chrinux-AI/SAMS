@@ -232,7 +232,7 @@ class RequestPipeline
       'teacher'         => 'teacher/dashboard.php',
       'student'         => 'student/dashboard.php',
       'parent'          => 'parent/dashboard.php',
-      'accountant'      => 'accountant/dashboard.php',
+      'accountant'      => 'accountant/index.php?page=dashboard',
       'bursar'          => 'bursar/dashboard.php',
       'librarian'       => 'librarian/dashboard.php',
       'transport'       => 'transport/dashboard.php',

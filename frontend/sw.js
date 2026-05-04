@@ -14,6 +14,9 @@ const STATIC_ASSETS = [
   "/attendance/",
   "/attendance/index.php",
   "/attendance/login.php",
+  "/attendance/frontend/login.php",
+  "/attendance/frontend/accountant/index.php?page=dashboard",
+  "/attendance/frontend/accountant/dashboard.php",
   "/attendance/assets/css/cyberpunk-ui.css",
   "/attendance/assets/js/main.js",
   "/attendance/assets/images/icons/logo3.png",
@@ -141,6 +144,12 @@ async function networkFirstStrategy(request, cacheName) {
 
   try {
     const response = await fetch(request);
+    if (request.mode === "navigate" && response && response.status >= 500) {
+      const fallback = await getNavigationFallback(cache, request);
+      if (fallback) {
+        return fallback;
+      }
+    }
     if (response.ok) {
       cache.put(request, response.clone());
     }
@@ -153,9 +162,11 @@ async function networkFirstStrategy(request, cacheName) {
       return cached;
     }
 
-    // Return offline page for navigation requests
     if (request.mode === "navigate") {
-      return cache.match("/attendance/offline.html");
+      const fallback = await getNavigationFallback(cache, request);
+      if (fallback) {
+        return fallback;
+      }
     }
 
     return new Response("Network error", {
@@ -163,6 +174,36 @@ async function networkFirstStrategy(request, cacheName) {
       statusText: "Service Unavailable",
     });
   }
+}
+
+async function getNavigationFallback(cache, request) {
+  const directMatch = await cache.match(request, { ignoreSearch: true });
+  if (directMatch) {
+    return directMatch;
+  }
+
+  try {
+    const url = new URL(request.url);
+    if (url.searchParams.get("page") === "dashboard") {
+      const dashboardFallbacks = [
+        "/attendance/frontend/accountant/index.php?page=dashboard",
+        "/attendance/frontend/accountant/dashboard.php",
+        "/attendance/frontend/login.php",
+        "/attendance/login.php",
+      ];
+
+      for (const path of dashboardFallbacks) {
+        const match = await cache.match(path, { ignoreSearch: true });
+        if (match) {
+          return match;
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("[SW] Navigation fallback URL parse failed:", error);
+  }
+
+  return cache.match("/attendance/offline.html", { ignoreSearch: true });
 }
 
 // Background sync for offline actions
@@ -511,11 +552,14 @@ async function syncOfflineData() {
     for (const record of pendingRecords) {
       if (!record.synced) {
         try {
-          const response = await fetch("/attendance/api/sync_attendance.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(record.data),
-          });
+          const response = await fetch(
+            "/attendance/api/sync.php?action=sync_attendance",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ records: [record.data] }),
+            },
+          );
 
           if (response.ok) {
             record.synced = true;

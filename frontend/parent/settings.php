@@ -104,28 +104,36 @@ $page_title = "Settings";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - SAMS</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link href="../assets/css/pwa-styles.css" rel="stylesheet">
     <?php include __DIR__ . '/../includes/settings-styles.php'; ?>
 </head>
 <body>
-    <?php include '../includes/sidebar-nav.php'; ?>
-    <div class="settings-container">
-        <h1><i class="fas fa-cog"></i> Settings</h1>
-        <?php if ($message): ?>
-            <div class="alert alert-<?php echo $message_type; ?>">
-                <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
-                <?php echo htmlspecialchars($message); ?>
+    <div class="app-layout">
+        <?php include '../includes/sidebar-nav.php'; ?>
+        <main class="cyber-main">
+            <div class="settings-container">
+                <h1><i class="fas fa-cog"></i> Settings</h1>
+                <?php if ($message): ?>
+                    <div class="alert alert-<?php echo $message_type; ?>">
+                        <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
+                        <?php echo htmlspecialchars($message); ?>
+                    </div>
+                <?php endif; ?>
+                <div class="settings-grid">
+                    <?php include __DIR__ . '/../includes/settings-profile-card.php'; ?>
+                    <?php include __DIR__ . '/../includes/settings-security-card.php'; ?>
+                    <?php include __DIR__ . '/../includes/settings-notifications-card.php'; ?>
+                    <?php include __DIR__ . '/../includes/settings-overview-card.php'; ?>
+                    <?php include __DIR__ . '/../includes/settings-theme-card.php'; ?>
+                </div>
             </div>
-        <?php endif; ?>
-        <div class="settings-grid">
-            <?php include __DIR__ . '/../includes/settings-profile-card.php'; ?>
-            <?php include __DIR__ . '/../includes/settings-security-card.php'; ?>
-            <?php include __DIR__ . '/../includes/settings-notifications-card.php'; ?>
-            <?php include __DIR__ . '/../includes/settings-overview-card.php'; ?>
-            <?php include __DIR__ . '/../includes/settings-theme-card.php'; ?>
-        </div>
+        </main>
     </div>
     <?php include '../includes/sams-bot.php'; ?>
     <script src="../assets/js/main.js"></script>

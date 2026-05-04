@@ -23,6 +23,8 @@ echo <<<HTML
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <title>System Reset</title>
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <style>
         .log { margin: 10px 0; }
         .success { color: #00FF7F; }

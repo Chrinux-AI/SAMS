@@ -147,7 +147,7 @@ $GLOBALS['_ROUTE_MAP'] = [
   'forum.topics'       => 'forum/topics.php',
 
   // ── Accountant ──
-  'accountant.dashboard' => 'accountant/dashboard.php',
+  'accountant.dashboard' => 'accountant/index.php?page=dashboard',
   'accountant.income'  => 'accountant/income.php',
   'accountant.expenses' => 'accountant/expenses.php',
   'accountant.payroll' => 'accountant/payroll.php',

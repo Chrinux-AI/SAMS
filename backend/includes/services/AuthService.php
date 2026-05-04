@@ -270,16 +270,27 @@ class SAMS_AuthService extends SAMS_BaseService {
      */
     private function getRoleDashboard($role) {
         $dashboards = [
-            'admin' => 'admin/index.php',
-            'super_admin' => 'admin/index.php',
-            'teacher' => 'teacher/index.php',
-            'student' => 'student/index.php',
-            'parent' => 'parent/index.php',
-            'accountant' => 'accountant/index.php',
-            'bursar' => 'bursar/index.php',
-            'librarian' => 'librarian/index.php'
+            'admin' => 'admin/dashboard.php',
+            'superadmin' => 'admin/dashboard.php',
+            'super_admin' => 'admin/dashboard.php',
+            'owner' => 'owner/dashboard.php',
+            'principal' => 'principal/dashboard.php',
+            'vice_principal' => 'principal/dashboard.php',
+            'admin_officer' => 'admin/dashboard.php',
+            'teacher' => 'teacher/dashboard.php',
+            'class_teacher' => 'teacher/dashboard.php',
+            'subject_coordinator' => 'teacher/dashboard.php',
+            'student' => 'student/dashboard.php',
+            'parent' => 'parent/dashboard.php',
+            'accountant' => 'accountant/index.php?page=dashboard',
+            'bursar' => 'bursar/dashboard.php',
+            'librarian' => 'librarian/dashboard.php',
+            'transport' => 'transport/dashboard.php',
+            'forum_moderator' => 'forum-moderator/dashboard.php',
+            'nurse' => 'nurse/dashboard.php',
+            'staff' => 'staff/dashboard.php'
         ];
 
-        return $dashboards[$role] ?? 'index.php';
+        return $dashboards[$role] ?? 'login.php';
     }
 }

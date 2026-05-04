@@ -6,14 +6,29 @@ require_student();
 
 
 $user_id = $_SESSION['user_id'];
-
-// Fetch student information
+$attendanceDateField = table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : (table_has_column('attendance_records', 'date') ? 'date' : 'attendance_date');
 $student = db()->fetch("
-    SELECT s.*, c.class_name
+    SELECT s.*, u.first_name, u.last_name, u.email, c.class_name
     FROM students s
-    LEFT JOIN classes c ON s.class_id = c.class_id
+    JOIN users u ON s.user_id = u.id
+    LEFT JOIN classes c ON s.class_id = c.id
     WHERE s.user_id = ?
-", [$user_id]); // Get attendance statistics
+", [$user_id]) ?: [
+    'id' => 0,
+    'user_id' => $user_id,
+    'first_name' => $_SESSION['full_name'] ?? 'Student',
+    'last_name' => '',
+    'email' => $_SESSION['email'] ?? '',
+    'student_id' => '',
+    'class_name' => null,
+];
+$studentRecordIds = array_values(array_unique(array_filter([
+    (int)($student['user_id'] ?? $user_id),
+    (int)($student['id'] ?? 0),
+])));
+$studentPlaceholders = implode(',', array_fill(0, max(1, count($studentRecordIds)), '?'));
+
+// Get attendance statistics
 $attendance_stats = db()->fetch("
     SELECT
         COUNT(*) as total_days,
@@ -22,28 +37,35 @@ $attendance_stats = db()->fetch("
         SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as late_days,
         ROUND((SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as attendance_percentage
     FROM attendance_records
-    WHERE student_id = ?
-", [$student['student_id']]) ?? ['total_days' => 0, 'present_days' => 0, 'absent_days' => 0, 'late_days' => 0, 'attendance_percentage' => 0]; // Get recent attendance records
+    WHERE student_id IN ($studentPlaceholders)
+", $studentRecordIds ?: [0]) ?? ['total_days' => 0, 'present_days' => 0, 'absent_days' => 0, 'late_days' => 0, 'attendance_percentage' => 0];
+
+// Get recent attendance records
 $recent_attendance = db()->fetchAll("
-    SELECT date, status, remarks
+    SELECT {$attendanceDateField} as attendance_date, status, remarks
     FROM attendance_records
-    WHERE student_id = ?
-    ORDER BY date DESC
+    WHERE student_id IN ($studentPlaceholders)
+    ORDER BY {$attendanceDateField} DESC
     LIMIT 10
-", [$student['student_id']]); // Get behavior logs
-$behavior_logs = db()->fetchAll("
+", $studentRecordIds ?: [0]);
+
+// Get behavior logs
+$behaviorLogsAvailable = table_exists('behavior_logs');
+$behavior_logs = $behaviorLogsAvailable ? db()->fetchAll("
     SELECT bl.*, CONCAT(u.first_name, ' ', u.last_name) as teacher_name
     FROM behavior_logs bl
     JOIN users u ON bl.teacher_id = u.id
-    WHERE bl.student_id = ?
+    WHERE bl.student_id IN ($studentPlaceholders)
     ORDER BY bl.created_at DESC
     LIMIT 5
-", [$student['student_id']]); // Calculate behavior score
-$behavior_result = db()->fetch("
+") : [];
+
+// Calculate behavior score
+$behavior_result = $behaviorLogsAvailable ? db()->fetch("
     SELECT AVG(behavior_score) as avg_score
     FROM behavior_logs
-    WHERE student_id = ?
-", [$student['student_id']]);
+    WHERE student_id IN ($studentPlaceholders)
+", $studentRecordIds ?: [0]) : ['avg_score' => 0];
 $behavior_score = $behavior_result['avg_score'] ?? 0;
 
 $page_title = "My Reports";
@@ -60,8 +82,12 @@ $page_title = "My Reports";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - Attendance AI</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
     <link href="../assets/css/pwa-styles.css" rel="stylesheet">
     <style>
         .reports-container {
@@ -94,21 +120,23 @@ $page_title = "My Reports";
             margin-top: 1rem;
         }
 
-        .stat-orb {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .reports-container .stat-orb {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             padding: 1.5rem;
             border-radius: 8px;
             text-align: center;
             color: white;
+            border: none;
         }
 
-        .stat-orb h3 {
+        .reports-container .stat-orb h3 {
             font-size: 2rem;
             margin-bottom: 0.5rem;
+            color: #fff;
         }
 
-        .stat-orb p {
-            opacity: 0.9;
+        .reports-container .stat-orb p {
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.9rem;
         }
 
@@ -243,11 +271,10 @@ $page_title = "My Reports";
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
-
-<?php include '../includes/sidebar-nav.php'; ?>
-
-    <div class="reports-container">
+    <div class="app-layout">
+        <?php include '../includes/sidebar-nav.php'; ?>
+        <main class="cyber-main">
+            <div class="reports-container">
         <h1><i class="fas fa-chart-line"></i> My Academic Reports</h1>
 
         <!-- Attendance Overview -->
@@ -292,7 +319,7 @@ $page_title = "My Reports";
                     <?php if (count($recent_attendance) > 0): ?>
                         <?php foreach ($recent_attendance as $record): ?>
                             <tr>
-                                <td><?php echo date('M d, Y', strtotime($record['date'])); ?></td>
+                                <td><?php echo date('M d, Y', strtotime($record['attendance_date'])); ?></td>
                                 <td>
                                     <span class="status-badge status-<?php echo strtolower($record['status']); ?>">
                                         <?php echo ucfirst($record['status']); ?>
@@ -374,6 +401,8 @@ $page_title = "My Reports";
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>
+            </div>
+        </main>
     </div>
 
     <?php include '../includes/sams-bot.php'; ?>

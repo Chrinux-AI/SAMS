@@ -18,14 +18,40 @@ $tenantId = $_SESSION['tenant_id'] ?? 1;
 $full_name = $_SESSION['full_name'];
 
 // Get children
-$children = db()->fetchAll("
-    SELECT u.id, u.first_name, u.last_name, s.admission_number as student_id, c.grade_level, c.class_name
-    FROM users u
-    JOIN students s ON u.id = s.user_id
-    JOIN parent_student_links psl ON s.user_id = psl.student_id
-    LEFT JOIN classes c ON s.class_id = c.id
-    WHERE psl.parent_id = ? AND u.status = 'active'
-", [$parent_id]);
+$children = [];
+$gradeLevelSelect = table_has_column('classes', 'grade_level')
+    ? 'c.grade_level'
+    : 'NULL AS grade_level';
+$userTenantClause = '';
+$userTenantParams = [];
+if ((int)$tenantId > 0) {
+    if (table_has_column('users', 'tenant_id')) {
+        $userTenantClause = ' AND u.tenant_id = ?';
+        $userTenantParams[] = (int)$tenantId;
+    } elseif (table_has_column('users', 'school_id')) {
+        $userTenantClause = ' AND u.school_id = ?';
+        $userTenantParams[] = (int)$tenantId;
+    }
+}
+
+if (table_exists('parent_student_links')) {
+    $children = db()->fetchAll("
+        SELECT u.id, u.first_name, u.last_name, s.admission_number as student_id, {$gradeLevelSelect}, c.class_name
+        FROM users u
+        JOIN students s ON u.id = s.user_id
+        JOIN parent_student_links psl ON s.user_id = psl.student_id
+        LEFT JOIN classes c ON s.class_id = c.id
+        WHERE psl.parent_id = ? AND u.status = 'active'{$userTenantClause}
+    ", array_merge([$parent_id], $userTenantParams)) ?: [];
+} elseif (table_has_column('users', 'parent_id')) {
+    $children = db()->fetchAll("
+        SELECT u.id, u.first_name, u.last_name, s.admission_number as student_id, {$gradeLevelSelect}, c.class_name
+        FROM users u
+        JOIN students s ON u.id = s.user_id
+        LEFT JOIN classes c ON s.class_id = c.id
+        WHERE u.parent_id = ? AND u.role = 'student' AND u.status = 'active'{$userTenantClause}
+    ", array_merge([$parent_id], $userTenantParams)) ?: [];
+}
 
 // Get today's attendance for all children
 $today = date('Y-m-d');
@@ -36,13 +62,15 @@ if (!empty($child_ids)) {
     $placeholders = implode(',', array_fill(0, count($child_ids), '?'));
     $params = array_merge($child_ids, [$today]);
 
-    $today_attendance = db()->fetchAll("
-        SELECT ar.*, u.first_name, u.last_name, c.class_name
-        FROM attendance_records ar
-        JOIN users u ON ar.student_id = u.id
-        JOIN classes c ON ar.class_id = c.id
-        WHERE ar.student_id IN ($placeholders) AND DATE(ar.check_in_time) = ?
-    ", $params);
+    if (table_exists('attendance_records')) {
+        $today_attendance = db()->fetchAll("
+            SELECT ar.*, u.first_name, u.last_name, c.class_name
+            FROM attendance_records ar
+            JOIN users u ON ar.student_id = u.id
+            JOIN classes c ON ar.class_id = c.id
+            WHERE ar.student_id IN ($placeholders) AND DATE(ar.check_in_time) = ?
+        ", $params) ?: [];
+    }
 }
 
 // Calculate stats
@@ -53,26 +81,14 @@ $today_total = count($today_attendance);
 $today_rate = $today_total > 0 ? round((($total_present + $total_late) / $today_total) * 100, 1) : 0;
 
 // Unread messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$parent_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$parent_id, (int)$tenantId);
 
 // Recent communications
-$recent_communications = db()->fetchAll("
-    SELECT m.*, u.first_name as sender_first, u.last_name as sender_last,
-           mr.is_read, mr.read_at
-    FROM messages m
-    JOIN users u ON m.sender_id = u.id
-    JOIN message_recipients mr ON m.id = mr.message_id
-    WHERE mr.recipient_id = ?
-    ORDER BY m.created_at DESC
-    LIMIT 5
-", [$parent_id]);
+$recent_communications = get_recent_received_communications((int)$parent_id, (int)$tenantId, 5);
 
 // Upcoming events/assignments for children
 $upcoming_events = [];
-if (!empty($child_ids)) {
+if (!empty($child_ids) && table_exists('assignments') && table_exists('class_enrollments')) {
     $placeholders = implode(',', array_fill(0, count($child_ids), '?'));
     $upcoming_events = db()->fetchAll("
         SELECT a.*, c.class_name, u.first_name, u.last_name
@@ -83,7 +99,7 @@ if (!empty($child_ids)) {
         WHERE ce.student_id IN ($placeholders) AND a.due_date >= CURDATE()
         ORDER BY a.due_date ASC
         LIMIT 5
-    ", $child_ids);
+    ", $child_ids) ?: [];
 }
 
 // AI Insights

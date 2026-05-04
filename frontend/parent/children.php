@@ -6,25 +6,13 @@ require_parent();
 
 $parent_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenantId = current_tenant_id();
 
 // Get all children with their details
-$children = db()->fetchAll("
-    SELECT u.id, u.first_name, u.last_name, u.email, s.admission_number as student_id, c.grade_level,
-           COUNT(DISTINCT ce.class_id) as class_count
-    FROM users u
-    JOIN students s ON u.id = s.user_id
-    JOIN parent_student_links psl ON s.user_id = psl.student_id
-    LEFT JOIN class_enrollments ce ON s.user_id = ce.student_id
-    LEFT JOIN classes c ON s.class_id = c.id
-    WHERE psl.parent_id = ? AND u.status = 'active'
-    GROUP BY u.id
-", [$parent_id]);
+$children = get_parent_linked_children((int)$parent_id, (int)$tenantId);
 
 // Unread messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$parent_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$parent_id, (int)$tenantId);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,14 +26,17 @@ $unread_count = db()->fetchOne("
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Children - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
 
 </head>
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -69,7 +60,7 @@ $unread_count = db()->fetchOne("
                 </div>
             </header>
 
-            <div class="app-layout">
+            <div style="display:grid; gap:24px;">
                 <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                     <div class="stat-orb">
                         <div class="stat-icon purple">

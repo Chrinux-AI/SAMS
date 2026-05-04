@@ -34,12 +34,15 @@ $total = count($records);
 $attendance_rate = $total > 0 ? round((($present + $late) / $total) * 100, 1) : 0;
 
 // Student's classes
+$enrollmentDateSelect = table_has_column('class_enrollments', 'enrollment_date')
+    ? 'ce.enrollment_date'
+    : 'NULL AS enrollment_date';
 $classes = db()->fetchAll("
-    SELECT c.*, ce.enrollment_date
+    SELECT c.*, {$enrollmentDateSelect}
     FROM classes c
     JOIN class_enrollments ce ON c.id = ce.class_id
     WHERE ce.student_id = ?
-", [$student_id]);
+", [$student_id]) ?: [];
 
 // Today's attendance
 $today = date('Y-m-d');
@@ -52,33 +55,36 @@ $today_record = db()->fetchOne("
 ", [$student_id, $today]);
 
 // Recent grades
-$recent_grades = db()->fetchAll("
-    SELECT g.*, a.title, c.class_name
-    FROM grades g
-    JOIN assignments a ON g.assignment_id = a.id
-    JOIN classes c ON a.class_id = c.id
-    JOIN class_enrollments ce ON c.id = ce.class_id
-    WHERE ce.student_id = ?
-    ORDER BY g.created_at DESC
-    LIMIT 5
-", [$student_id]);
+$recent_grades = [];
+if (table_exists('grades') && table_exists('assignments') && table_exists('classes') && table_exists('class_enrollments')) {
+    $recent_grades = db()->fetchAll("
+        SELECT g.*, a.title, c.class_name
+        FROM grades g
+        JOIN assignments a ON g.assignment_id = a.id
+        JOIN classes c ON a.class_id = c.id
+        JOIN class_enrollments ce ON c.id = ce.class_id
+        WHERE ce.student_id = ?
+        ORDER BY g.created_at DESC
+        LIMIT 5
+    ", [$student_id]) ?: [];
+}
 
 // Upcoming assignments
-$upcoming_assignments = db()->fetchAll("
-    SELECT a.*, c.class_name
-    FROM assignments a
-    JOIN classes c ON a.class_id = c.id
-    JOIN class_enrollments ce ON c.id = ce.class_id
-    WHERE ce.student_id = ? AND a.due_date >= CURDATE()
-    ORDER BY a.due_date ASC
-    LIMIT 5
-", [$student_id]);
+$upcoming_assignments = [];
+if (table_exists('assignments') && table_exists('classes') && table_exists('class_enrollments')) {
+    $upcoming_assignments = db()->fetchAll("
+        SELECT a.*, c.class_name
+        FROM assignments a
+        JOIN classes c ON a.class_id = c.id
+        JOIN class_enrollments ce ON c.id = ce.class_id
+        WHERE ce.student_id = ? AND a.due_date >= CURDATE()
+        ORDER BY a.due_date ASC
+        LIMIT 5
+    ", [$student_id]) ?: [];
+}
 
 // Unread messages
-$unread_count = db()->fetchOne("
-    SELECT COUNT(*) as count FROM message_recipients
-    WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL
-", [$student_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$student_id, (int)$tenantId);
 
 // AI Insights
 $ai_insights = [];

@@ -11,16 +11,10 @@ require_parent();
 
 $parent_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
+$tenantId = current_tenant_id();
 
 // Get all linked children
-$children = db()->fetchAll("
-    SELECT s.id, CONCAT(u.first_name, ' ', u.last_name) as child_name, s.admission_number as student_id
-    FROM parent_student_links psl
-    JOIN students s ON psl.student_id = s.user_id
-    JOIN users u ON s.user_id = u.id
-    WHERE psl.parent_id = ? AND u.status = 'active'
-    ORDER BY child_name
-", [$parent_id]);
+$children = get_parent_linked_children((int)$parent_id, (int)$tenantId);
 
 // Handle report generation
 $generated_report = null;
@@ -31,19 +25,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
     $end_date = sanitize($_POST['end_date']);
     $format = sanitize($_POST['format']);
 
-    // Get child info
-    $child = db()->fetchOne("
-        SELECT s.id, CONCAT(u.first_name, ' ', u.last_name) as child_name, s.admission_number as student_id, c.grade_level
-        FROM students s
-        JOIN users u ON s.user_id = u.id
-        LEFT JOIN classes c ON s.class_id = c.id
-        WHERE s.id = ?
-    ", [$child_id]);
+    $child = null;
+    foreach ($children as $candidate) {
+        if ((int)($candidate['user_id'] ?? 0) === $child_id || (int)($candidate['student_profile_id'] ?? 0) === $child_id) {
+            $child = $candidate;
+            break;
+        }
+    }
 
     if ($child) {
+        $studentIdentifiers = array_values(array_unique(array_filter([
+            (int)($child['user_id'] ?? 0),
+            (int)($child['student_profile_id'] ?? 0),
+        ])));
         $generated_report = [
             'type' => $report_type,
-            'child' => $child,
+            'child' => [
+                'id' => (int)($child['user_id'] ?? 0),
+                'child_name' => $child['child_name'] ?? trim(($child['first_name'] ?? '') . ' ' . ($child['last_name'] ?? '')),
+                'student_id' => $child['student_id'] ?? '',
+                'grade_level' => $child['grade_level'] ?? null,
+            ],
             'start_date' => $start_date,
             'end_date' => $end_date,
             'generated_at' => date('Y-m-d H:i:s')
@@ -52,16 +54,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
         // Generate report data based on type
         switch ($report_type) {
             case 'attendance':
-                $generated_report['data'] = db()->fetchAll("
-                    SELECT ar.*, c.class_name,
-                           DATE(ar.check_in_time) as date,
-                           TIME(ar.check_in_time) as time
-                    FROM attendance_records ar
-                    JOIN classes c ON ar.class_id = c.id
-                    WHERE ar.student_id = ?
-                    AND DATE(ar.check_in_time) BETWEEN ? AND ?
-                    ORDER BY ar.check_in_time DESC
-                ", [$child_id, $start_date, $end_date]);
+                $generated_report['data'] = [];
+                if (!empty($studentIdentifiers) && table_exists('attendance_records')) {
+                    $attendanceDateField = table_has_column('attendance_records', 'check_in_time')
+                        ? 'check_in_time'
+                        : (table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : null);
+                    if ($attendanceDateField !== null) {
+                        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+                        $classJoin = (table_exists('classes') && table_has_column('attendance_records', 'class_id'))
+                            ? ' LEFT JOIN classes c ON ar.class_id = c.id'
+                            : '';
+                        $classSelect = ($classJoin !== '' && table_has_column('classes', 'class_name'))
+                            ? ', c.class_name'
+                            : ", '' AS class_name";
+                        $generated_report['data'] = db()->fetchAll("
+                            SELECT ar.*{$classSelect},
+                                   DATE(ar.{$attendanceDateField}) as date,
+                                   TIME(ar.{$attendanceDateField}) as time
+                            FROM attendance_records ar{$classJoin}
+                            WHERE ar.student_id IN ({$placeholders})
+                              AND DATE(ar.{$attendanceDateField}) BETWEEN ? AND ?
+                            ORDER BY ar.{$attendanceDateField} DESC
+                        ", array_merge($studentIdentifiers, [$start_date, $end_date])) ?: [];
+                    }
+                }
 
                 // Calculate statistics
                 $total = count($generated_report['data']);
@@ -78,15 +94,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
                 break;
 
             case 'grades':
-                $generated_report['data'] = db()->fetchAll("
-                    SELECT g.*, a.title as assignment_title, c.class_name,
-                           (g.points_earned / g.max_points * 100) as percentage
-                    FROM grades g
-                    LEFT JOIN assignments a ON g.assignment_id = a.id
-                    LEFT JOIN classes c ON g.class_id = c.id
-                    WHERE g.student_id = ? AND g.grade_date BETWEEN ? AND ?
-                    ORDER BY g.grade_date DESC
-                ", [$child_id, $start_date, $end_date]);
+                $generated_report['data'] = [];
+                if (!empty($studentIdentifiers) && table_exists('grades')) {
+                    $gradeDateField = table_has_column('grades', 'grade_date')
+                        ? 'grade_date'
+                        : (table_has_column('grades', 'created_at') ? 'created_at' : null);
+                    if ($gradeDateField !== null) {
+                        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+                        $assignmentJoin = (table_exists('assignments') && table_has_column('grades', 'assignment_id'))
+                            ? ' LEFT JOIN assignments a ON g.assignment_id = a.id'
+                            : '';
+                        $classJoin = '';
+                        if (table_exists('classes')) {
+                            if (table_has_column('grades', 'class_id')) {
+                                $classJoin = ' LEFT JOIN classes c ON g.class_id = c.id';
+                            } elseif ($assignmentJoin !== '' && table_has_column('assignments', 'class_id')) {
+                                $classJoin = ' LEFT JOIN classes c ON a.class_id = c.id';
+                            }
+                        }
+                        $assignmentTitleSelect = $assignmentJoin !== '' ? 'a.title as assignment_title' : "'' as assignment_title";
+                        $classNameSelect = ($classJoin !== '' && table_has_column('classes', 'class_name')) ? 'c.class_name' : "'' as class_name";
+                        $percentageSelect = (table_has_column('grades', 'points_earned') && table_has_column('grades', 'max_points'))
+                            ? '(g.points_earned / NULLIF(g.max_points, 0) * 100) as percentage'
+                            : 'NULL as percentage';
+                        $generated_report['data'] = db()->fetchAll("
+                            SELECT g.*, {$assignmentTitleSelect}, {$classNameSelect}, {$percentageSelect}
+                            FROM grades g{$assignmentJoin}{$classJoin}
+                            WHERE g.student_id IN ({$placeholders}) AND DATE(g.{$gradeDateField}) BETWEEN ? AND ?
+                            ORDER BY g.{$gradeDateField} DESC
+                        ", array_merge($studentIdentifiers, [$start_date, $end_date])) ?: [];
+                    }
+                }
 
                 $total_points = array_sum(array_column($generated_report['data'], 'max_points'));
                 $earned_points = array_sum(array_column($generated_report['data'], 'points_earned'));
@@ -98,19 +136,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
 
             case 'progress':
                 // Combined attendance and grades
-                $attendance_data = db()->fetchAll("
-                    SELECT DATE(ar.check_in_time) as date, ar.status
-                    FROM attendance_records ar
-                    WHERE ar.student_id = ? AND DATE(ar.check_in_time) BETWEEN ? AND ?
-                    ORDER BY ar.check_in_time
-                ", [$child_id, $start_date, $end_date]);
+                $attendance_data = [];
+                if (!empty($studentIdentifiers) && table_exists('attendance_records')) {
+                    $attendanceDateField = table_has_column('attendance_records', 'check_in_time')
+                        ? 'check_in_time'
+                        : (table_has_column('attendance_records', 'attendance_date') ? 'attendance_date' : null);
+                    if ($attendanceDateField !== null) {
+                        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+                        $attendance_data = db()->fetchAll("
+                            SELECT DATE(ar.{$attendanceDateField}) as date, ar.status
+                            FROM attendance_records ar
+                            WHERE ar.student_id IN ({$placeholders}) AND DATE(ar.{$attendanceDateField}) BETWEEN ? AND ?
+                            ORDER BY ar.{$attendanceDateField}
+                        ", array_merge($studentIdentifiers, [$start_date, $end_date])) ?: [];
+                    }
+                }
 
-                $grade_data = db()->fetchAll("
-                    SELECT g.grade_date, (g.points_earned / g.max_points * 100) as percentage
-                    FROM grades g
-                    WHERE g.student_id = ? AND g.grade_date BETWEEN ? AND ?
-                    ORDER BY g.grade_date
-                ", [$child_id, $start_date, $end_date]);
+                $grade_data = [];
+                if (!empty($studentIdentifiers) && table_exists('grades')) {
+                    $gradeDateField = table_has_column('grades', 'grade_date')
+                        ? 'grade_date'
+                        : (table_has_column('grades', 'created_at') ? 'created_at' : null);
+                    if ($gradeDateField !== null && table_has_column('grades', 'points_earned') && table_has_column('grades', 'max_points')) {
+                        $placeholders = implode(',', array_fill(0, count($studentIdentifiers), '?'));
+                        $grade_data = db()->fetchAll("
+                            SELECT DATE(g.{$gradeDateField}) as grade_date, (g.points_earned / NULLIF(g.max_points, 0) * 100) as percentage
+                            FROM grades g
+                            WHERE g.student_id IN ({$placeholders}) AND DATE(g.{$gradeDateField}) BETWEEN ? AND ?
+                            ORDER BY g.{$gradeDateField}
+                        ", array_merge($studentIdentifiers, [$start_date, $end_date])) ?: [];
+                    }
+                }
 
                 $generated_report['data'] = [
                     'attendance' => $attendance_data,
@@ -121,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
     }
 }
 
-$unread_count = db()->fetchOne("SELECT COUNT(*) as count FROM message_recipients WHERE recipient_id = ? AND is_read = 0 AND deleted_at IS NULL", [$parent_id])['count'] ?? 0;
+$unread_count = get_unread_message_count((int)$parent_id, (int)$tenantId);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -135,15 +191,18 @@ $unread_count = db()->fetchOne("SELECT COUNT(*) as count FROM message_recipients
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -160,13 +219,13 @@ $unread_count = db()->fetchOne("SELECT COUNT(*) as count FROM message_recipients
                     </a>
                 </div>
             </header>
-            <div class="app-layout">
+            <div style="display:grid; gap:24px;">
                 <?php if (empty($children)): ?>
                     <div class="holo-card">
                         <div style="text-align:center;padding:60px;">
-                            <i class="fas fa-users" style="font-size:4rem;color:rgba(255,255,255,0.2);margin-bottom:20px;"></i>
-                            <h3 style="color:rgba(255,255,255,0.6);">No Children Linked</h3>
-                            <p style="color:rgba(255,255,255,0.4);">Contact the administrator to link your children</p>
+                            <i class="fas fa-users" style="font-size:4rem;color:#cbd5e1;margin-bottom:20px;"></i>
+                            <h3 style="color:#0f172a;">No Children Linked</h3>
+                            <p style="color:#64748b;">Contact the administrator to link your children</p>
                         </div>
                     </div>
                 <?php else: ?>

@@ -1,196 +1,224 @@
 <?php
 
 /**
- * Communication API — Real-time messaging backend
+ * Communication API â€” Real-time messaging backend
  * Delegates to MessageService for all operations.
  */
 session_start();
+
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/database.php';
+require_once __DIR__ . '/../../includes/api-response.php';
+
+function communication_success(array $payload = [], int $statusCode = 200): void
+{
+  api_json_response(array_merge(['success' => true], $payload), $statusCode);
+}
+
+function communication_error(string $message, int $statusCode = 400, array $meta = []): void
+{
+  api_json_response([
+    'success' => false,
+    'error' => $message,
+    'meta' => $meta,
+  ], $statusCode);
+}
 
 // Rate limit API calls
 RateLimiterService::enforce('message');
-
-header('Content-Type: application/json');
-
-if (!is_logged_in()) {
-  http_response_code(401);
-  echo json_encode(['error' => 'Unauthorized']);
-  exit;
-}
+api_require_auth();
 
 $user_id = (int)$_SESSION['user_id'];
+if (!isset($_SESSION['tenant_id'])) {
+  set_user_tenant_session($user_id);
+}
+if (!user_in_current_tenant($user_id)) {
+  communication_error('Tenant access denied', 403);
+}
+
 $user_role = $_SESSION['role'] ?? 'student';
+$normalized_user_role = str_replace('-', '_', strtolower((string)$user_role));
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 try {
   switch ($action) {
-
-    // ─── LIST CONVERSATIONS ───
     case 'conversations':
       $rows = MessageService::getConversations($user_id);
       foreach ($rows as &$row) {
         MessageService::enrichConversation($row, $user_id);
       }
       unset($row);
-      echo json_encode(['conversations' => $rows]);
-      break;
+      communication_success(['conversations' => $rows]);
 
-    // ─── GET MESSAGES FOR CONVERSATION ───
     case 'messages':
       $conv_id = (int)($_GET['conversation_id'] ?? 0);
-      if (!$conv_id) {
-        echo json_encode(['error' => 'Missing conversation_id']);
-        break;
+      if ($conv_id <= 0) {
+        communication_error('Missing conversation_id', 422);
       }
       if (!MessageService::isParticipant($conv_id, $user_id)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Not a participant']);
-        break;
+        communication_error('Not a participant', 403);
       }
 
       $before = isset($_GET['before']) ? (int)$_GET['before'] : null;
       $limit = min((int)($_GET['limit'] ?? 50), 100);
-      $messages = MessageService::getMessages($conv_id, $user_id, $limit, $before);
-      echo json_encode(['messages' => $messages]);
-      break;
+      communication_success([
+        'messages' => MessageService::getMessages($conv_id, $user_id, $limit, $before),
+      ]);
 
-    // ─── SEND MESSAGE ───
     case 'send':
       if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        echo json_encode(['error' => 'POST required']);
-        break;
+        communication_error('POST required', 405);
       }
 
       $conv_id = (int)($_POST['conversation_id'] ?? 0);
-      $body = trim($_POST['body'] ?? '');
+      $body = trim((string)($_POST['body'] ?? ''));
       $reply_to = (int)($_POST['reply_to_id'] ?? 0) ?: null;
 
-      if (!$conv_id || !$body) {
-        echo json_encode(['error' => 'Missing conversation_id or body']);
-        break;
+      if ($conv_id <= 0 || $body === '') {
+        communication_error('Missing conversation_id or body', 422);
       }
       if (!MessageService::isParticipant($conv_id, $user_id)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Not a participant']);
-        break;
+        communication_error('Not a participant', 403);
       }
 
       $result = MessageService::send($conv_id, $user_id, $body, $reply_to);
-      echo json_encode($result);
-      break;
+      if (!($result['success'] ?? false)) {
+        communication_error($result['error'] ?? 'Failed to send message', 422);
+      }
+      communication_success($result);
 
-    // ─── CREATE CONVERSATION ───
     case 'create_conversation':
       if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        echo json_encode(['error' => 'POST required']);
-        break;
+        communication_error('POST required', 405);
       }
 
       $target_id = (int)($_POST['user_id'] ?? 0);
-      $type = $_POST['type'] ?? 'direct';
+      $type = trim((string)($_POST['type'] ?? 'direct'));
       $title = sanitize($_POST['title'] ?? '');
 
-      if ($type === 'direct' && $target_id) {
-        $target = db()->fetchOne("SELECT id, role FROM users WHERE id = ?", [$target_id]);
-        if (!$target) {
-          echo json_encode(['error' => 'User not found']);
-          break;
+      if ($type === 'direct') {
+        if ($target_id <= 0) {
+          communication_error('Invalid type or missing user_id', 422);
         }
-        if (!MessageService::canCommunicate($user_role, $target['role'])) {
-          echo json_encode(['error' => 'You do not have permission to message this user']);
-          break;
+
+        $result = MessageService::createDirect($user_id, $target_id, $user_role);
+        if (!($result['success'] ?? false)) {
+          communication_error($result['error'] ?? 'Failed to create conversation', 422);
         }
-        $result = MessageService::createDirect($user_id, $target_id);
-        echo json_encode($result);
-      } elseif ($type === 'group') {
-        if (!in_array($user_role, ['admin', 'teacher'])) {
-          echo json_encode(['error' => 'Only admin and teacher can create group chats']);
-          break;
+        communication_success($result, !empty($result['existing']) ? 200 : 201);
+      }
+
+      if ($type === 'group') {
+        if (!in_array($normalized_user_role, ['admin', 'teacher'], true)) {
+          communication_error('Only admin and teacher can create group chats', 403);
         }
+
         $member_ids = json_decode($_POST['member_ids'] ?? '[]', true);
         if (!is_array($member_ids) || count($member_ids) < 1) {
-          echo json_encode(['error' => 'At least one member required']);
-          break;
+          communication_error('At least one member required', 422);
         }
-        $result = MessageService::createGroup($user_id, $member_ids, $title ?: 'Group Chat');
-        echo json_encode($result);
-      } else {
-        echo json_encode(['error' => 'Invalid type or missing user_id']);
+
+        $result = MessageService::createGroup($user_id, $member_ids, $title ?: 'Group Chat', $user_role);
+        if (!($result['success'] ?? false)) {
+          communication_error($result['error'] ?? 'Failed to create group conversation', 422);
+        }
+        communication_success($result, 201);
       }
-      break;
 
-    // ─── TYPING INDICATOR ───
+      communication_error('Invalid type or missing user_id', 422);
+
     case 'typing':
-      $conv_id = (int)($_POST['conversation_id'] ?? 0);
-      if ($conv_id) MessageService::setTyping($conv_id, $user_id);
-      echo json_encode(['ok' => true]);
-      break;
-
     case 'stop_typing':
-      $conv_id = (int)($_POST['conversation_id'] ?? 0);
-      if ($conv_id) MessageService::stopTyping($conv_id, $user_id);
-      echo json_encode(['ok' => true]);
-      break;
+      if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        communication_error('POST required', 405);
+      }
 
-    // ─── GET TYPING USERS ───
+      $conv_id = (int)($_POST['conversation_id'] ?? 0);
+      if ($conv_id <= 0) {
+        communication_error('Missing conversation_id', 422);
+      }
+      if (!MessageService::isParticipant($conv_id, $user_id)) {
+        communication_error('Not a participant', 403);
+      }
+
+      if ($action === 'typing') {
+        MessageService::setTyping($conv_id, $user_id);
+      } else {
+        MessageService::stopTyping($conv_id, $user_id);
+      }
+
+      communication_success(['ok' => true]);
+
     case 'typing_users':
       $conv_id = (int)($_GET['conversation_id'] ?? 0);
-      if (!$conv_id) {
-        echo json_encode(['users' => []]);
-        break;
+      if ($conv_id <= 0) {
+        communication_success(['users' => []]);
       }
-      echo json_encode(['users' => MessageService::getTypingUsers($conv_id, $user_id)]);
-      break;
+      if (!MessageService::isParticipant($conv_id, $user_id)) {
+        communication_error('Not a participant', 403);
+      }
 
-    // ─── SEARCH USERS FOR NEW CONVERSATION ───
+      communication_success([
+        'users' => MessageService::getTypingUsers($conv_id, $user_id),
+      ]);
+
     case 'search_users':
       $q = sanitize($_GET['q'] ?? '');
       if (strlen($q) < 2) {
-        echo json_encode(['users' => []]);
-        break;
+        communication_success(['users' => []]);
       }
-      echo json_encode(['users' => MessageService::searchUsers($q, $user_id, $user_role)]);
-      break;
 
-    // ─── DELETE MESSAGE (soft) ───
+      communication_success([
+        'users' => MessageService::searchUsers($q, $user_id, $user_role),
+      ]);
+
     case 'delete_message':
-      $msg_id = (int)($_POST['message_id'] ?? 0);
-      if (!$msg_id) {
-        echo json_encode(['error' => 'Missing message_id']);
-        break;
+      if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        communication_error('POST required', 405);
       }
-      echo json_encode(MessageService::deleteMessage($msg_id, $user_id, $user_role));
-      break;
 
-    // ─── CONVERSATION INFO ───
+      $msg_id = (int)($_POST['message_id'] ?? 0);
+      if ($msg_id <= 0) {
+        communication_error('Missing message_id', 422);
+      }
+
+      $result = MessageService::deleteMessage($msg_id, $user_id, $user_role);
+      if (!($result['success'] ?? false)) {
+        communication_error($result['error'] ?? 'Not allowed', 403);
+      }
+      communication_success($result);
+
     case 'conversation_info':
       $conv_id = (int)($_GET['conversation_id'] ?? 0);
-      $info = MessageService::getConversationInfo($conv_id);
-      if (!$info) {
-        echo json_encode(['error' => 'Not found']);
-        break;
+      if ($conv_id <= 0) {
+        communication_error('Missing conversation_id', 422);
       }
-      echo json_encode($info);
-      break;
 
-    // ─── POLL FOR NEW MESSAGES ───
+      $info = MessageService::getConversationInfo($conv_id, $user_id);
+      if (!$info) {
+        communication_error('Not found', 404);
+      }
+      communication_success($info);
+
     case 'poll':
       $conv_id = (int)($_GET['conversation_id'] ?? 0);
       $after = (int)($_GET['after'] ?? 0);
-      if (!$conv_id || !MessageService::isParticipant($conv_id, $user_id)) {
-        echo json_encode(['messages' => []]);
-        break;
+      if ($conv_id <= 0) {
+        communication_error('Missing conversation_id', 422);
       }
-      echo json_encode(['messages' => MessageService::poll($conv_id, $user_id, $after)]);
-      break;
+      if (!MessageService::isParticipant($conv_id, $user_id)) {
+        communication_error('Not a participant', 403);
+      }
+
+      communication_success([
+        'messages' => MessageService::poll($conv_id, $user_id, $after),
+      ]);
 
     default:
-      echo json_encode(['error' => 'Unknown action']);
+      communication_error('Unknown action', 404);
   }
 } catch (Throwable $e) {
   error_log("Communication API error: " . $e->getMessage());
-  http_response_code(500);
-  echo json_encode(['error' => 'Server error']);
+  communication_error('Server error', 500);
 }

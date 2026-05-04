@@ -154,6 +154,34 @@ class Database
         $result = $this->fetch($sql, $params);
         return $result ? (int)$result['count'] : 0;
     }
+
+    public function lastInsertId()
+    {
+        return $this->connection->lastInsertId();
+    }
+
+    public function beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function commit()
+    {
+        return $this->connection->commit();
+    }
+
+    public function rollBack()
+    {
+        if ($this->connection->inTransaction()) {
+            return $this->connection->rollBack();
+        }
+        return false;
+    }
+
+    public function inTransaction()
+    {
+        return $this->connection->inTransaction();
+    }
 }
 
 // Helper function to get database instance

@@ -313,7 +313,7 @@ ob_start();
   </div>
 </div>
 
-<div id="editUserModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4" style="z-index:9999;">
+<div id="editUserModal" class="fixed inset-0 bg-black hidden items-center justify-center p-4" style="z-index:9999;">
   <div class="bg-white rounded-xl w-full max-w-xl p-5">
     <h3 class="text-lg font-semibold mb-4">Edit User</h3>
     <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-3">

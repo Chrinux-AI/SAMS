@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/database.php';
+require_once dirname(__DIR__, 2) . '/includes/config.php';
+require_once dirname(__DIR__, 2) . '/includes/functions.php';
+require_once dirname(__DIR__, 2) . '/includes/database.php';
 
 $password = 'DevPass@2026';
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -35,4 +35,3 @@ foreach ($targetRoles as $role) {
     update_flexible('users', $update, 'id = ?', [(int)$user['id']]);
     echo $role . ' | ' . $user['email'] . ' | ' . $password . " | updated\n";
 }
-

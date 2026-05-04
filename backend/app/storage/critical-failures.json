@@ -1,0 +1,282 @@
+[
+    {
+        "timestamp": "2026-04-08 06:02:09",
+        "module": "php_fatal",
+        "error": "Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at C:\\xampp\\htdocs\\attendance\\frontend\\accountant\\dashboard.php:7) in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:618\nStack trace:\n#0 [internal function]: ErrorHandler::handleError(2, 'Cannot modify h...', 'C:\\\\xampp\\\\htdocs...', 618)\n#1 C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php(618): header('Location: ..\/lo...')\n#2 C:\\xampp\\htdocs\\attendance\\backend\\includes\\function",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 618
+    },
+    {
+        "timestamp": "2026-04-08 06:25:09",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-08 06:25:43",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-08 06:25:53",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-08 06:27:13",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-08 07:15:58",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:15:59",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:00",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:00",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:00",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:02",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:03",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:04",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:04",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:04",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:05",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:05",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:05",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:09",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:10",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:10",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:10",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:11",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:12",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:12",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-08 07:16:12",
+        "module": "php_fatal",
+        "error": "Cannot redeclare format_currency() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1729)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 1747
+    },
+    {
+        "timestamp": "2026-04-19 17:55:15",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-20 11:16:54",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-20 11:16:54",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-25 07:42:06",
+        "module": "php_fatal",
+        "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+        "line": 130
+    },
+    {
+        "timestamp": "2026-04-25 07:43:20",
+        "module": "php_fatal",
+        "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+        "line": 130
+    },
+    {
+        "timestamp": "2026-04-25 07:45:14",
+        "module": "php_fatal",
+        "error": "Cannot redeclare sidebar_nav_unread_message_count() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php:64)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\sidebar-nav.php",
+        "line": 130
+    },
+    {
+        "timestamp": "2026-04-26 17:04:37",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-26 17:12:44",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-04-26 17:17:33",
+        "module": "php_fatal",
+        "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 2117
+    },
+    {
+        "timestamp": "2026-04-26 17:17:33",
+        "module": "php_fatal",
+        "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 2117
+    },
+    {
+        "timestamp": "2026-04-26 17:20:11",
+        "module": "php_fatal",
+        "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 2117
+    },
+    {
+        "timestamp": "2026-04-26 17:20:11",
+        "module": "php_fatal",
+        "error": "Cannot redeclare get_parent_linked_children() (previously declared in C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php:1961)",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\functions.php",
+        "line": 2117
+    },
+    {
+        "timestamp": "2026-04-29 19:50:48",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    },
+    {
+        "timestamp": "2026-05-03 21:32:43",
+        "module": "php_fatal",
+        "error": "Cannot declare class Database, because the name is already in use",
+        "file": "C:\\xampp\\htdocs\\attendance\\backend\\includes\\database.php",
+        "line": 7
+    }
+]

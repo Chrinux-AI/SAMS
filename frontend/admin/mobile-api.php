@@ -106,7 +106,7 @@ $security_settings = [
 
 <head>
     <script src="../assets/js/theme-loader.js"></script>
-        <link rel="manifest" href="/attendance/manifest.json">
+    <link rel="manifest" href="/attendance/manifest.json">
     <meta name="theme-color" content="#00BFFF">
     <link rel="apple-touch-icon" href="/attendance/assets/images/icons/icon-192x192.png">
     <meta charset="UTF-8">
@@ -300,7 +300,7 @@ $security_settings = [
 
 
 
-        <!-- API Status Indicator -->
+    <!-- API Status Indicator -->
     <div class="api-indicator">
         <i class="fas fa-mobile-alt"></i> API Online
     </div>
@@ -314,7 +314,7 @@ $security_settings = [
             </div>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <span style="color: #10b981;">API v<?php echo $api_stats['api_version']; ?> Running</span>
-                <a href="../logout.php" class="btn-logout">
+                <a href="<?php echo htmlspecialchars(site_url('logout.php')); ?>" class="btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>

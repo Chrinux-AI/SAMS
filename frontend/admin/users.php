@@ -9,70 +9,35 @@ session_start();
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/database.php';
+require_once PROJECT_ROOT . '/backend/modules/admin/AdminUserManager.php';
 require_admin('../login.php');
 
 $message = '';
 $message_type = '';
 
-// Get filter parameters
 $filter_role = $_GET['role'] ?? 'all';
 $filter_status = $_GET['status'] ?? 'all';
 $search = $_GET['search'] ?? '';
 
-// Build WHERE clause
-$where_conditions = [];
-$params = [];
-$tenant_filter_sql = '';
-$tenant_filter_params = [];
+$adminUserManager = new AdminUserManager(current_tenant_id(), (int)($_SESSION['user_id'] ?? 0));
+$usersPageData = $adminUserManager->getUsersPageData([
+    'role' => $filter_role,
+    'status' => $filter_status,
+    'search' => $search,
+]);
 
-if (table_exists('tenant_users')) {
-    $tenant_filter_sql = 'id IN (SELECT user_id FROM tenant_users WHERE tenant_id = :tenant_id AND is_active = 1)';
-    $tenant_filter_params['tenant_id'] = current_tenant_id();
-    $where_conditions[] = $tenant_filter_sql;
-}
-
-if ($filter_role !== 'all') {
-    $where_conditions[] = 'role = :role';
-    $params['role'] = $filter_role;
-}
-
-if ($filter_status !== 'all') {
-    $where_conditions[] = 'status = :status';
-    $params['status'] = $filter_status;
-}
-
-if (!empty($search)) {
-    $where_conditions[] = '(first_name LIKE :search OR last_name LIKE :search OR email LIKE :search)';
-    $params['search'] = "%$search%";
-}
-
-$where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
-
-// Get users with filters
-$users = db()->fetchAll("
-    SELECT * FROM users
-    $where_clause
-    ORDER BY created_at DESC
-", array_merge($tenant_filter_params, $params));
-
-// Get counts for badges
-$count_where_prefix = $tenant_filter_sql !== '' ? $tenant_filter_sql . ' AND ' : '';
-$count_params = $tenant_filter_params;
-
-$total_users = db()->count('users', $tenant_filter_sql !== '' ? $tenant_filter_sql : '1=1', $count_params);
-$active_users = db()->count('users', $count_where_prefix . 'status = :status', array_merge($count_params, ['status' => 'active']));
-$pending_users = db()->count('users', $count_where_prefix . 'status = :status', array_merge($count_params, ['status' => 'pending']));
-$admins = db()->count('users', $count_where_prefix . 'role = :role', array_merge($count_params, ['role' => 'admin']));
-$teachers = db()->count('users', $count_where_prefix . 'role = :role', array_merge($count_params, ['role' => 'teacher']));
-$students = db()->count('users', $count_where_prefix . 'role = :role', array_merge($count_params, ['role' => 'student']));
+$users = $usersPageData['users'] ?? [];
+$stats = $usersPageData['stats'] ?? [];
+$total_users = (int)($stats['total_users'] ?? 0);
+$active_users = (int)($stats['active_users'] ?? 0);
+$pending_users = (int)($stats['pending_users'] ?? 0);
+$admins = (int)($stats['admins'] ?? 0);
+$teachers = (int)($stats['teachers'] ?? 0);
+$students = (int)($stats['students'] ?? 0);
 
 $page_title = 'Users Management';
 $page_icon = 'users-cog';
 $full_name = $_SESSION['full_name'];
-?>
-<// Master layout configuration
-$page_title = 'Users Management';
-$page_icon = 'fas fa-users-cog';
 
 ob_start();
 ?>
@@ -184,7 +149,7 @@ ob_start();
             </a>
         <?php endif; ?>
 
-        <button type="button" onclick="toggleSelectAll()" id="selectAllBtn" class="px-5 py-2.5 border border-slate-200 text-slate-700 font-bold rounded-lg text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ml-auto">
+        <button type="button" onclick="toggleSelectAll(true)" id="selectAllBtn" class="px-5 py-2.5 border border-slate-200 text-slate-700 font-bold rounded-lg text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ml-auto">
             <span class="material-symbols-outlined text-[18px]">checklist_rtl</span> <span>Select All</span>
         </button>
     </form>
@@ -355,6 +320,7 @@ ob_start();
 </div>
 
 <script>
+    const USERS_API = '../../backend/api/admin/users.php';
     let deleteUserId = null;
     let selectedUsers = [];
 
@@ -392,7 +358,7 @@ ob_start();
         if (!deleteUserId) return;
 
         try {
-            const response = await fetch('../api/delete-user.php?action=delete', {
+            const response = await fetch(`${USERS_API}?action=delete`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: deleteUserId })
@@ -429,16 +395,13 @@ ob_start();
         }
     }
 
-    function toggleSelectAll() {
+    function toggleSelectAll(fromButton = false) {
         const selectAllCheckbox = document.getElementById('selectAllCheckbox');
         const checkboxes = document.querySelectorAll('.user-checkbox');
         const selectAllBtn = document.getElementById('selectAllBtn');
 
-        // Toggle the state
-        const newState = typeof selectAllCheckbox.checked !== 'undefined' ? selectAllCheckbox.checked : true;
-        // if called from the button, the checkbox isn't naturally updated
-        if(event && event.currentTarget === selectAllBtn) {
-           selectAllCheckbox.checked = !selectAllCheckbox.checked;
+        if (fromButton) {
+            selectAllCheckbox.checked = !selectAllCheckbox.checked;
         }
 
         checkboxes.forEach(cb => { cb.checked = selectAllCheckbox.checked; });
@@ -483,7 +446,7 @@ ob_start();
         }
 
         try {
-            const response = await fetch('../api/delete-user.php?action=bulk_delete', {
+            const response = await fetch(`${USERS_API}?action=bulk_delete`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_ids: selectedUsers.map(u => u.id) })
@@ -511,7 +474,7 @@ ob_start();
         }
 
         try {
-            const response = await fetch('../api/delete-user.php?action=delete_pending', {
+            const response = await fetch(`${USERS_API}?action=delete_pending`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ confirm: 'DELETE_ALL_PENDING' })
@@ -531,7 +494,7 @@ ob_start();
     }
 
     function viewUser(userId) {
-        window.location.href = 'student-view.php?id=' + userId;
+        window.location.href = 'user-view.php?id=' + userId;
     }
 
     // Close modal on escape key

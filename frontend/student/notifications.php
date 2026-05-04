@@ -4,22 +4,39 @@ require_once '../includes/functions.php';
 require_once '../includes/database.php';
 require_student();
 
-$student_id = $_SESSION['user_id'];
+$student_id = (int)($_SESSION['user_id'] ?? 0);
 $full_name = $_SESSION['full_name'];
+$currentTenantId = current_tenant_id();
+
+if (!isset($_SESSION['tenant_id'])) {
+    set_user_tenant_session($student_id);
+    $currentTenantId = current_tenant_id();
+}
+
+if ($student_id <= 0 || !$currentTenantId || !user_in_current_tenant($student_id)) {
+    http_response_code(403);
+    exit('Tenant access denied');
+}
+
+$notificationTenantClause = table_has_column('notifications', 'tenant_id') ? ' AND tenant_id = ?' : '';
+$notificationTenantParams = table_has_column('notifications', 'tenant_id') ? [$currentTenantId] : [];
+$notificationCategoryExpr = table_has_column('notifications', 'category')
+    ? 'COALESCE(category, "general")'
+    : (table_has_column('notifications', 'type') ? 'COALESCE(type, "general")' : '"general"');
 
 // Get all notifications with category
 $filter = $_GET['filter'] ?? 'all';
 $category = $_GET['category'] ?? 'all';
 
-$sql = "SELECT * FROM notifications WHERE user_id = ?";
-$params = [$student_id];
+$sql = "SELECT notifications.*, {$notificationCategoryExpr} AS notification_category FROM notifications WHERE user_id = ?{$notificationTenantClause}";
+$params = array_merge([$student_id], $notificationTenantParams);
 
 if ($filter === 'unread') {
     $sql .= " AND is_read = 0";
 }
 
 if ($category !== 'all') {
-    $sql .= " AND category = ?";
+    $sql .= " AND {$notificationCategoryExpr} = ?";
     $params[] = $category;
 }
 
@@ -29,9 +46,9 @@ $notifications = db()->fetchAll($sql, $params);
 
 // Get notification stats
 $stats = [
-    'total' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ?", [$student_id])['c'],
-    'unread' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND is_read = 0", [$student_id])['c'],
-    'today' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND DATE(created_at) = CURDATE()", [$student_id])['c']
+    'total' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ?{$notificationTenantClause}", array_merge([$student_id], $notificationTenantParams))['c'],
+    'unread' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND is_read = 0{$notificationTenantClause}", array_merge([$student_id], $notificationTenantParams))['c'],
+    'today' => db()->fetchOne("SELECT COUNT(*) as c FROM notifications WHERE user_id = ? AND DATE(created_at) = CURDATE(){$notificationTenantClause}", array_merge([$student_id], $notificationTenantParams))['c']
 ];
 
 $page_title = 'Notification Center';
@@ -51,6 +68,8 @@ $page_icon = 'bell';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
     <style>
         .notification-header {
@@ -445,7 +464,7 @@ $page_icon = 'bell';
                             <div class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>"
                                 data-id="<?php echo $notif['id']; ?>"
                                 onclick="handleNotificationClick(<?php echo $notif['id']; ?>, '<?php echo htmlspecialchars($notif['link'] ?? '#'); ?>')">
-                                <div class="notification-icon <?php echo $notif['category'] ?? 'info'; ?>">
+                                <div class="notification-icon <?php echo htmlspecialchars((string)($notif['notification_category'] ?? 'info')); ?>">
                                     <i class="fas fa-<?php echo $notif['icon'] ?? 'bell'; ?>"></i>
                                 </div>
                                 <div class="notification-content">
@@ -460,8 +479,8 @@ $page_icon = 'bell';
                                             <i class="fas fa-clock"></i>
                                             <?php echo timeAgo($notif['created_at']); ?>
                                         </div>
-                                        <?php if (isset($notif['category'])): ?>
-                                            <span class="notification-category"><?php echo ucfirst($notif['category']); ?></span>
+                                        <?php if (isset($notif['notification_category'])): ?>
+                                            <span class="notification-category"><?php echo ucfirst(htmlspecialchars((string)$notif['notification_category'])); ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>

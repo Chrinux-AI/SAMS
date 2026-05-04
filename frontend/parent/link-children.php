@@ -23,6 +23,7 @@ $parent_id = $_SESSION['user_id'];
 $full_name = $_SESSION['full_name'];
 $message = '';
 $message_type = '';
+$tenantId = current_tenant_id();
 
 // Handle Add Child Request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_child') {
@@ -251,10 +252,7 @@ $linked_children = db()->fetchAll("
     ORDER BY psl.is_primary DESC, u.first_name
 ", [$parent_id]);
 
-$unread_messages = db()->fetchOne(
-    "SELECT COUNT(*) as count FROM message_recipients WHERE recipient_id = ? AND is_read = 0",
-    [$parent_id]
-)['count'] ?? 0;
+$unread_messages = get_unread_message_count((int)$parent_id, $tenantId ? (int)$tenantId : null);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -268,13 +266,16 @@ $unread_messages = db()->fetchOne(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Link Children - <?php echo APP_NAME; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../assets/css/sams-core.css" rel="stylesheet">
     <link href="../assets/css/professional-ui.css" rel="stylesheet">
+    <?php include '../includes/sams-head-bootstrap.php'; ?>
+
 
 </head>
 <body>
     <div class="starfield"></div>
-    <div class="app-layout"></div>
 
     <div class="app-layout">
         <?php include '../includes/sidebar-nav.php'; ?>
@@ -291,7 +292,7 @@ $unread_messages = db()->fetchOne(
                 </div>
             </header>
 
-            <div class="app-layout">
+            <div style="display:grid;gap:24px;">
                 <?php if ($message): ?>
                     <div class="alert alert-<?php echo $message_type; ?>" style="background:rgba(<?php echo $message_type === 'success' ? '0,255,127' : ($message_type === 'warning' ? '255,255,0' : '255,69,0'); ?>,0.1);border:1px solid var(--cyber-<?php echo $message_type === 'success' ? 'green' : ($message_type === 'warning' ? 'yellow' : 'red'); ?>);color:var(--cyber-<?php echo $message_type === 'success' ? 'green' : ($message_type === 'warning' ? 'yellow' : 'red'); ?>);padding:15px;border-radius:8px;margin-bottom:20px;">
                         <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : ($message_type === 'warning' ? 'exclamation-triangle' : 'times-circle'); ?>"></i>

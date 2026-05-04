@@ -105,8 +105,32 @@ class SAMS_ChatbotService extends SAMS_BaseService {
         // Detect intent
         $intent = $this->detectIntent($message);
         
-        // Generate response based on intent
-        $response = $this->generateResponse($intent, $message);
+        // Generate response based on intent. If unknown, use our Local AI.
+        if ($intent['type'] === 'unknown') {
+            require_once __DIR__ . '/../../ai/local-inference.php';
+            $localAI = new SentinelLocalAI();
+            
+            // Reconstruct recent conversation history for context
+            $messages = [
+                ['role' => 'system', 'content' => "You are the SAMS Public AI (School Attendance Management System Assistant). Be helpful, professional, and concise. Your school name is Academic Sentinel."]
+            ];
+            
+            // Add history
+            foreach ($this->conversationHistory as $hist) {
+                $role = ($hist['sender'] === 'user') ? 'user' : 'assistant';
+                $messages[] = ['role' => $role, 'content' => $hist['message']];
+            }
+            
+            $aiResult = $localAI->generateResponse($messages);
+            if ($aiResult['success']) {
+                $response = rtrim(trim($aiResult['content']), '"');
+                $response = ltrim($response, '"');
+            } else {
+                $response = $this->generateFallbackResponse();
+            }
+        } else {
+            $response = $this->generateResponse($intent, $message);
+        }
         
         // Log bot response
         $this->logConversation($response, 'bot');

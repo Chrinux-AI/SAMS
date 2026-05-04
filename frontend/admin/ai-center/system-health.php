@@ -111,6 +111,8 @@ $scoreColor = $healthScore >= 80 ? '#22C55E' : ($healthScore >= 60 ? '#F59E0B' :
   <title>AI System Health - <?php echo APP_NAME; ?></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/professional-ui.css">
+    <?php include '../../includes/sams-head-bootstrap.php'; ?>
+
   <link rel="stylesheet" href="../../assets/css/sidebar-nav.css">
   <style>
     .health-header {

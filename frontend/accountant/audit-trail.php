@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -39,12 +39,12 @@ try {
 
 if (empty($entries)) {
   $entries = [
-    ['created_at' => '2026-03-09 10:15:23', 'username' => 'john.doe', 'action' => 'payment_received', 'details' => 'Student fee payment $15,000 - INV-2026-0451', 'ip_address' => '192.168.1.45'],
+    ['created_at' => '2026-03-09 10:15:23', 'username' => 'john.doe', 'action' => 'payment_received', 'details' => 'Student fee payment ₦15,000 - INV-2026-0451', 'ip_address' => '192.168.1.45'],
     ['created_at' => '2026-03-08 14:32:10', 'username' => 'jane.smith', 'action' => 'invoice_created', 'details' => 'New invoice generated for Grade 10 fees', 'ip_address' => '192.168.1.22'],
     ['created_at' => '2026-03-07 09:45:00', 'username' => 'admin', 'action' => 'financial_report', 'details' => 'Monthly financial report exported', 'ip_address' => '192.168.1.1'],
-    ['created_at' => '2026-03-06 16:20:55', 'username' => 'bursar01', 'action' => 'payment_approved', 'details' => 'Approved vendor payment $3,200 - EXP-2026-0112', 'ip_address' => '192.168.1.33'],
+    ['created_at' => '2026-03-06 16:20:55', 'username' => 'bursar01', 'action' => 'payment_approved', 'details' => 'Approved vendor payment ₦3,200 - EXP-2026-0112', 'ip_address' => '192.168.1.33'],
     ['created_at' => '2026-03-05 11:10:30', 'username' => 'john.doe', 'action' => 'invoice_updated', 'details' => 'Updated invoice INV-2026-0449 amount', 'ip_address' => '192.168.1.45'],
-    ['created_at' => '2026-03-04 08:55:12', 'username' => 'admin', 'action' => 'financial_adjustment', 'details' => 'Budget adjustment for IT department +$5,000', 'ip_address' => '192.168.1.1'],
+    ['created_at' => '2026-03-04 08:55:12', 'username' => 'admin', 'action' => 'financial_adjustment', 'details' => 'Budget adjustment for IT department +₦5,000', 'ip_address' => '192.168.1.1'],
   ];
 }
 
@@ -61,7 +61,8 @@ $page_title = 'Financial Audit Trail';
 $page_icon = 'history';
 $page_subtitle = 'Track financial activities and recent accounting changes.';
 
-ob_start();
+$activeTab = 'audit-trail';
+require_once __DIR__ . '/partials/header.php';
 ?>
 
 <form method="GET" class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-4 mb-6 flex flex-wrap items-end gap-3">
@@ -74,7 +75,7 @@ ob_start();
     <input type="text" name="user" value="<?php echo htmlspecialchars($user_filter); ?>" placeholder="Username or ID" class="rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-3 py-2 text-sm">
   </div>
   <button type="submit" class="rounded-lg bg-primary text-on-primary px-4 py-2 text-sm font-semibold">Filter</button>
-  <a href="audit-trail.php" class="rounded-lg border border-outline-variant/30 px-4 py-2 text-sm font-semibold">Clear</a>
+  <a href="index.php?page=audit-trail" class="rounded-lg border border-outline-variant/30 px-4 py-2 text-sm font-semibold">Clear</a>
 </form>
 
 <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden">
@@ -121,6 +122,4 @@ ob_start();
 </div>
 
 <?php
-$page_content = ob_get_clean();
-require_once __DIR__ . '/partials/atlas-shell.php';
-render_accountant_atlas_shell($page_title, 'reports', $page_content, $_SESSION['full_name'] ?? 'Accountant');
+require_once __DIR__ . '/partials/footer.php';

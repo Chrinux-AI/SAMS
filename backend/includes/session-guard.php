@@ -85,8 +85,8 @@ function enforce_session_timeout(): bool
         exit;
       }
 
-      // Build redirect path
-      $base = '/attendance/login.php?timeout=1';
+      // Build redirect path from the active deployment host/path
+      $base = rtrim((defined('APP_URL') ? APP_URL : '/attendance'), '/') . '/login.php?timeout=1';
       header("Location: {$base}");
       exit;
     }
